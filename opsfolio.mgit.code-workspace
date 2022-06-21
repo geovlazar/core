@@ -1,0 +1,91 @@
+{
+	"folders": [
+		{
+			"path": "github.com/opsfolio/core",
+			"name": "opsfolio/core"
+		},
+		{
+			"path": "github.com/opsfolio/orchestrator",
+			"name": "opsfolio/orchestrator"
+		},
+		{
+			"path": "github.com/resFactory/factory",
+			"name": "resFactory/factory"
+		},
+		{
+			"path": "github.com/netspective-studios/PgDCP"
+		},
+		{
+			"path": "git.netspective.io/netspective-medigy/modules/netspective-automated-cybersecurity-compliance-and-continuous-monitoring/ac3m-information-aide"
+		},
+		{
+			"path": "github.com/gov-suite/governed-im"
+		},
+		{
+			"path": "github.com/gov-suite/governed-im-rds"
+		},
+		{
+			"path": "github.com/gov-suite/governed-im-transform"
+		},
+		{
+			"path": "github.com/tinysource/tinysource"
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"mikestead.dotenv",
+			"denoland.vscode-deno",
+			"frigus02.vscode-sql-tagged-template-literals",
+			"humao.rest-client",
+			"graphql.vscode-graphql",
+			"yzhang.markdown-all-in-one",
+			"skellock.just",
+			"shd101wyy.markdown-preview-enhanced",
+			"mechatroner.rainbow-csv",
+			"alexander-yu.vscode-open",
+			"spmeesseman.vscode-taskexplorer",
+			"mdickin.markdown-shortcuts",
+			"telesoho.vscode-markdown-paste-image",
+			"jebbs.markdown-extended",
+			"ms-edgedevtools.vscode-edge-devtools",
+			"hediet.vscode-drawio",
+			"cmoog.sqlnotebook",
+			"ms-vscode.wordcount",
+			"tomoki1207.pdf"
+		]
+	},
+	"settings": {
+		"files.trimTrailingWhitespace": true,
+		"[markdown]": {
+			"files.trimTrailingWhitespace": false
+		},
+		"html.format.unformatted": "md-block",
+		"git.autofetch": true,
+		"terminal.integrated.fontFamily": "CascadianCode NF",
+		"deno.enable": true,
+		"deno.lint": true,
+		"deno.unstable": true,
+		"deno.codeLens.implementations": false,
+		"editor.formatOnSave": true,
+		"deno.suggest.imports.hosts": {
+			"https://deno.land": false,
+			"https://cdn.pika.dev": false,
+			"https://cdn.dreg.dev": false,
+			"https://denopkg.com": false
+		},
+		"files.associations": {
+			".rfignore": "ignore",
+			".envrc.example": "dotenv"
+		},
+		"cSpell.words": [
+			"allowfullscreen",
+			"autoplay",
+			"backloading",
+			"commericializable",
+			"Medigy",
+			"mindmap",
+			"reactables"
+		],
+		"hediet.vscode-drawio.theme": "atlas"
+	},
+}
