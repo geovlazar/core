@@ -12,7 +12,3 @@ Opsfolio is an *infrastructure assurance* tool to help define expectations for a
 
 ![architecture](support/docs/architecture.drawio.svg)
 
-Convert image below and merge into the draw.io diagram above:
-
-![architecture](support/docs/osquery-pg-fdw.jpg)
-
