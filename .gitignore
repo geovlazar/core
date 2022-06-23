@@ -1,0 +1,4 @@
+# Don't store the generated files (TODO: remove this after development concludes)
+opsfolio.sqlite.db
+opsfolio.auto.sql
+opsfolio.osquery-atc.auto.json

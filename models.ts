@@ -1,115 +1,26 @@
-import { path, rflAxiom as ax, rflSQLa as SQLa } from "./deps.ts";
+import { path, rflSQLa as SQLa, rflSQLaTypical as SQLaTyp } from "./deps.ts";
 
-// deno-lint-ignore no-explicit-any
-type Any = any;
+/**
+ * All our table names should be strongly typed and consistent. Generics are
+ * used so that they are passed into Axiom, SQLa domain, etc. properly typed.
+ * @param name the name of the table
+ * @returns the transformed table name (e.g. in case prefixes should be added)
+ */
+export function tableName<Name extends string, Qualified extends string = Name>(
+  name: Name,
+): Qualified {
+  return name as unknown as Qualified;
+}
 
-export function modelsAide<Context extends SQLa.SqlEmitContext>(
-  ddlOptions?: SQLa.SqlTextSupplierOptions<Context> & {
-    readonly sqlNS?: SQLa.SqlNamespaceSupplier;
-  },
-) {
-  // TODO: convert this to a UUID to allow database row merging/syncing
-  const primaryKey = () =>
-    SQLa.autoIncPrimaryKey<number, Context>(SQLa.integer());
+export enum ContextEnum {
+  DEVELOPMENT,
+  TEST,
+  PRODUCTION,
+}
 
-  type HousekeepingColumnsDefns<
-    Context extends SQLa.SqlEmitContext,
-  > = {
-    readonly created_at: SQLa.AxiomSqlDomain<Date | undefined, Context>;
-  };
-
-  function housekeeping<
-    Context extends SQLa.SqlEmitContext,
-  >(): HousekeepingColumnsDefns<Context> {
-    return {
-      created_at: SQLa.dateTimeNullable(undefined, {
-        sqlDefaultValue: () => ({ SQL: () => `CURRENT_TIMESTAMP` }),
-      }),
-    };
-  }
-
-  /**
-   * All of our tables will follow a specific format, namely that they will have
-   * a single primary key with the same name as the table with _id appended and
-   * common "houskeeping" columns like created_at.
-   * TODO: figure out how to automatically add ...housekeeping() to the end of
-   * each table (it's easy to add at the start of each table, but we want them
-   * at the end after all the "content" columns).
-   * @param tableName
-   * @param props
-   * @returns
-   */
-  const table = <
-    TableName extends string,
-    TPropAxioms extends
-      & Record<string, ax.Axiom<Any>>
-      & Record<`${TableName}_id`, ax.Axiom<Any>>
-      & HousekeepingColumnsDefns<Context>,
-  >(
-    tableName: TableName,
-    props: TPropAxioms,
-  ) => {
-    // "created_at" is considered "housekeeping" with a default so don't
-    // emit it as part of the insert DML statement
-    const defaultIspOptions: SQLa.InsertStmtPreparerOptions<
-      TableName,
-      Any,
-      Any,
-      Context
-    > = { isColumnEmittable: (name) => name == "created_at" ? false : true };
-    return {
-      ...SQLa.tableDefinition(tableName, props, {
-        isIdempotent: true,
-        sqlNS: ddlOptions?.sqlNS,
-      }),
-      ...SQLa.tableDomainsRowFactory(tableName, props, { defaultIspOptions }),
-      view: SQLa.tableDomainsViewWrapper(
-        `${tableName}_vw`,
-        tableName,
-        props,
-      ),
-      defaultIspOptions, // in case others need to wrap the call
-    };
-  };
-
-  const enumTable = <
-    TableName extends string,
-    TPropAxioms extends
-      & Record<`${TableName}_id`, ax.Axiom<Any>>
-      & {
-        readonly code: SQLa.AxiomSqlDomain<string, Context>;
-        readonly value: SQLa.AxiomSqlDomain<string, Context>;
-      }
-      & HousekeepingColumnsDefns<Context>,
-  >(
-    tableName: TableName,
-    seed?: { readonly code: string; readonly value: string }[],
-    props: TPropAxioms = {
-      [`${tableName}_id`]: primaryKey(),
-      code: SQLa.text(),
-      value: SQLa.text(),
-      ...housekeeping(),
-    } as TPropAxioms,
-  ) => {
-    const entity = table(tableName, props);
-    return {
-      ...entity,
-      // see will be used in SQL interpolation template literal, which accepts
-      // either a string, SqlTextSupplier, or array of SqlTextSuppliers; in our
-      // case, if seed data is provided we'll prepare the insert DMLs as an
-      // array of SqlTextSuppliers
-      seed: seed
-        ? seed.map((s) => entity.insertDML(s as Any))
-        : `-- no ${tableName} seed rows`,
-    };
-  };
-
-  return {
-    primaryKey,
-    housekeeping,
-    table,
-    enumTable,
-  };
+export enum AssetRiskType {
+  TYPE1 = "asset risk type 1",
+  TYPE2 = "asset risk type 2",
 }
 
 export function enumerations<Context extends SQLa.SqlEmitContext>(
@@ -117,22 +28,158 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
   },
 ) {
-  const ma = modelsAide(ddlOptions);
-  const context = ma.enumTable("context", [
-    { code: "dev", value: "development" },
-    { code: "test", value: "test" },
-    { code: "production", value: "production" },
-  ]);
+  const lg = SQLaTyp.typicalLookupsGovn(ddlOptions);
+  const contextET = lg.enumTable(tableName("context"), ContextEnum);
+  const assetRiskType = lg.enumTextTable(
+    tableName("asset_risk_type"),
+    AssetRiskType,
+  );
 
   // deno-fmt-ignore
   const DDL = SQLa.SQL<Context>(ddlOptions)`
-      ${context}
+      ${contextET}
 
-      ${context.seed}`;
+      ${assetRiskType}
+
+      ${contextET.seedDML}
+
+      ${assetRiskType.seedDML}`;
 
   return {
-    context: ma.enumTable("context"),
+    contextET,
+    assetRiskType,
     DDL,
+    exposeATC: [contextET, assetRiskType],
+  };
+}
+
+export function entities<Context extends SQLa.SqlEmitContext>(
+  ddlOptions?: SQLa.SqlTextSupplierOptions<Context> & {
+    readonly sqlNS?: SQLa.SqlNamespaceSupplier;
+  },
+) {
+  const mg = SQLaTyp.typicalModelsGovn(ddlOptions);
+  const enums = enumerations(ddlOptions);
+
+  const graph = mg.table(tableName("graph"), {
+    graph_id: mg.primaryKey(),
+    name: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const boundary = mg.table(tableName("boundary"), {
+    boundary_id: mg.primaryKey(),
+    name: SQLa.text(),
+    graph_id: graph.foreignKeyRef.graph_id(),
+    ...mg.housekeeping(),
+  });
+
+  const host = mg.table(tableName("host"), {
+    host_id: mg.primaryKey(),
+    host_name: SQLa.unique(SQLa.text()),
+    ...mg.housekeeping(),
+  });
+
+  const hostBoundary = mg.table(tableName("host_boundary"), {
+    host_boundary_id: mg.primaryKey(),
+    host_id: host.foreignKeyRef.host_id(),
+    boundary_id: boundary.foreignKeyRef.boundary_id(),
+    ...mg.housekeeping(),
+  });
+
+  const raciMatrix = mg.table(tableName("raci_matrix"), {
+    raci_matrix_id: mg.primaryKey(),
+    asset: SQLa.text(),
+    responsible: SQLa.text(),
+    accountable: SQLa.text(),
+    consulted: SQLa.text(),
+    informed: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const assetRisk = mg.table(tableName("asset_risk"), {
+    asset_risk_id: mg.primaryKey(),
+    asset_risk_type_id: enums.assetRiskType.foreignKeyRef.code(),
+    asset: SQLa.text(),
+    threat_event: SQLa.text(),
+    relevance: SQLa.text(),
+    likelihood: SQLa.text(),
+    impact: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  // tableTypes.typical('opsfolio_asset_risk', [
+  //     columnTypes.identity(),
+  //     columnTypes.enum('opsfolio_asset_risk_type', name = 'asset_risk_type_id', required=true),
+  //     columnTypes.text('threat_event'),
+  //     columnTypes.text('relevance'),
+  //     columnTypes.text('likelihood'),
+  //     columnTypes.text('impact'),
+  //     columnTypes.text('risk')
+  // ]),
+
+  // deno-fmt-ignore
+  const DDL = SQLa.SQL<Context>(ddlOptions)`
+      ${host}
+
+      ${graph}
+
+      ${boundary}
+
+      ${hostBoundary}
+
+      ${raciMatrix}
+
+      ${assetRisk}`;
+
+  return {
+    host,
+    graph,
+    boundary,
+    hostBoundary,
+    raciMatrix,
+    assetRisk,
+    DDL,
+    exposeATC: [host, graph, boundary, hostBoundary, raciMatrix],
+  };
+}
+
+export function osQueryConfig<Context extends SQLa.SqlEmitContext>(
+  ...tables:
+    // deno-lint-ignore no-explicit-any
+    (SQLa.TableDefinition<any, Context> & SQLa.SqlDomainsSupplier<Context>)[]
+) {
+  type osQueryATCRecord = {
+    readonly query: string;
+    readonly path: string;
+    readonly columns: string[];
+    readonly platform?: string;
+  };
+
+  const osQueryATCRecords = tables.reduce(
+    (result, table) => {
+      result[table.tableName] = {
+        query: `select ${
+          table.domains.map((d) => d.identity).join(", ")
+        } from ${table.tableName}`,
+        columns: table.domains.map((d) => d.identity),
+      };
+      return result;
+    },
+    {} as Record<string, Omit<osQueryATCRecord, "path">>,
+  );
+
+  return {
+    osQueryATC: (path: string, tableName: (suggested: string) => string) => {
+      const ATC: Record<string, osQueryATCRecord> = {};
+      for (const atcRec of Object.entries(osQueryATCRecords)) {
+        const [suggestedTableName, atcPartial] = atcRec;
+        ATC[tableName(suggestedTableName)] = { ...atcPartial, path };
+      }
+      return {
+        auto_table_construction: ATC,
+      };
+    },
   };
 }
 
@@ -141,48 +188,8 @@ export function models<Context extends SQLa.SqlEmitContext>(
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
   },
 ) {
-  const ma = modelsAide(ddlOptions);
-
-  const boundary = ma.table("boundary", {
-    boundary_id: ma.primaryKey(),
-    name: SQLa.text(),
-    ...ma.housekeeping(),
-  });
-
-  const host = ma.table("host", {
-    host_id: ma.primaryKey(),
-    host_name: SQLa.unique(SQLa.text()),
-    ...ma.housekeeping(),
-  });
-
-  const hostBoundary = ma.table("host_boundary", {
-    host_boundary_id: ma.primaryKey(),
-    host_id: host.foreignKeyRef.host_id(),
-    boundary_id: boundary.foreignKeyRef.boundary_id(),
-    ...ma.housekeeping(),
-  });
-
-  // deno-fmt-ignore
-  const DDL = SQLa.SQL<Context>(ddlOptions)`
-      ${host}
-
-      ${boundary}`;
-
-  return {
-    host,
-    boundary,
-    hostBoundary,
-    DDL,
-  };
-}
-
-export function dbDefn<Context extends SQLa.SqlEmitContext>(
-  ddlOptions?: SQLa.SqlTextSupplierOptions<Context> & {
-    readonly sqlNS?: SQLa.SqlNamespaceSupplier;
-  },
-) {
-  const e = enumerations(ddlOptions);
-  const m = models(ddlOptions);
+  const enums = enumerations(ddlOptions);
+  const ents = entities(ddlOptions);
 
   // deno-fmt-ignore
   const DDL = SQLa.SQL<Context>(ddlOptions)`
@@ -191,24 +198,25 @@ export function dbDefn<Context extends SQLa.SqlEmitContext>(
       ${SQLa.typicalSqlTextLintSummary}
 
       -- enumeration tables
-      ${e.DDL}
+      ${enums.DDL}
 
       -- content tables
-      ${m.DDL}
+      ${ents.DDL}
 
       ${SQLa.typicalSqlTmplEngineLintSummary}`;
 
   return {
-    enumerations: e,
-    models: m,
+    enumerations: enums,
+    entities: ents,
     DDL,
+    ...osQueryConfig(...enums.exposeATC, ...ents.exposeATC),
   };
 }
 
 if (import.meta.main) {
   // if we're being called as a CLI, just emit the DDL SQL:
   //    deno run -A models.ts > opsfolio.auto.sql
-  //    deno run -A models.ts | sqlite3 synthetic.sqlite.db
-  const ctx = SQLa.typicalSqlEmitContext();
-  console.log(dbDefn().DDL.SQL(ctx));
+  //    deno run -A models.ts | sqlite3 opsfolio.sqlite.db
+  const m = models();
+  console.log(m.DDL.SQL(SQLa.typicalSqlEmitContext()));
 }

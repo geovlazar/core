@@ -9,6 +9,7 @@ export * as dzx from "https://deno.land/x/dzx@0.3.1/mod.ts";
 
 export * as rflAxiom from "../../resFactory/factory/lib/safety/axiom.ts";
 export * as rflSQLa from "../../resFactory/factory/lib/sql/render/mod.ts";
+export * as rflSQLaTypical from "../../resFactory/factory/lib/sql/render/typical.ts";
 export * as rflSqlShellTask from "../../resFactory/factory/lib/sql/shell/task.ts";
 export * as rflTask from "../../resFactory/factory/lib/task/core.ts";
 export * as rflTaskUDD from "../../resFactory/factory/lib/task/udd.ts";

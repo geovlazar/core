@@ -5,6 +5,9 @@
 			"name": "opsfolio/core"
 		},
 		{
+			"path": "git.netspective.io/information-governance-suite/operations-portfolio-specification"
+		},
+		{
 			"path": "github.com/opsfolio/orchestrator",
 			"name": "opsfolio/orchestrator"
 		},
@@ -14,6 +17,9 @@
 		},
 		{
 			"path": "github.com/netspective-studios/PgDCP"
+		},
+		{
+			"path": "git.netspective.io/netspective-medigy/modules/netspective-automated-cybersecurity-compliance-and-continuous-monitoring/ac3m-information-aide"
 		},
 		{
 			"path": "github.com/gov-suite/governed-im"

@@ -1,9 +1,11 @@
 import {
   dzx,
   rflGitHubTask as gh,
+  rflSQLa as SQLa,
   rflTask as t,
   rflTaskUDD as udd,
 } from "./deps.ts";
+import * as m from "./models.ts";
 
 // see setup and usage instructions in $RF_HOME/lib/task/README.md
 
@@ -17,9 +19,10 @@ export class Tasks extends t.EventEmitter<{
   ensureProjectDeps(): Promise<void>; // -- see $RF_HOME/lib/sql/shell/task.ts
   updateDenoDeps(): Promise<void>;
   maintain(): Promise<void>;
+  // TODO: clean(): Promise<void>;
   // TODO: doctor(): Promise<void>; -- test that all dependencies are available
   // TODO: deploy(): Promise<void>; -- setup /etc/opsfolio.sqlite.db, /etc/opsfolio.osquery-atc.json links, cron tasks, etc. (upgrade as necessary)
-  // TODO: generateArtifacts(): Promise<void>; -- generate *.auto.sql, *.osquery-atc.auto.json, etc.
+  generateArtifacts(): Promise<void>; // -- generate *.auto.sql, *.osquery-atc.auto.json, etc.
   // TODO: prepareSandbox(): Promise<void>; -- replace deps.* with local Resource Factory locations
   // TODO: publish(): Promise<void>; -- replace deps.* with remote RF locations, tag, and push to remote
 }> {
@@ -31,6 +34,24 @@ export class Tasks extends t.EventEmitter<{
     this.on("maintain", async () => {
       await this.emit("ensureProjectDeps");
       await this.emit("updateDenoDeps");
+    });
+    this.on("generateArtifacts", async () => {
+      const models = m.models();
+      await Deno.writeTextFile(
+        "opsfolio.auto.sql",
+        models.DDL.SQL(SQLa.typicalSqlEmitContext()),
+      );
+      await Deno.writeTextFile(
+        "opsfolio.osquery-atc.auto.json",
+        JSON.stringify(
+          models.osQueryATC(
+            "opsfolio.sqlite.db",
+            (tableName) => `opsfolio_${tableName}`,
+          ),
+          undefined,
+          "  ",
+        ),
+      );
     });
   }
 }
