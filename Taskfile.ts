@@ -44,10 +44,12 @@ export class Tasks extends t.EventEmitter<{
       await Deno.writeTextFile(
         "opsfolio.osquery-atc.auto.json",
         JSON.stringify(
-          models.osQueryATC(
-            "opsfolio.sqlite.db",
-            (tableName) => `opsfolio_${tableName}`,
-          ),
+          models.osQueryATCConfig((tableName, atcPartial) => {
+            return {
+              osQueryTableName: `opsfolio_${tableName}`,
+              atcRec: { ...atcPartial, path: "opsfolio.sqlite.db" }
+            }
+          }),
           undefined,
           "  ",
         ),

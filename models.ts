@@ -1,4 +1,9 @@
-import { path, rflSQLa as SQLa, rflSQLaTypical as SQLaTyp } from "./deps.ts";
+import {
+  path,
+  rflSQLa as SQLa,
+  rflSQLaTypical as SQLaTyp,
+  rflSqlOsQuery as osQ,
+} from "./deps.ts";
 
 /**
  * All our table names should be strongly typed and consistent. Generics are
@@ -108,16 +113,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
-  // tableTypes.typical('opsfolio_asset_risk', [
-  //     columnTypes.identity(),
-  //     columnTypes.enum('opsfolio_asset_risk_type', name = 'asset_risk_type_id', required=true),
-  //     columnTypes.text('threat_event'),
-  //     columnTypes.text('relevance'),
-  //     columnTypes.text('likelihood'),
-  //     columnTypes.text('impact'),
-  //     columnTypes.text('risk')
-  // ]),
-
   // deno-fmt-ignore
   const DDL = SQLa.SQL<Context>(ddlOptions)`
       ${host}
@@ -141,45 +136,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     assetRisk,
     DDL,
     exposeATC: [host, graph, boundary, hostBoundary, raciMatrix],
-  };
-}
-
-export function osQueryConfig<Context extends SQLa.SqlEmitContext>(
-  ...tables:
-    // deno-lint-ignore no-explicit-any
-    (SQLa.TableDefinition<any, Context> & SQLa.SqlDomainsSupplier<Context>)[]
-) {
-  type osQueryATCRecord = {
-    readonly query: string;
-    readonly path: string;
-    readonly columns: string[];
-    readonly platform?: string;
-  };
-
-  const osQueryATCRecords = tables.reduce(
-    (result, table) => {
-      result[table.tableName] = {
-        query: `select ${
-          table.domains.map((d) => d.identity).join(", ")
-        } from ${table.tableName}`,
-        columns: table.domains.map((d) => d.identity),
-      };
-      return result;
-    },
-    {} as Record<string, Omit<osQueryATCRecord, "path">>,
-  );
-
-  return {
-    osQueryATC: (path: string, tableName: (suggested: string) => string) => {
-      const ATC: Record<string, osQueryATCRecord> = {};
-      for (const atcRec of Object.entries(osQueryATCRecords)) {
-        const [suggestedTableName, atcPartial] = atcRec;
-        ATC[tableName(suggestedTableName)] = { ...atcPartial, path };
-      }
-      return {
-        auto_table_construction: ATC,
-      };
-    },
   };
 }
 
@@ -209,7 +165,12 @@ export function models<Context extends SQLa.SqlEmitContext>(
     enumerations: enums,
     entities: ents,
     DDL,
-    ...osQueryConfig(...enums.exposeATC, ...ents.exposeATC),
+    osQueryATCConfig: osQ.osQueryATCConfigSupplier(
+      [...enums.exposeATC, ...ents.exposeATC].map((t) => ({
+        tableName: t.tableName,
+        columns: t.domains.map((d) => ({ columnName: d.identity })),
+      })),
+    ),
   };
 }
 
