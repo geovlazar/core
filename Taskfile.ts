@@ -7,6 +7,13 @@ import {
 } from "./deps.ts";
 import * as m from "./models.ts";
 
+type GeneratableAsset = {
+  readonly sqliteSqlSrc: string;
+  readonly erdPlantUmlIE: string;
+  readonly osQueryATCConfig: string;
+  readonly sqliteDb: string;
+};
+
 // see setup and usage instructions in $RF_HOME/lib/task/README.md
 
 // governance:
@@ -19,15 +26,18 @@ export class Tasks extends t.EventEmitter<{
   ensureProjectDeps(): Promise<void>; // -- see $RF_HOME/lib/sql/shell/task.ts
   updateDenoDeps(): Promise<void>;
   maintain(): Promise<void>;
-  // TODO: clean(): Promise<void>;
+  clean(): Promise<void>;
   // TODO: doctor(): Promise<void>; -- test that all dependencies are available
   // TODO: deploy(): Promise<void>; -- setup /etc/opsfolio.sqlite.db, /etc/opsfolio.osquery-atc.json links, cron tasks, etc. (upgrade as necessary)
   generateArtifacts(): Promise<void>; // -- generate *.auto.sql, *.osquery-atc.auto.json, etc.
+  dbDeploy(): Promise<void>; // -- generateArtifacts() and then create ("migrate" or "deploy") the database
   // TODO: prepareSandbox(): Promise<void>; -- replace deps.* with local Resource Factory locations
   // TODO: publish(): Promise<void>; -- replace deps.* with remote RF locations, tag, and push to remote
 }> {
   constructor() {
     super();
+
+    // housekeeping tasks
     this.on("help", t.eeHelpTask(this));
     this.on("updateDenoDeps", udd.updateDenoDepsTask());
     this.on("ensureProjectDeps", ensureProjectDeps());
@@ -35,25 +45,44 @@ export class Tasks extends t.EventEmitter<{
       await this.emit("ensureProjectDeps");
       await this.emit("updateDenoDeps");
     });
+
+    const ga: GeneratableAsset = {
+      sqliteSqlSrc: "opsfolio.auto.sql",
+      erdPlantUmlIE: "opsfolio.auto.puml",
+      osQueryATCConfig: "opsfolio.auto.osquery-atc.json",
+      sqliteDb: "opsfolio.auto.sqlite.db",
+    };
+
+    // deno-lint-ignore require-await
+    this.on("clean", async () => {
+      Object.values(ga).forEach((f) => {
+        try {
+          Deno.removeSync(f);
+        } catch { /** ignore files don't exist */ }
+      });
+    });
+
     this.on("generateArtifacts", async () => {
+      const ctx = SQLa.typicalSqlEmitContext();
       const models = m.models();
+      await Deno.writeTextFile(ga.sqliteSqlSrc, models.DDL.SQL(ctx));
+      await Deno.writeTextFile(ga.erdPlantUmlIE, models.plantUmlIE(ctx));
       await Deno.writeTextFile(
-        "opsfolio.auto.sql",
-        models.DDL.SQL(SQLa.typicalSqlEmitContext()),
-      );
-      await Deno.writeTextFile(
-        "opsfolio.osquery-atc.auto.json",
+        ga.osQueryATCConfig,
         JSON.stringify(
           models.osQueryATCConfig((tableName, atcPartial) => {
             return {
               osQueryTableName: `opsfolio_${tableName}`,
-              atcRec: { ...atcPartial, path: "opsfolio.sqlite.db" }
-            }
+              atcRec: { ...atcPartial, path: ga.sqliteDb },
+            };
           }),
           undefined,
           "  ",
         ),
       );
+    });
+    this.on("dbDeploy", async () => {
+      await this.emit("generateArtifacts");
     });
   }
 }

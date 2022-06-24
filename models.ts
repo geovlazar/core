@@ -2,6 +2,7 @@ import {
   path,
   rflSQLa as SQLa,
   rflSQLaTypical as SQLaTyp,
+  rflSqlDiagram as sqlD,
   rflSqlOsQuery as osQ,
 } from "./deps.ts";
 
@@ -17,7 +18,7 @@ export function tableName<Name extends string, Qualified extends string = Name>(
   return name as unknown as Qualified;
 }
 
-export enum ContextEnum {
+export enum ExecutionContext {
   DEVELOPMENT,
   TEST,
   PRODUCTION,
@@ -34,7 +35,10 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
   },
 ) {
   const lg = SQLaTyp.typicalLookupsGovn(ddlOptions);
-  const contextET = lg.enumTable(tableName("context"), ContextEnum);
+  const execCtx = lg.enumTable(
+    tableName("execution_context"),
+    ExecutionContext,
+  );
   const assetRiskType = lg.enumTextTable(
     tableName("asset_risk_type"),
     AssetRiskType,
@@ -42,19 +46,19 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
   // deno-fmt-ignore
   const DDL = SQLa.SQL<Context>(ddlOptions)`
-      ${contextET}
+      ${execCtx}
 
       ${assetRiskType}
 
-      ${contextET.seedDML}
+      ${execCtx.seedDML}
 
       ${assetRiskType.seedDML}`;
 
   return {
-    contextET,
+    execCtx,
     assetRiskType,
     DDL,
-    exposeATC: [contextET, assetRiskType],
+    exposeATC: [execCtx, assetRiskType],
   };
 }
 
@@ -171,6 +175,19 @@ export function models<Context extends SQLa.SqlEmitContext>(
         columns: t.domains.map((d) => ({ columnName: d.identity })),
       })),
     ),
+    plantUmlIE: (ctx: Context) =>
+      sqlD.plantUmlIE(ctx, function* () {
+        for (const e of Object.values(enums)) {
+          if (SQLaTyp.isEnumTableDefn(e)) {
+            yield e;
+          }
+        }
+        for (const e of Object.values(ents)) {
+          if (SQLa.isTableDefinition(e)) {
+            yield e;
+          }
+        }
+      }, sqlD.typicalPlantUmlIeOptions()),
   };
 }
 
