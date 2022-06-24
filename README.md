@@ -9,15 +9,65 @@ met.
 - Certain _actuals_ need to be managed by Opsfolio because most tools don't
   manage non-technical _actuals_.
 
-## Deployment
+## Conventions
+
+Opsfolio generates files using the convention `*.auto.*` which means that it's
+an _auto_-generated file and should not be modified. Any file that has
+`*.auto.*` in the file means that it will be deleted and recreated whenever
+necessary.
+
+## Installation
 
 ```bash
-# install deno, git
+# install deno, git and add them to $PATH
 export OPSFOLIO_HOME=/opt/opsfolio
 git clone https://github.com/opsfolio/core $OPSFOLIO_HOME
 cd $OPSFOLIO_HOME
 deno run -A --unstable Taskfile.ts deploy
 deno run -A --unstable Taskfile.ts doctor
+```
+
+## osQuery ATC Database Deployment
+
+Opsfolio uses osQuery's
+[Automatic Table Construction (ATC)](https://osquery.readthedocs.io/en/stable/deployment/configuration/#automatic-table-construction)
+feature to register new `opsfolio_*` tables. Once `deno Taskfile.ts db-deploy`
+is used, a SQLite database is created along with
+`opsfolio.auto.osquery-atc.json` which registers the Opsfolio tables so that
+they can be used via `osqueryi` or other osQuery interfaces.
+
+```bash
+cd $OPSFOLIO_HOME
+deno run -A --unstable Taskfile.ts db-deploy
+osqueryi --config_path ./opsfolio.auto.osquery-atc.json "select code, value from opsfolio_execution_context"
+```
+
+Once you run `osqueryi` you should see the following output if the osQuery ATC
+configuration and database were properly deployed:
+
+```
++------+-------------+
+| code | value       |
++------+-------------+
+| 0    | DEVELOPMENT |
+| 1    | TEST        |
+| 2    | PRODUCTION  |
++------+-------------+
+```
+
+If you get `Error: no such table: opsfolio_execution_context` when you run
+`osqueryi` try running with `--verbose` flag:
+
+```bash
+osqueryi --verbose --config_path ./opsfolio.auto.osquery-atc.json "select code, value from opsfolio_execution_context"
+```
+
+Look for lines like this:
+
+```
+...auto_constructed_tables... Removing stale ATC entries
+                          ... ATC table: opsfolio_execution_context Registered
+                          ... ATC table: opsfolio_asset_risk_type Registered
 ```
 
 ## Implementation Strategies
