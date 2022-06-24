@@ -97,3 +97,19 @@ export class Tasks extends t.EventEmitter<{
     });
   }
 }
+
+// only execute tasks if Taskfile.ts is being called as a script; otherwise
+// it might be imported for tasks or other reasons and we shouldn't "run".
+if (import.meta.main) {
+  await t.eventEmitterCLI(
+    Deno.args,
+    new Tasks({
+      ga: {
+        sqliteSqlSrc: "opsfolio.auto.sql",
+        plantUmlIE: "opsfolio.auto.puml",
+        osQueryATCConfig: "opsfolio.auto.osquery-atc.json",
+        sqliteDb: "opsfolio.auto.sqlite.db",
+      },
+    }),
+  );
+}
