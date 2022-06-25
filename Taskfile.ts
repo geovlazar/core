@@ -1,9 +1,14 @@
-import { rflSQLa as SQLa, rflTask as t, rflTaskUDD as udd } from "./deps.ts";
+import {
+  rflGitHubTask as gh,
+  rflSQLa as SQLa,
+  rflTask as t,
+  rflTaskUDD as udd,
+} from "./deps.ts";
 import * as mod from "./mod.ts";
 
 type SandboxAsset = {
   depsTs: string;
-  resFactoryTag: string;
+  resFactoryTag: () => Promise<string>;
 };
 
 /**
@@ -27,7 +32,8 @@ async function mutateResFactoryDeps(
     )
     : origDepsTs.replaceAll(
       '"../../resFactory/factory/',
-      `"https://raw.githubusercontent.com/resFactory/factory/${sb.resFactoryTag}/`,
+      `"https://raw.githubusercontent.com/resFactory/factory/${await sb
+        .resFactoryTag()}/`,
     );
   if (mutatedDepsTs != origDepsTs) {
     await Deno.writeTextFile(sb.depsTs, mutatedDepsTs);
@@ -97,7 +103,8 @@ if (import.meta.main) {
     new Tasks({
       sandbox: {
         depsTs: "deps.ts",
-        resFactoryTag: "main",
+        resFactoryTag: async () =>
+          await gh.latestGitHubRepoTag({ repo: "resFactory/factory" }, "main"),
       },
     }),
   );
