@@ -1,4 +1,4 @@
-import { testingAsserts as ta } from "./deps-test.ts";
+import { dzx, rflWS as ws, testingAsserts as ta } from "./deps-test.ts";
 import { rflSQL as sql, rflSQLa as SQLa, rflSqlite as sqlite } from "./deps.ts";
 import * as mod from "./mod.ts";
 
@@ -40,12 +40,37 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
       storageFileName: () => generatable.sqliteDb,
       events: () => new sql.SqlEventEmitter(),
     });
+    // in the SQLite database the table is called `execution_context`
     const ee = await db.recordsDQL(
       "select code, value from execution_context",
     );
     ta.assert(ee);
     ta.assert(ee.records.length > 0);
     db.close();
+  });
+
+  await tc.step(`osqueryi ATC`, async () => {
+    try {
+      // in the SQLite database the table is called `execution_context` but when
+      // accessed through osQuery, it's called opsfolio_execution_context since
+      // all tables in the ATC database prefixed with `opsfolio_`.
+      const osqResult = await dzx.$
+        `osqueryi --config_path ${generatable.osQueryATCConfig} "select code, value from opsfolio_execution_context"`;
+      ta.assertEquals(
+        osqResult.stdout,
+        ws.unindentWhitespace(`
+      +------+-------------+
+      | code | value       |
+      +------+-------------+
+      | 0    | DEVELOPMENT |
+      | 1    | TEST        |
+      | 2    | PRODUCTION  |
+      +------+-------------+
+      `),
+      );
+    } catch {
+      console.log(`osqueryi not found`);
+    }
   });
 
   await mod.clean(generatable);
