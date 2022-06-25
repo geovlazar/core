@@ -1,18 +1,37 @@
-import {
-  rflSQL as sql,
-  rflSQLa as SQLa,
-  rflSqlite as sqlite,
-  rflTask as t,
-  rflTaskUDD as udd,
-} from "./deps.ts";
-import * as m from "./models.ts";
+import { rflTask as t, rflTaskUDD as udd } from "./deps.ts";
 
-type GeneratableAsset = {
-  readonly sqliteSqlSrc: string;
-  readonly osQueryATCConfig: string;
-  readonly sqliteDb: string;
-  readonly plantUmlIE?: string;
+type SandboxAsset = {
+  depsTs: string;
+  resFactoryTag: string;
 };
+
+/**
+ * Instead of using multiple import maps, mutate the local deps.ts to point to
+ * an appropriate set of https://github.com/resFactory/factory modules.
+ * When local (mGit path conventions): ../../../github.com/resFactory/factory*
+ * when remote (latest): https://raw.githubusercontent.com/resFactory/factory/main*
+ * when remote (pinned): https://raw.githubusercontent.com/resFactory/factory/${tag}*
+ * @param sb the sandbox asset locations
+ * @param prepare whether we're pointing to resFactory in local sandbox or publish (GitHub) location
+ */
+async function mutateResFactoryDeps(
+  sb: SandboxAsset,
+  prepare: "sandbox" | "publish",
+) {
+  const origDepsTs = Deno.readTextFileSync(sb.depsTs);
+  const mutatedDepsTs = prepare == "sandbox"
+    ? origDepsTs.replaceAll(
+      /"https:\/\/raw.githubusercontent.com\/resFactory\/factory\/.*?\//g,
+      `"../../resFactory/factory/`,
+    )
+    : origDepsTs.replaceAll(
+      '"../../resFactory/factory/',
+      `"https://raw.githubusercontent.com/resFactory/factory/${sb.resFactoryTag}/`,
+    );
+  if (mutatedDepsTs != origDepsTs) {
+    await Deno.writeTextFile(sb.depsTs, mutatedDepsTs);
+  }
+}
 
 // see setup and usage instructions in $RF_HOME/lib/task/README.md
 
@@ -26,15 +45,15 @@ export class Tasks extends t.EventEmitter<{
   ensureProjectDeps(): Promise<void>; // download binaries from sources
   updateDenoDeps(): Promise<void>;
   maintain(): Promise<void>;
-  clean(): Promise<void>;
   // TODO: doctor(): Promise<void>; -- test that all dependencies are available
-  // TODO: deploy(): Promise<void>; -- setup /etc/opsfolio.sqlite.db, /etc/opsfolio.osquery-atc.json links, cron tasks, etc. (upgrade as necessary)
-  generateArtifacts(): Promise<void>; // -- generate *.auto.sql, *.osquery-atc.auto.json, etc.
-  dbDeploy(): Promise<void>; // -- generateArtifacts() and then create ("migrate" or "deploy") the database
-  // TODO: prepareSandbox(): Promise<void>; -- replace deps.* with local Resource Factory locations
-  // TODO: publish(): Promise<void>; -- replace deps.* with remote RF locations, tag, and push to remote
+  prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
+  publish(): Promise<void>; // -- replace deps.* with remote RF locations, TODO: tag, and push to remote
 }> {
-  constructor(readonly config: { readonly ga: GeneratableAsset }) {
+  constructor(
+    readonly config: {
+      readonly sandbox: SandboxAsset;
+    },
+  ) {
     super();
 
     // housekeeping tasks
@@ -47,54 +66,14 @@ export class Tasks extends t.EventEmitter<{
       await this.emit("updateDenoDeps");
     });
 
-    // deno-lint-ignore require-await
-    this.on("clean", async () => {
-      const { ga } = config;
-      Object.values(ga).forEach((f) => {
-        try {
-          Deno.removeSync(f);
-        } catch { /** ignore files don't exist */ }
-      });
-    });
-
-    this.on("generateArtifacts", async () => {
-      const { ga } = config;
-      const ctx = SQLa.typicalSqlEmitContext();
-      const models = m.models();
-      await Deno.writeTextFile(ga.sqliteSqlSrc, models.DDL.SQL(ctx));
-      await Deno.writeTextFile(
-        ga.osQueryATCConfig,
-        JSON.stringify(
-          models.osQueryATCConfig((tableName, atcPartial) => {
-            return {
-              osQueryTableName: `opsfolio_${tableName}`,
-              atcRec: { ...atcPartial, path: ga.sqliteDb },
-            };
-          }),
-          undefined,
-          "  ",
-        ),
-      );
-      if (ga.plantUmlIE) {
-        await Deno.writeTextFile(ga.plantUmlIE, models.plantUmlIE(ctx));
-      }
-    });
-
-    this.on("dbDeploy", async () => {
-      await this.emit("clean");
-      await this.emit("generateArtifacts");
-
-      const { ga } = config;
-      const db = new sqlite.SqliteDatabase({
-        storageFileName: () => ga.sqliteDb,
-        events: () => new sql.SqlEventEmitter(),
-      });
-
-      const ctx = SQLa.typicalSqlEmitContext();
-      const models = m.models();
-      db.dbStore.execute(models.DDL.SQL(ctx));
-      db.close();
-    });
+    this.on(
+      "prepareSandbox",
+      async () => await mutateResFactoryDeps(config.sandbox, "sandbox"),
+    );
+    this.on(
+      "publish",
+      async () => await mutateResFactoryDeps(config.sandbox, "publish"),
+    );
   }
 }
 
@@ -104,11 +83,9 @@ if (import.meta.main) {
   await t.eventEmitterCLI(
     Deno.args,
     new Tasks({
-      ga: {
-        sqliteSqlSrc: "opsfolio.auto.sql",
-        plantUmlIE: "opsfolio.auto.puml",
-        osQueryATCConfig: "opsfolio.auto.osquery-atc.json",
-        sqliteDb: "opsfolio.auto.sqlite.db",
+      sandbox: {
+        depsTs: "deps.ts",
+        resFactoryTag: "main",
       },
     }),
   );
