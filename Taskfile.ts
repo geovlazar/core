@@ -1,4 +1,5 @@
 import {
+  hex,
   rflGitHubTask as gh,
   rflSQLa as SQLa,
   rflTask as t,
@@ -78,10 +79,28 @@ export class Tasks extends t.EventEmitter<{
       const models = mod.models();
       const ctx = SQLa.typicalSqlEmitContext();
       await Deno.writeTextFile("support/docs/models.sql", models.DDL.SQL(ctx));
-      await Deno.writeTextFile(
-        "support/docs/models.erd.puml",
-        models.plantUmlIE(SQLa.typicalSqlEmitContext()),
+
+      const puml = models.plantUmlIE(SQLa.typicalSqlEmitContext());
+      await Deno.writeTextFile("support/docs/models.erd.puml", puml);
+
+      const te = (s: string) => new TextEncoder().encode(s);
+      const td = (d: Uint8Array) => new TextDecoder().decode(d);
+      const pumlHex = td(hex.encode(te(puml)));
+      const pumlResp = await fetch(
+        `http://www.plantuml.com/plantuml/svg/~h${pumlHex}`,
       );
+      if (pumlResp.ok) {
+        await Deno.writeTextFile(
+          "support/docs/models.erd.svg",
+          await pumlResp.text(),
+        );
+      } else {
+        console.log(
+          `Unable to fetch from http://www.plantuml.com/plantuml/svg/~h...:`,
+          pumlResp.status,
+          pumlResp.statusText,
+        );
+      }
     });
 
     this.on(

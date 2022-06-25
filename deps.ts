@@ -1,4 +1,5 @@
 export * as path from "https://deno.land/std@0.144.0/path/mod.ts";
+export * as hex from "https://deno.land/std@0.144.0/encoding/hex.ts";
 
 // use Taskfile.ts prepare-sandbox and publish tasks to mutate RF module URLs:
 //   path-task prepare-sandbox will switch RF URLs to local mGit location
