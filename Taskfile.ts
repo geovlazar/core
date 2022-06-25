@@ -1,4 +1,5 @@
-import { rflTask as t, rflTaskUDD as udd } from "./deps.ts";
+import { rflSQLa as SQLa, rflTask as t, rflTaskUDD as udd } from "./deps.ts";
+import * as mod from "./mod.ts";
 
 type SandboxAsset = {
   depsTs: string;
@@ -45,6 +46,7 @@ export class Tasks extends t.EventEmitter<{
   ensureProjectDeps(): Promise<void>; // download binaries from sources
   updateDenoDeps(): Promise<void>;
   maintain(): Promise<void>;
+  generateModelsDocs(): Promise<void>;
   // TODO: doctor(): Promise<void>; -- test that all dependencies are available
   prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
   publish(): Promise<void>; // -- replace deps.* with remote RF locations, TODO: tag, and push to remote
@@ -66,14 +68,24 @@ export class Tasks extends t.EventEmitter<{
       await this.emit("updateDenoDeps");
     });
 
+    this.on("generateModelsDocs", async () => {
+      const models = mod.models();
+      const ctx = SQLa.typicalSqlEmitContext();
+      await Deno.writeTextFile("support/docs/models.sql", models.DDL.SQL(ctx));
+      await Deno.writeTextFile(
+        "support/docs/models.erd.puml",
+        models.plantUmlIE(SQLa.typicalSqlEmitContext()),
+      );
+    });
+
     this.on(
       "prepareSandbox",
       async () => await mutateResFactoryDeps(config.sandbox, "sandbox"),
     );
-    this.on(
-      "publish",
-      async () => await mutateResFactoryDeps(config.sandbox, "publish"),
-    );
+    this.on("publish", async () => {
+      await this.emit("generateModelsDocs");
+      await mutateResFactoryDeps(config.sandbox, "publish");
+    });
   }
 }
 

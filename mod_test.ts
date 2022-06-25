@@ -69,7 +69,9 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
       `),
       );
     } catch {
-      console.log(`osqueryi not found`);
+      console.log(
+        `unable to run osqueryi ATC test case: osqueryi executable not found in path`,
+      );
     }
   });
 
