@@ -14,18 +14,8 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
   const models = mod.models();
   const assets = {
     sqliteSql: models.DDL.SQL(ctx),
-    osQueryATCConfig: (sqliteDbPath: string) => {
-      return JSON.stringify(
-        models.osQueryATCConfig((tableName, atcPartial) => {
-          return {
-            osQueryTableName: `opsfolio_${tableName}`,
-            atcRec: { ...atcPartial, path: sqliteDbPath },
-          };
-        }),
-        undefined,
-        "  ",
-      );
-    },
+    osQueryATCConfig: (sqliteDbPath: string) =>
+      models.osQueryATCConfigJsonText(sqliteDbPath, ctx),
     plantUmlIE: models.plantUmlIE(ctx),
   };
 

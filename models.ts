@@ -165,16 +165,41 @@ export function models<Context extends SQLa.SqlEmitContext>(
 
       ${SQLa.typicalSqlTmplEngineLintSummary}`;
 
+  const atcCS = osQ.osQueryATCConfigSupplier(
+    [...enums.exposeATC, ...ents.exposeATC].map((t) => ({
+      tableName: t.tableName,
+      columns: t.domains.map((d) => ({ columnName: d.identity })),
+    })),
+  );
+
+  const osQueryATCConfig = (
+    sqliteDbPath: string,
+    _ctx: Context,
+    osQueryTableName: (tableName: string) => string = (tableName) =>
+      `opsfolio_${tableName}`,
+  ) => {
+    return atcCS((tableName, atcPartial) => {
+      return {
+        osQueryTableName: osQueryTableName(tableName),
+        atcRec: { ...atcPartial, path: sqliteDbPath },
+      };
+    });
+  };
+
   return {
     enumerations: enums,
     entities: ents,
     DDL,
-    osQueryATCConfig: osQ.osQueryATCConfigSupplier(
-      [...enums.exposeATC, ...ents.exposeATC].map((t) => ({
-        tableName: t.tableName,
-        columns: t.domains.map((d) => ({ columnName: d.identity })),
-      })),
-    ),
+    osQueryATCConfig,
+    osQueryATCConfigJsonText: (
+      sqliteDbPath: string,
+      ctx: Context,
+      osQueryTableName?: (tableName: string) => string,
+    ) => {
+      return JSON.stringify(
+        osQueryATCConfig(sqliteDbPath, ctx, osQueryTableName),
+      );
+    },
     plantUmlIE: (ctx: Context) =>
       sqlD.plantUmlIE(ctx, function* () {
         for (const e of Object.values(enums)) {
