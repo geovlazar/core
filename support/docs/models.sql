@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS "host" (
 CREATE TABLE IF NOT EXISTS "graph" (
     "graph_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
+    "description" TEXT,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

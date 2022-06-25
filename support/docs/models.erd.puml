@@ -35,6 +35,7 @@
     * **graph_id**: INTEGER
     --
     * name: TEXT
+      description: TEXT
       created_at: DATETIME
   }
 

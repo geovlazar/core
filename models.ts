@@ -73,6 +73,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
   const graph = mg.table(tableName("graph"), {
     graph_id: mg.primaryKey(),
     name: SQLa.text(),
+    description: SQLa.textNullable(),
     ...mg.housekeeping(),
   });
 
