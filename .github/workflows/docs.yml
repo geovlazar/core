@@ -1,4 +1,4 @@
-name: assurance
+name: docs
 
 on:
   push:
