@@ -23,7 +23,8 @@
 	"settings": {
 		"files.trimTrailingWhitespace": true,
 		"[markdown]": {
-			"files.trimTrailingWhitespace": false
+			"files.trimTrailingWhitespace": false,
+			"editor.defaultFormatter": "denoland.vscode-deno"
 		},
 		"git.autofetch": true,
 		"terminal.integrated.fontFamily": "CascadianCode NF",
@@ -32,6 +33,9 @@
 		"deno.unstable": true,
 		"deno.codeLens.implementations": false,
 		"editor.formatOnSave": true,
+		"[typescript]": {
+			"editor.defaultFormatter": "denoland.vscode-deno"
+		},
 		"hediet.vscode-drawio.theme": "atlas"
 	},
 }
