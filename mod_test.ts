@@ -1,5 +1,10 @@
-import { dzx, rflWS as ws, testingAsserts as ta } from "./deps-test.ts";
-import { rflSQL as sql, rflSQLa as SQLa, rflSqlite as sqlite } from "./deps.ts";
+import { rflWS as ws, testingAsserts as ta } from "./deps-test.ts";
+import {
+  dzx,
+  rflSQL as sql,
+  rflSQLa as SQLa,
+  rflSqlite as sqlite,
+} from "./deps.ts";
 import * as mod from "./mod.ts";
 
 Deno.test("Opsfolio generate artifacts", async (tc) => {
@@ -16,7 +21,7 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
     sqliteSql: models.seedDDL.SQL(ctx),
     osQueryATCConfig: (sqliteDbPath: string) =>
       models.osQueryATCConfigJsonText(sqliteDbPath, ctx),
-    plantUmlIE: models.plantUmlIE(ctx),
+    plantUmlIE: models.plantUmlIE(ctx, "models"),
   };
 
   await mod.clean(generatable);
