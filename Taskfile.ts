@@ -73,7 +73,7 @@ export function doctor(sandbox: SandboxAsset) {
   // deno-fmt-ignore
   return async () => {
     console.info($.dim(`Runtime dependencies`));
-    console.info($.yellow(`  * no runtime dependencies`));
+    console.info($.yellow(`  * ${(await $o`deno --version`).split("\n")[0]}`));
     console.info($.dim(`Build dependencies`));
     const dot = await dzx.$e`dot -V`;
     const java = await dzx.$o`java --version`;

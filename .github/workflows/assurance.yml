@@ -18,6 +18,7 @@ jobs:
         uses: denolib/setup-deno@v2
 
       - run: deno --version
+      - run: deno run -A --unstable Taskfile.ts doctor
 
       # Run all test files in the repository and collect code coverage.
       # The example runs with all permissions, but it is recommended to run
