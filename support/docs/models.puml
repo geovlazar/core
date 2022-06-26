@@ -1,4 +1,4 @@
-@startuml IE
+@startuml models
   hide circle
   skinparam linetype ortho
   skinparam roundcorner 20

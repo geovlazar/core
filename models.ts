@@ -241,7 +241,7 @@ export function models<Context extends SQLa.SqlEmitContext>(
         osQueryATCConfig(sqliteDbPath, ctx, osQueryTableName),
       );
     },
-    plantUmlIE: (ctx: Context) =>
+    plantUmlIE: (ctx: Context, diagramName: string) =>
       sqlD.plantUmlIE(
         ctx,
         function* () {
@@ -256,7 +256,10 @@ export function models<Context extends SQLa.SqlEmitContext>(
             }
           }
         },
-        sqlD.typicalPlantUmlIeOptions(ents.modelsGovn.erdConfig),
+        sqlD.typicalPlantUmlIeOptions({
+          diagramName,
+          ...ents.modelsGovn.erdConfig,
+        }),
       ),
   };
 }
