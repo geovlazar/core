@@ -101,4 +101,103 @@ CREATE TABLE IF NOT EXISTS "asset_risk" (
     FOREIGN KEY("asset_risk_type_id") REFERENCES "asset_risk_type"("code")
 );
 
+CREATE TABLE IF NOT EXISTS "vulnerability" (
+    "vulnerability_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "short_name" TEXT NOT NULL,
+    "source" TEXT NOT NULL,
+    "affected_software" TEXT NOT NULL,
+    "reference" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
+    "patch_availability" TEXT NOT NULL,
+    "severity" TEXT NOT NULL,
+    "solutions" TEXT NOT NULL,
+    "tags" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "threat_source" (
+    "threat_source_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "threat_source" TEXT NOT NULL,
+    "identifier" TEXT NOT NULL,
+    "threat_source_type" TEXT NOT NULL,
+    "source_of_information" TEXT NOT NULL,
+    "capability" TEXT NOT NULL,
+    "intent" TEXT NOT NULL,
+    "targeting" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "threat_event" (
+    "threat_event_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "threat_event" TEXT NOT NULL,
+    "identifier" TEXT NOT NULL,
+    "threat_event_type" INTEGER NOT NULL,
+    "event_classification" TEXT NOT NULL,
+    "source_of_information" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "billing" (
+    "billing_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "purpose" TEXT NOT NULL,
+    "bill_rate" TEXT NOT NULL,
+    "period" TEXT NOT NULL,
+    "effective_from_date" DATETIME NOT NULL,
+    "effective_to_date" TEXT NOT NULL,
+    "prorate" INTEGER NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "scheduled_task" (
+    "scheduled_task_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "description" TEXT NOT NULL,
+    "task_date" DATETIME NOT NULL,
+    "reminder_date" DATETIME NOT NULL,
+    "assigned_to" TEXT NOT NULL,
+    "reminder_to" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "timesheet" (
+    "timesheet_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "time_hour" INTEGER NOT NULL,
+    "timesheet_summary" TEXT NOT NULL,
+    "start_time" TEXT NOT NULL,
+    "end_time" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "certificate" (
+    "certificate_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "certificate_name" TEXT NOT NULL,
+    "short_name" TEXT NOT NULL,
+    "certificate_category" TEXT NOT NULL,
+    "certificate_type" TEXT NOT NULL,
+    "certificate_authority" TEXT NOT NULL,
+    "validity" TEXT NOT NULL,
+    "expiration_date" DATETIME NOT NULL,
+    "domain_name" TEXT NOT NULL,
+    "key_size" INTEGER NOT NULL,
+    "path" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "device" (
+    "device_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "device_name" TEXT NOT NULL,
+    "short_name" TEXT NOT NULL,
+    "barcode" TEXT NOT NULL,
+    "model" TEXT NOT NULL,
+    "serial_number" TEXT NOT NULL,
+    "firmware" TEXT NOT NULL,
+    "data_center" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "purpose" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- no template engine lint issues

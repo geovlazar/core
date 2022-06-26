@@ -7,7 +7,7 @@
 		{
 			"path": "github.com/resFactory/factory",
 			"name": "resFactory/factory"
-		},
+		}
 	],
 	"extensions": {
 		"recommendations": [
@@ -17,7 +17,8 @@
 			"shd101wyy.markdown-preview-enhanced",
 			"mechatroner.rainbow-csv",
 			"hediet.vscode-drawio",
-			"cmoog.sqlnotebook"
+			"cmoog.sqlnotebook",
+			"jebbs.plantuml"
 		]
 	},
 	"settings": {
@@ -36,6 +37,9 @@
 		"[typescript]": {
 			"editor.defaultFormatter": "denoland.vscode-deno"
 		},
-		"hediet.vscode-drawio.theme": "atlas"
+		"hediet.vscode-drawio.theme": "atlas",
+		"plantuml.server": "",
+		"markdown-preview-enhanced.plantumlServer": "",
+		"plantuml.java": "/home/snshah/.asdf/shims/java"
 	},
 }

@@ -95,6 +95,113 @@
       created_at: DATETIME
   }
 
+  entity "vulnerability" as vulnerability {
+    * **vulnerability_id**: INTEGER
+    --
+    * short_name: TEXT
+    * source: TEXT
+    * affected_software: TEXT
+    * reference: TEXT
+    * status: TEXT
+    * patch_availability: TEXT
+    * severity: TEXT
+    * solutions: TEXT
+    * tags: TEXT
+    * description: TEXT
+      created_at: DATETIME
+  }
+
+  entity "threat_source" as threat_source {
+    * **threat_source_id**: INTEGER
+    --
+    * threat_source: TEXT
+    * identifier: TEXT
+    * threat_source_type: TEXT
+    * source_of_information: TEXT
+    * capability: TEXT
+    * intent: TEXT
+    * targeting: TEXT
+    * description: TEXT
+      created_at: DATETIME
+  }
+
+  entity "threat_event" as threat_event {
+    * **threat_event_id**: INTEGER
+    --
+    * threat_event: TEXT
+    * identifier: TEXT
+    * threat_event_type: INTEGER
+    * event_classification: TEXT
+    * source_of_information: TEXT
+    * description: TEXT
+      created_at: DATETIME
+  }
+
+  entity "billing" as billing {
+    * **billing_id**: INTEGER
+    --
+    * purpose: TEXT
+    * bill_rate: TEXT
+    * period: TEXT
+    * effective_from_date: DATETIME
+    * effective_to_date: TEXT
+    * prorate: INTEGER
+      created_at: DATETIME
+  }
+
+  entity "scheduled_task" as scheduled_task {
+    * **scheduled_task_id**: INTEGER
+    --
+    * description: TEXT
+    * task_date: DATETIME
+    * reminder_date: DATETIME
+    * assigned_to: TEXT
+    * reminder_to: TEXT
+      created_at: DATETIME
+  }
+
+  entity "timesheet" as timesheet {
+    * **timesheet_id**: INTEGER
+    --
+    * time_hour: INTEGER
+    * timesheet_summary: TEXT
+    * start_time: TEXT
+    * end_time: TEXT
+      created_at: DATETIME
+  }
+
+  entity "certificate" as certificate {
+    * **certificate_id**: INTEGER
+    --
+    * certificate_name: TEXT
+    * short_name: TEXT
+    * certificate_category: TEXT
+    * certificate_type: TEXT
+    * certificate_authority: TEXT
+    * validity: TEXT
+    * expiration_date: DATETIME
+    * domain_name: TEXT
+    * key_size: INTEGER
+    * path: TEXT
+      created_at: DATETIME
+  }
+
+  entity "device" as device {
+    * **device_id**: INTEGER
+    --
+    * device_name: TEXT
+    * short_name: TEXT
+    * barcode: TEXT
+    * model: TEXT
+    * serial_number: TEXT
+    * firmware: TEXT
+    * data_center: TEXT
+    * location: TEXT
+    * purpose: TEXT
+    * description: TEXT
+      created_at: DATETIME
+  }
+
   graph_nature |o..o| graph
   boundary |o..o{ boundary
   graph |o..o{ boundary

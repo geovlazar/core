@@ -16,15 +16,25 @@ an _auto_-generated file and should not be modified. Any file that has
 `*.auto.*` in the file means that it will be deleted and recreated whenever
 necessary.
 
-## Installation
+## Development Sandbox
+
+Opsfolio Core uses Resource Factory remote URL-based modules. In most cases you
+do not need a local RF but if you are doing development with Resource Factory
+locally you will need to do the following so that `deps.ts` refers to your local
+path:
 
 ```bash
-# install deno, git and add them to $PATH
-export OPSFOLIO_HOME=/opt/opsfolio
-git clone https://github.com/opsfolio/core $OPSFOLIO_HOME
-cd $OPSFOLIO_HOME
-deno run -A --unstable Taskfile.ts deploy
-deno run -A --unstable Taskfile.ts doctor
+deno run -A --unstable Taskfile.ts prepare-sandbox
+```
+
+Before you commit/push back to GitHub, though, you will need to run
+`prepare-publish` to reset `deps.ts` back to remote URLs:
+
+```
+deno run -A --unstable Taskfile.ts prepare-publish
+# do commits, etc.
+# git semtag final
+# git push
 ```
 
 ## osQuery ATC Database Deployment

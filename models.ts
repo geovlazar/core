@@ -6,6 +6,12 @@ import {
   rflSqlTypical as SQLaTyp,
 } from "./deps.ts";
 
+// TODO:
+// - [ ] increase number of enums for proper typing of lookups
+// - [ ] strongly type all text to ints/date/etc. where necessary
+// - [ ] convert relevant legacy Opsfolio Drupal CTVs to SQLa entities
+// - [ ] convert relevant legacy IGS Operations Portfolio Specification (OPS) repo models to SQLa entities
+
 // TODO: introduce Party, Person, etc. "typical" tables so in case "graph",
 // "boundary", etc. are not as useful. Better to leave data models general
 // instead of using Party or other universal models?
@@ -155,6 +161,105 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
+  const vulnerability = mg.table(tableName("vulnerability"), {
+    vulnerability_id: mg.primaryKey(),
+    short_name: SQLa.text(),
+    source: SQLa.text(),
+    affected_software: SQLa.text(),
+    reference: SQLa.text(),
+    status: SQLa.text(),
+    patch_availability: SQLa.text(),
+    severity: SQLa.text(),
+    solutions: SQLa.text(),
+    tags: SQLa.text(),
+    description: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const threatSource = mg.table(tableName("threat_source"), {
+    threat_source_id: mg.primaryKey(),
+    threat_source: SQLa.text(),
+    identifier: SQLa.text(),
+    threat_source_type: SQLa.text(),
+    source_of_information: SQLa.text(),
+    capability: SQLa.text(),
+    intent: SQLa.text(),
+    targeting: SQLa.text(),
+    description: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const threatEvent = mg.table(tableName("threat_event"), {
+    threat_event_id: mg.primaryKey(),
+    threat_event: SQLa.text(),
+    identifier: SQLa.text(),
+    threat_event_type: SQLa.integer(),
+    event_classification: SQLa.text(),
+    source_of_information: SQLa.text(),
+    description: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const billing = mg.table(tableName("billing"), {
+    billing_id: mg.primaryKey(),
+    purpose: SQLa.text(),
+    bill_rate: SQLa.text(),
+    period: SQLa.text(),
+    effective_from_date: SQLa.dateTime(),
+    effective_to_date: SQLa.text(),
+    prorate: SQLa.integer(),
+    ...mg.housekeeping(),
+  });
+
+  const scheduledTask = mg.table(tableName("scheduled_task"), {
+    scheduled_task_id: mg.primaryKey(),
+    description: SQLa.text(),
+    task_date: SQLa.dateTime(),
+    reminder_date: SQLa.dateTime(),
+    assigned_to: SQLa.text(),
+    reminder_to: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const timesheet = mg.table(tableName("timesheet"), {
+    timesheet_id: mg.primaryKey(),
+    time_hour: SQLa.integer(),
+    timesheet_summary: SQLa.text(),
+    start_time: SQLa.text(),
+    end_time: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const certificate = mg.table(tableName("certificate"), {
+    certificate_id: mg.primaryKey(),
+    certificate_name: SQLa.text(),
+    short_name: SQLa.text(),
+    certificate_category: SQLa.text(),
+    certificate_type: SQLa.text(),
+    certificate_authority: SQLa.text(),
+    validity: SQLa.text(),
+    expiration_date: SQLa.dateTime(),
+    domain_name: SQLa.text(),
+    key_size: SQLa.integer(),
+    path: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const device = mg.table(tableName("device"), {
+    device_id: mg.primaryKey(),
+    device_name: SQLa.text(),
+    short_name: SQLa.text(),
+    barcode: SQLa.text(),
+    model: SQLa.text(),
+    serial_number: SQLa.text(),
+    firmware: SQLa.text(),
+    data_center: SQLa.text(),
+    location: SQLa.text(),
+    purpose: SQLa.text(),
+    description: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
       ${host}
@@ -167,7 +272,23 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${raciMatrix}
 
-      ${assetRisk}`;
+      ${assetRisk}
+
+      ${vulnerability}
+
+      ${threatSource}
+
+      ${threatEvent}
+
+      ${billing}
+
+      ${scheduledTask}
+
+      ${timesheet}
+
+      ${certificate}
+
+      ${device}`;
 
   return {
     modelsGovn: mg,
@@ -177,6 +298,14 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     hostBoundary,
     raciMatrix,
     assetRisk,
+    vulnerability,
+    threatSource,
+    threatEvent,
+    billing,
+    scheduledTask,
+    timesheet,
+    certificate,
+    device,
     seedDDL,
     exposeATC: [host, graph, boundary, hostBoundary, raciMatrix],
   };
