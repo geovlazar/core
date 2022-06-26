@@ -1,4 +1,4 @@
-import { rflSQL as sql, rflSqlite as sqlite } from "./deps.ts";
+import { hex, rflSQL as sql, rflSqlite as sqlite } from "./deps.ts";
 
 // deno-lint-ignore no-explicit-any
 type Any = any;
@@ -8,6 +8,7 @@ type AssetsConfig = {
   readonly osQueryATCConfig: string;
   readonly sqliteDb: string;
   readonly plantUmlIE: string;
+  readonly plantUmlIeSVG?: string;
 };
 
 // deno-lint-ignore require-await
@@ -31,6 +32,12 @@ export async function generateArtifacts(assets: {
   );
   if (assets.plantUmlIE) {
     await Deno.writeTextFile(ga.plantUmlIE, assets.plantUmlIE);
+    if (ga.plantUmlIeSVG) {
+      await persistPlantUmlSVG({
+        svgDestFile: ga.plantUmlIeSVG,
+        pumlSrcText: assets.plantUmlIE,
+      });
+    }
   }
 }
 
@@ -44,4 +51,32 @@ export async function dbDeploy(assets: {
   });
   db.dbStore.execute(assets.sqliteSql);
   db.close();
+}
+
+/**
+ * Accepts PlantUML source text and sends it to PlantUML.com for generating
+ * an SVG using the public API server. See https://plantuml.com/text-encoding
+ * @param options rendering arguments
+ */
+export async function persistPlantUmlSVG(
+  { pumlSrcText, svgDestFile }: {
+    readonly pumlSrcText: string;
+    readonly svgDestFile: string;
+  },
+) {
+  const te = (s: string) => new TextEncoder().encode(s);
+  const td = (d: Uint8Array) => new TextDecoder().decode(d);
+  const pumlHex = td(hex.encode(te(pumlSrcText)));
+  const pumlResp = await fetch(
+    `http://www.plantuml.com/plantuml/svg/~h${pumlHex}`,
+  );
+  if (pumlResp.ok) {
+    await Deno.writeTextFile(svgDestFile, await pumlResp.text());
+  } else {
+    console.log(
+      `Unable to fetch from http://www.plantuml.com/plantuml/svg/~h...:`,
+      pumlResp.status,
+      pumlResp.statusText,
+    );
+  }
 }

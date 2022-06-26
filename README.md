@@ -7,7 +7,7 @@ met.
 - _Expectations_ need to be established independent of tools like osQuery since
   most tools help determine the _actuals_ rather than _expectations_.
 - Certain _actuals_ need to be managed by Opsfolio because most tools don't
-  manage non-technical _actuals_.
+  manage non-technical _actuals_ (such as a risk register or RACI chart).
 
 ## Conventions
 

@@ -13,7 +13,7 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
   const ctx = SQLa.typicalSqlEmitContext();
   const models = mod.models();
   const assets = {
-    sqliteSql: models.DDL.SQL(ctx),
+    sqliteSql: models.seedDDL.SQL(ctx),
     osQueryATCConfig: (sqliteDbPath: string) =>
       models.osQueryATCConfigJsonText(sqliteDbPath, ctx),
     plantUmlIE: models.plantUmlIE(ctx),
