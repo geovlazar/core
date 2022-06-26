@@ -56,6 +56,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       ${assetRiskType.seedDML}`;
 
   return {
+    modelsGovn: lg,
     execCtx,
     assetRiskType,
     seedDDL,
@@ -136,6 +137,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       ${assetRisk}`;
 
   return {
+    modelsGovn: mg,
     host,
     graph,
     boundary,
@@ -207,18 +209,22 @@ export function models<Context extends SQLa.SqlEmitContext>(
       );
     },
     plantUmlIE: (ctx: Context) =>
-      sqlD.plantUmlIE(ctx, function* () {
-        for (const e of Object.values(enums)) {
-          if (SQLaTyp.isEnumTableDefn(e)) {
-            yield e;
+      sqlD.plantUmlIE(
+        ctx,
+        function* () {
+          for (const e of Object.values(enums)) {
+            if (SQLaTyp.isEnumTableDefn(e)) {
+              yield e;
+            }
           }
-        }
-        for (const e of Object.values(ents)) {
-          if (SQLa.isTableDefinition(e)) {
-            yield e;
+          for (const e of Object.values(ents)) {
+            if (SQLa.isTableDefinition(e)) {
+              yield e;
+            }
           }
-        }
-      }, sqlD.typicalPlantUmlIeOptions()),
+        },
+        sqlD.typicalPlantUmlIeOptions(ents.modelsGovn.erdConfig),
+      ),
   };
 }
 

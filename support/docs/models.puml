@@ -1,0 +1,87 @@
+@startuml IE
+  hide circle
+  skinparam linetype ortho
+  skinparam roundcorner 20
+  skinparam class {
+    BackgroundColor White
+    ArrowColor Silver
+    BorderColor Silver
+    FontColor Black
+    FontSize 12
+  }
+
+  entity "execution_context" as execution_context {
+    * **code**: INTEGER
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "asset_risk_type" as asset_risk_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "host" as host {
+    * **host_id**: INTEGER
+    --
+    * host_name: TEXT
+      created_at: DATETIME
+  }
+
+  entity "graph" as graph {
+    * **graph_id**: INTEGER
+    --
+    * name: TEXT
+      description: TEXT
+      created_at: DATETIME
+  }
+
+  entity "boundary" as boundary {
+    * **boundary_id**: INTEGER
+    --
+      parent_boundary_id: INTEGER <<SELF>>
+    * name: TEXT
+    * graph_id: INTEGER <<FK(graph)>>
+      created_at: DATETIME
+  }
+
+  entity "host_boundary" as host_boundary {
+    * **host_boundary_id**: INTEGER
+    --
+    * host_id: INTEGER <<FK(host)>>
+    * boundary_id: INTEGER <<FK(boundary)>>
+      created_at: DATETIME
+  }
+
+  entity "raci_matrix" as raci_matrix {
+    * **raci_matrix_id**: INTEGER
+    --
+    * asset: TEXT
+    * responsible: TEXT
+    * accountable: TEXT
+    * consulted: TEXT
+    * informed: TEXT
+      created_at: DATETIME
+  }
+
+  entity "asset_risk" as asset_risk {
+    * **asset_risk_id**: INTEGER
+    --
+    * asset_risk_type_id: TEXT <<ENUM(asset_risk_type)>>
+    * asset: TEXT
+    * threat_event: TEXT
+    * relevance: TEXT
+    * likelihood: TEXT
+    * impact: TEXT
+      created_at: DATETIME
+  }
+
+  boundary |o..o{ boundary
+  graph |o..o{ boundary
+  host |o..o{ host_boundary
+  boundary |o..o{ host_boundary
+  asset_risk_type |o..o| asset_risk
+@enduml

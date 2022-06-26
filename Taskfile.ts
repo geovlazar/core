@@ -83,6 +83,7 @@ export class Tasks extends t.EventEmitter<{
       );
 
       const puml = models.plantUmlIE(SQLa.typicalSqlEmitContext());
+      await Deno.writeTextFile("support/docs/models.puml", puml);
       await mod.persistPlantUmlSVG({
         pumlSrcText: puml,
         svgDestFile: "support/docs/models.erd.svg",
