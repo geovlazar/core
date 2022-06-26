@@ -67,16 +67,16 @@ export async function persistPlantUmlSVG(
   const te = (s: string) => new TextEncoder().encode(s);
   const td = (d: Uint8Array) => new TextDecoder().decode(d);
   const pumlHex = td(hex.encode(te(pumlSrcText)));
-  const pumlResp = await fetch(
-    `http://www.plantuml.com/plantuml/svg/~h${pumlHex}`,
-  );
+  const pumlURI = `https://www.plantuml.com/plantuml/svg/~h${pumlHex}`;
+  const pumlResp = await fetch(pumlURI);
   if (pumlResp.ok) {
     await Deno.writeTextFile(svgDestFile, await pumlResp.text());
   } else {
     console.log(
-      `Unable to fetch from http://www.plantuml.com/plantuml/svg/~h...:`,
+      `Unable to fetch from https://www.plantuml.com/plantuml/svg/~h...:`,
       pumlResp.status,
       pumlResp.statusText,
     );
+    console.log(pumlURI);
   }
 }

@@ -11,6 +11,18 @@ CREATE TABLE IF NOT EXISTS "execution_context" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "graph_nature" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "boundary_nature" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS "asset_risk_type" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
@@ -20,6 +32,11 @@ CREATE TABLE IF NOT EXISTS "asset_risk_type" (
 INSERT INTO "execution_context" ("code", "value") VALUES (0, 'DEVELOPMENT');
 INSERT INTO "execution_context" ("code", "value") VALUES (1, 'TEST');
 INSERT INTO "execution_context" ("code", "value") VALUES (2, 'PRODUCTION');
+
+INSERT INTO "graph_nature" ("code", "value") VALUES ('SERVICE', 'Service');
+INSERT INTO "graph_nature" ("code", "value") VALUES ('APP', 'Application');
+
+INSERT INTO "boundary_nature" ("code", "value") VALUES ('REGULATORY_TAX_ID', 'Regulatory Tax ID');
 
 INSERT INTO "asset_risk_type" ("code", "value") VALUES ('TYPE1', 'asset risk type 1');
 INSERT INTO "asset_risk_type" ("code", "value") VALUES ('TYPE2', 'asset risk type 2');
@@ -34,19 +51,23 @@ CREATE TABLE IF NOT EXISTS "host" (
 
 CREATE TABLE IF NOT EXISTS "graph" (
     "graph_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "graph_nature_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("graph_nature_id") REFERENCES "graph_nature"("code")
 );
 
 CREATE TABLE IF NOT EXISTS "boundary" (
     "boundary_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "parent_boundary_id" INTEGER,
-    "name" TEXT NOT NULL,
     "graph_id" INTEGER NOT NULL,
+    "boundary_nature_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY("parent_boundary_id") REFERENCES "boundary"("boundary_id"),
-    FOREIGN KEY("graph_id") REFERENCES "graph"("graph_id")
+    FOREIGN KEY("graph_id") REFERENCES "graph"("graph_id"),
+    FOREIGN KEY("boundary_nature_id") REFERENCES "boundary_nature"("code")
 );
 
 CREATE TABLE IF NOT EXISTS "host_boundary" (

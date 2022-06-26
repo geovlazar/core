@@ -8,7 +8,7 @@ export * as hex from "https://deno.land/std@0.144.0/encoding/hex.ts";
 export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/safety/axiom.ts";
 export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/mod.ts";
 export * as rflSQLa from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/render/mod.ts";
-export * as rflSQLaTypical from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/models/typical.ts";
+export * as rflSqlTypical from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/models/typical.ts";
 export * as rflSqlShellTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/shell/task.ts";
 export * as rflSqlDiagram from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/diagram/mod.ts";
 export * as rflSqlOsQuery from "https://raw.githubusercontent.com/resFactory/factory/v0.9.11/lib/sql/shell/osquery.ts";

@@ -40,12 +40,24 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
       storageFileName: () => generatable.sqliteDb,
       events: () => new sql.SqlEventEmitter(),
     });
+
     // in the SQLite database the table is called `execution_context`
     const ee = await db.recordsDQL(
       "select code, value from execution_context",
     );
     ta.assert(ee);
     ta.assert(ee.records.length > 0);
+
+    // TODO: loop through each TableDefinition and check if it was added to
+    // SQLite schema; this allows testing whether a table was defined but
+    // mistakenly left out of generated DDL (seed DDL)
+
+    // TODO: loop through each EnumTable and check if it was added to
+    // SQLite schema; this allows testing whether an enum table was defined
+    // but mistakenly left out of generated DDL (seed DDL). For enums also
+    // check whether the total number of rows is the same as the enums
+    // defined.
+
     db.close();
   });
 

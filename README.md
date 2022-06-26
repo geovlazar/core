@@ -117,3 +117,31 @@ Look for lines like this:
   relationships), labels imply more generalized associations.
 - **Context**. A _context_ is similar to a label but it is specialized to allow
   depiction of environments such as dev/test/stage/prod/etc.
+
+## Visualizing Entity-Relationship Diagrams (ERDs) using PlantUML in VS Code
+
+To preview `*.puml` PlantUML-based Information Engineering (IE) ERDs in VS Code,
+you'll need to:
+
+- Install the
+  [PlantUML VS Code (jebbs.plantuml)](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml)
+  extension
+- Install Graphviz `dot` executable
+- Install Java JRE
+
+To setup Graphviz:
+
+```
+sudo apt-get update && sudo apt-get install graphviz
+```
+
+To install Java:
+
+```
+asdf install java oracle-17
+asdf global java oracle-17
+whereis java
+```
+
+Use location of `whereis java` to set in VS Code PlantUML
+`Java executable location` configuration.

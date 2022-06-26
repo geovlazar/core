@@ -1,10 +1,14 @@
 import {
   path,
   rflSQLa as SQLa,
-  rflSQLaTypical as SQLaTyp,
   rflSqlDiagram as sqlD,
   rflSqlOsQuery as osQ,
+  rflSqlTypical as SQLaTyp,
 } from "./deps.ts";
+
+// TODO: introduce Party, Person, etc. "typical" tables so in case "graph",
+// "boundary", etc. are not as useful. Better to leave data models general
+// instead of using Party or other universal models?
 
 /**
  * All our table names should be strongly typed and consistent. Generics are
@@ -30,6 +34,15 @@ export enum AssetRiskType {
   TYPE2 = "asset risk type 2",
 }
 
+export enum GraphNature {
+  SERVICE = "Service",
+  APP = "Application",
+}
+
+export enum BoundaryNature {
+  REGULATORY_TAX_ID = "Regulatory Tax ID", // like an "official" company (something with a Tax ID)
+}
+
 export function enumerations<Context extends SQLa.SqlEmitContext>(
   ddlOptions?: SQLa.SqlTextSupplierOptions<Context> & {
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
@@ -40,6 +53,14 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     tableName("execution_context"),
     ExecutionContext,
   );
+  const graphNature = lg.enumTextTable(
+    tableName("graph_nature"),
+    GraphNature,
+  );
+  const boundaryNature = lg.enumTextTable(
+    tableName("boundary_nature"),
+    BoundaryNature,
+  );
   const assetRiskType = lg.enumTextTable(
     tableName("asset_risk_type"),
     AssetRiskType,
@@ -49,15 +70,25 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
       ${execCtx}
 
+      ${graphNature}
+
+      ${boundaryNature}
+
       ${assetRiskType}
 
       ${execCtx.seedDML}
+
+      ${graphNature.seedDML}
+
+      ${boundaryNature.seedDML}
 
       ${assetRiskType.seedDML}`;
 
   return {
     modelsGovn: lg,
     execCtx,
+    graphNature,
+    boundaryNature,
     assetRiskType,
     seedDDL,
     exposeATC: [execCtx, assetRiskType],
@@ -74,6 +105,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
   const graph = mg.table(tableName("graph"), {
     graph_id: mg.primaryKey(),
+    graph_nature_id: enums.graphNature.foreignKeyRef.code(),
     name: SQLa.text(),
     description: SQLa.textNullable(),
     ...mg.housekeeping(),
@@ -83,8 +115,9 @@ export function entities<Context extends SQLa.SqlEmitContext>(
   const boundary = mg.table(tableName("boundary"), {
     boundary_id: boundaryId,
     parent_boundary_id: SQLa.selfRefNullableForeignKey(boundaryId),
-    name: SQLa.text(),
     graph_id: graph.foreignKeyRef.graph_id(),
+    boundary_nature_id: enums.boundaryNature.foreignKeyRef.code(),
+    name: SQLa.text(),
     ...mg.housekeeping(),
   });
 
