@@ -60,10 +60,10 @@ deno run -A --unstable Taskfile.ts prepare-publish
 
 Opsfolio uses osQuery's
 [Automatic Table Construction (ATC)](https://osquery.readthedocs.io/en/stable/deployment/configuration/#automatic-table-construction)
-feature to register new `opsfolio_*` tables. Once `deno Taskfile.ts db-deploy`
-is used, a SQLite database is created along with
-`opsfolio.auto.osquery-atc.json` which registers the Opsfolio tables so that
-they can be used via `osqueryi` or other osQuery interfaces.
+feature to register new `opsfolio_*` tables. Once `deno test` is used, a SQLite
+database is created along with `opsfolio.auto.osquery-atc.json` which registers
+the Opsfolio tables so that they can be used via `osqueryi` or other osQuery
+interfaces.
 
 ```bash
 # generate the artifacts and test automatically, but don't delete the artifacts
