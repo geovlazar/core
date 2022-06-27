@@ -52,6 +52,20 @@ async function mutateResFactoryDeps(
   }
 }
 
+/**
+ * Called from .git/hooks/pre-commit to run checks before allowing commit;
+ * To use, setup .git/hooks/pre-commit as an executable and call like this:
+ *
+ *     #!/bin/bash
+ *     # `set -e`` errors out (cancels commit) if any command returns non-zero
+ *     set -e
+ *     GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
+ *   	    deno run -A --unstable Taskfile.ts git-hook-pre-commit
+ *
+ * @param _tasks the task runner
+ * @param sandbox sandbox config vars
+ * @returns
+ */
 function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
   return async () => {
     const verbose = $.verbose;
@@ -78,16 +92,32 @@ function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
     await $`deno fmt`;
     await $`deno lint`;
     await $`deno test -A --unstable`;
+    console.log($.dim("Pre-commit checks passed, allowing commit."));
     $.verbose = verbose;
   };
 }
 
+/**
+ * Called from .git/hooks/pre-push to run checks before allowing remote push;
+ * To use, setup .git/hooks/pre-push as an executable and call like this:
+ *
+ *     #!/bin/bash
+ *     # `set -e`` errors out (cancels push) if any command returns non-zero
+ *     set -e
+ *     GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
+ *   	    deno run -A --unstable Taskfile.ts git-hook-pre-push
+ *
+ * @param tasks the task runner
+ * @param _sandbox sandbox config vars
+ * @returns
+ */
 function gitHookPrePush(tasks: Tasks, _sandbox: SandboxAsset) {
   return async () => {
     const verbose = $.verbose;
     $.verbose = true;
     await tasks.emit("preparePublish");
     $.verbose = verbose;
+    console.log($.dim("Pre-push checks passed, proceeding with push."));
   };
 }
 
@@ -146,7 +176,6 @@ export class Tasks extends t.EventEmitter<{
   generateModelsDocs(): Promise<void>;
   prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
   preparePublish(): Promise<void>; // -- replace deps.* with remote RF locations, TODO: tag, and push to remote
-  populateGitHooks(): Promise<void>; // -- add git pre-commit / pre-push hooks for
   gitHookPreCommit(): Promise<void>; // called by .git/hooks/pre-commit to ensure deno lint/fmt/etc.
   gitHookPrePush(): Promise<void>; // called by .git/hooks/pre-push to ensure deps.ts is not pointing to local
   // TODO: shellContribs(): Promise<void>; // -[ ] generate ("contribute") aliases, env vars, CLI completions, etc. useful for shells
