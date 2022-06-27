@@ -24,10 +24,17 @@ type SandboxAsset = {
   };
 };
 
+/**
+ * Test to see if any of the imports in deps.ts contains relative paths URIs
+ * such as ../resFactory/factory/. If so, it means that the deps.ts refers to
+ * "local" Resource Factory modules.
+ * @param sb the sandbox asset locations
+ * @returns true if deps.ts refers to "local" Resource Factory modules, false if refers to remotes
+ */
 // deno-lint-ignore require-await
 async function isResFactoryDepsLocal(sb: SandboxAsset) {
   const origDepsTs = Deno.readTextFileSync(sb.depsTs);
-  return origDepsTs.indexOf('"../../resFactory/factory/') > 0;
+  return origDepsTs.indexOf("../resFactory/factory/") > 0;
 }
 
 /**

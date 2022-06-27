@@ -4,7 +4,7 @@ export * as dzx from "https://deno.land/x/dzx@0.3.1/mod.ts";
 
 // use Taskfile.ts prepare-sandbox and publish tasks to mutate RF module URLs:
 //   Taksfile.ts prepare-sandbox will switch RF URLs to local mGit location
-//   Taksfile.ts publish will switch RF URLs to remote GitHub location
+//   Taksfile.ts prepare-publish will switch RF URLs to remote GitHub location (using latest tag)
 
 export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/v0.9.12/lib/safety/axiom.ts";
 export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.9.12/lib/sql/mod.ts";
