@@ -1,3 +1,10 @@
+// see Taskfile.ts setup and usage instructions in $RF_HOME/lib/task/README.md
+
+// governance:
+// * use natural Deno modules for tasks, only use Taskfile.ts as wrapper
+// * be cross-platform and don't introduce dependencies unless necessary
+// * use dzx whenever possible for exiting to shell, support Windows too
+
 import {
   dzx,
   rflGitHubTask as gh,
@@ -121,6 +128,11 @@ function gitHookPrePush(tasks: Tasks, _sandbox: SandboxAsset) {
   };
 }
 
+/**
+ * Download and cache all project dependencies (such as plantuml.jar).
+ * @param sandbox sandbox config vars
+ * @returns nothing
+ */
 export function ensureProjectDeps(sandbox: SandboxAsset) {
   return async () => {
     const options = { verbose: true };
@@ -159,13 +171,6 @@ export function doctor(sandbox: SandboxAsset) {
     console.info(`  * ${plantUML.split("\n")[0] || `${sandbox.plantUML.jarFileNameOnly} not found, use Taskfile.ts ensure-project-deps to download from GitHub`}`);
   };
 }
-
-// see setup and usage instructions in $RF_HOME/lib/task/README.md
-
-// governance:
-// * use natural Deno modules for tasks, only use Taskfile.ts as wrapper
-// * be cross-platform and don't introduce dependencies unless necessary
-// * use dzx whenever possible for exiting to shell, support Windows too
 
 export class Tasks extends t.EventEmitter<{
   help(): void;
