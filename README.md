@@ -35,6 +35,23 @@ artifacts after testing completed:
 OPSFOLIO_UT_CLEAN_ARTIFACTS=false deno test -A --unstable
 ```
 
+If you use `OPSFOLIO_UT_CLEAN_ARTIFACTS=false` you'll see the following files
+after `deno test`:
+
+- `opsfolio.auto.sqlite.db` is the SQLite database that will be automatically
+  integrated into `osqueryi` through ATCs; it's referred to in the
+  `opsfolio.auto.osquery-atc.json` config files and indirectly used by osQuery.
+- `opsfolio.auto.osquery-atc.json` is the osQuery ATC config that will allow
+  integration of `opsfolio_*` tables into osQuery; this file is directly used by
+  osQuery.
+- `opsfolio.auto.puml` is a PlantUML Information Engineering ("IE") that can be
+  used to generate an entity-relationship diagram (ERD); this file is not used
+  by osQuery, it's just to enhance understanding and describe the schema.
+- `opsfolio.auto.sql` is the SQL file that was used to create
+  `opsfolio.auto.sqlite.db` (check the `INSERT INTO` statements to see what data
+  is available); this file is not used by osQuery, it's only used to create the
+  SQLite database file (`opsfolio.auto.sqlite.db`)
+
 ## Development Sandbox
 
 Opsfolio Core uses Resource Factory remote URL-based modules. In most cases you
