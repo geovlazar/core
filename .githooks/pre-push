@@ -1,0 +1,5 @@
+#!/bin/bash
+# `set -e`` errors out (cancels push) if any command returns non-zero
+set -e
+GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
+	deno run -A --unstable Taskfile.ts git-hook-pre-push

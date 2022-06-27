@@ -25,6 +25,21 @@ type SandboxAsset = {
 };
 
 /**
+ * Sets up .githooks/* as the location for this project's Git hooks.
+ * @param _tasks the task runner
+ * @param _sandbox sandbox config vars
+ * @returns a function that can be used by Tasks event emitter
+ */
+function init(_tasks: Tasks, _sandbox: SandboxAsset) {
+  return async () => {
+    const verbose = $.verbose;
+    $.verbose = true;
+    await $`git config core.hooksPath .githooks`;
+    $.verbose = verbose;
+  };
+}
+
+/**
  * Test to see if any of the imports in deps.ts contains relative paths URIs
  * such as ../resFactory/factory/. If so, it means that the deps.ts refers to
  * "local" Resource Factory modules.
@@ -67,18 +82,11 @@ async function mutateResFactoryDeps(
 }
 
 /**
- * Called from .git/hooks/pre-commit to run checks before allowing commit;
- * To use, setup .git/hooks/pre-commit as an executable and call like this:
- *
- *     #!/bin/bash
- *     # `set -e`` errors out (cancels commit) if any command returns non-zero
- *     set -e
- *     GITHOOK_COMMITMSG_HEAD="$(head -1 $1)" GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
- *   	    deno run -A --unstable Taskfile.ts git-hook-prepare-commit-msg
- *
+ * Called from .githooks/pre-commit to run commit message checks; be sure to use
+ * Taskfile.ts init at least once in the cloned repo to use.
  * @param _tasks the task runner
  * @param _sandbox sandbox config vars
- * @returns
+ * @returns a function that can be used by Tasks event emitter
  */
 function gitHookPrepareCommitMsg(_tasks: Tasks, _sandbox: SandboxAsset) {
   // deno-lint-ignore require-await
@@ -121,18 +129,11 @@ function gitHookPrepareCommitMsg(_tasks: Tasks, _sandbox: SandboxAsset) {
 }
 
 /**
- * Called from .git/hooks/pre-commit to run checks before allowing commit;
- * To use, setup .git/hooks/pre-commit as an executable and call like this:
- *
- *     #!/bin/bash
- *     # `set -e`` errors out (cancels commit) if any command returns non-zero
- *     set -e
- *     GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
- *   	    deno run -A --unstable Taskfile.ts git-hook-pre-commit
- *
+ * Called from .githooks/pre-commit to run checks before allowing commit; be
+ * sure to use Taskfile.ts init at least once in the cloned repo to use.
  * @param _tasks the task runner
  * @param sandbox sandbox config vars
- * @returns
+ * @returns a function that can be used by Tasks event emitter
  */
 function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
   return async () => {
@@ -166,18 +167,11 @@ function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
 }
 
 /**
- * Called from .git/hooks/pre-push to run checks before allowing remote push;
- * To use, setup .git/hooks/pre-push as an executable and call like this:
- *
- *     #!/bin/bash
- *     # `set -e`` errors out (cancels push) if any command returns non-zero
- *     set -e
- *     GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
- *   	    deno run -A --unstable Taskfile.ts git-hook-pre-push
- *
+ * Called from .githooks/pre-push to run checks before allowing remote push; be
+ * sure to use Taskfile.ts init at least once in the cloned repo to use.
  * @param tasks the task runner
  * @param _sandbox sandbox config vars
- * @returns
+ * @returns a function that can be used by Tasks event emitter
  */
 function gitHookPrePush(tasks: Tasks, _sandbox: SandboxAsset) {
   return async () => {
@@ -220,6 +214,8 @@ export function ensureProjectDeps(sandbox: SandboxAsset) {
 export function doctor(sandbox: SandboxAsset) {
   // deno-fmt-ignore
   return async () => {
+    console.info($.dim(`Git repo configuration`));
+    console.info($.yellow(`  * ${await $o`git config core.hooksPath` == ".githooks" ? '.githooks setup properly' : '.githooks not setup properly, run Taskfile.ts init'}`));
     console.info($.dim(`Runtime dependencies`));
     console.info($.yellow(`  * ${(await $o`deno --version`).split("\n")[0]}`));
     console.info($.dim(`Build dependencies`));
@@ -234,6 +230,7 @@ export function doctor(sandbox: SandboxAsset) {
 }
 
 export class Tasks extends t.EventEmitter<{
+  init(): Promise<void>; // setup .githooks and any other initialization
   help(): void;
   doctor(): Promise<void>; // test that all dependencies are available
   ensureProjectDeps(): Promise<void>; // download binaries from sources
@@ -262,6 +259,7 @@ export class Tasks extends t.EventEmitter<{
     const { sandbox } = config;
 
     // housekeeping tasks
+    this.on("init", init(this, sandbox));
     this.on("help", t.eeHelpTask(this));
     this.on("doctor", doctor(sandbox));
     this.on("gitHookPrepareCommitMsg", gitHookPrepareCommitMsg(this, sandbox));

@@ -9,6 +9,46 @@ met.
 - Certain _actuals_ need to be managed by Opsfolio because most tools don't
   manage non-technical _actuals_ (such as a risk register or RACI chart).
 
+## Repo initialization after clone (one time)
+
+In order to use properly setup Git hooks, run the following in the repo root
+after the initial clone:
+
+```bash
+deno run -A --unstable Taskfile.ts init
+```
+
+The following Git hooks will be setup:
+
+- `.githooks/prepare-commit-msg` will make sure commit messages match
+  Conventional Commits strategy
+- `.githooks/pre-commit` will run `deno fmt`, `deno lint`, and `deno test`
+  before commits
+- `.githooks/pre-push` will run `Taskfile.ts prepare-publish` to generate docs,
+  etc.
+
+After running `Taskfile.ts init` run the `doctor` command:
+
+```bash
+deno run -A --unstable Taskfile.ts doctor
+```
+
+You should see something like this:
+
+```bash
+Git repo configuration
+  * .githooks setup properly
+Runtime dependencies
+  * deno 1.23.0 (release, x86_64-unknown-linux-gnu)
+Build dependencies
+  * dot - graphviz version 2.43.0 (0)
+  * java 17 2021-09-14 LTS
+  * PlantUML version 1.2022.6 (Tue Jun 21 13:34:49 EDT 2022)
+```
+
+If you get any error messages for `dot`, `Java`, or `PlantUML` then you will not
+get auto-generated entity relationship diagrams (ERDs).
+
 ## Conventions
 
 Opsfolio generates files using the convention `*.auto.*` which means that it's
