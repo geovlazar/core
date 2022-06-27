@@ -55,10 +55,9 @@ async function mutateResFactoryDeps(
 function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
   return async () => {
     const verbose = $.verbose;
-    $.verbose = true;
-    const commitList = await $o
-      `git diff --cached --name-only --diff-filter=ACM`;
+    const commitList = await $o`git diff --cached --name-only`;
     const commitFileNames = commitList.split("\n");
+    $.verbose = true;
     console.log(
       `Running pre-commit checks in Taskfile.ts from ${
         Deno.env.get("GITHOOK_SCRIPT")
@@ -68,9 +67,12 @@ function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
       commitFileNames.find((fn) => fn == sandbox.depsTs) &&
       await isResFactoryDepsLocal(sandbox)
     ) {
-      console.log(
-        `resFactory/factory URLs are local, cannot commit ${sandbox.depsTs}`,
+      console.error(
+        $.brightRed(
+          `resFactory/factory URLs are local, cannot commit ${sandbox.depsTs}`,
+        ),
       );
+      console.log($.green("run Taskfile.ts prepare-publish before commit"));
       Deno.exit(100);
     }
     await $`deno fmt`;
