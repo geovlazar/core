@@ -101,6 +101,12 @@ export class Tasks extends t.EventEmitter<{
   generateModelsDocs(): Promise<void>;
   prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
   preparePublish(): Promise<void>; // -- replace deps.* with remote RF locations, TODO: tag, and push to remote
+  // TODO: shellContribs(): Promise<void>; // -[ ] generate ("contribute") aliases, env vars, CLI completions, etc. useful for shells
+  //                                               using shell-contribs should eliminate need for custom shells, etc. like
+  //                                               github.com/netspective-studios/home-creators and allow generic shells to be used
+  //                                          -[ ] auto-detect bash and zsh and generate proper shell contributions
+  //                                          -[ ] alias path-task
+  //                                          -[ ] git semver in support/bin
 }> {
   constructor(
     readonly config: {
