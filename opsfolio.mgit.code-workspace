@@ -37,9 +37,6 @@
 		"[typescript]": {
 			"editor.defaultFormatter": "denoland.vscode-deno"
 		},
-		"hediet.vscode-drawio.theme": "atlas",
-		"plantuml.server": "",
-		"markdown-preview-enhanced.plantumlServer": "",
-		"plantuml.java": "/home/snshah/.asdf/shims/java"
+		"hediet.vscode-drawio.theme": "atlas"
 	},
 }

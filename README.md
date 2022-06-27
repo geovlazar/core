@@ -141,17 +141,21 @@ you'll need to:
 
 To setup Graphviz:
 
-```
+```bash
 sudo apt-get update && sudo apt-get install graphviz
 ```
 
-To install Java:
+To install Java (you can use any version, below are just examples):
 
-```
+```bash
 asdf install java oracle-17
 asdf global java oracle-17
 whereis java
 ```
 
-Use location of `whereis java` to set in VS Code PlantUML
-`Java executable location` configuration.
+Add the following to your `bash_profile` and restart VS Code so that it will
+pick up the location of Java and any other ASDF-based executables:
+
+```bash
+export PATH=$PATH:$HOME/.asdf/shims
+```
