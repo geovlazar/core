@@ -101,6 +101,9 @@ export class Tasks extends t.EventEmitter<{
   generateModelsDocs(): Promise<void>;
   prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
   preparePublish(): Promise<void>; // -- replace deps.* with remote RF locations, TODO: tag, and push to remote
+  populateGitHooks(): Promise<void>; // -- add git pre-commit / pre-push hooks for
+  gitHookPreCommit(): Promise<void>; // called by .git/hooks/pre-commit to ensure deno lint/fmt/etc.
+  gitHookPrePush(): Promise<void>; // called by .git/hooks/pre-push to ensure deps.ts is not pointing to local
   // TODO: shellContribs(): Promise<void>; // -[ ] generate ("contribute") aliases, env vars, CLI completions, etc. useful for shells
   //                                               using shell-contribs should eliminate need for custom shells, etc. like
   //                                               github.com/netspective-studios/home-creators and allow generic shells to be used
