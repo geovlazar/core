@@ -5,6 +5,12 @@
 // * be cross-platform and don't introduce dependencies unless necessary
 // * use dzx whenever possible for exiting to shell, support Windows too
 
+// TODO:
+// -[ ] preparePublish might generate updated assets but it's being called in
+//      Git pre-push hook; test what happens and see if we should stop the push
+//      in case artifacts need to be stages/committed?
+// -[ ] see what's reusable across projects and put them into $RF_HOME/lib/task
+
 import {
   dzx,
   rflGitHubTask as gh,
@@ -138,16 +144,15 @@ function gitHookPrepareCommitMsg(_tasks: Tasks, _sandbox: SandboxAsset) {
 function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
   return async () => {
     const verbose = $.verbose;
-    const commitList = await $o`git diff --cached --name-only`;
-    const commitFileNames = commitList.split("\n");
+    const commitList = (await $o`git diff --cached --name-only`).split("\n");
     $.verbose = true;
     console.log(
       `Running pre-commit checks in Taskfile.ts from ${
         Deno.env.get("GITHOOK_SCRIPT")
-      } for ${commitFileNames.join(", ")}`,
+      } for ${commitList.join(", ")}`,
     );
     if (
-      commitFileNames.find((fn) => fn == sandbox.depsTs) &&
+      commitList.find((fn) => fn == sandbox.depsTs) &&
       await isResFactoryDepsLocal(sandbox)
     ) {
       console.error(
