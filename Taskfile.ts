@@ -66,6 +66,60 @@ async function mutateResFactoryDeps(
  *     #!/bin/bash
  *     # `set -e`` errors out (cancels commit) if any command returns non-zero
  *     set -e
+ *     GITHOOK_COMMITMSG_HEAD="$(head -1 $1)" GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
+ *   	    deno run -A --unstable Taskfile.ts git-hook-prepare-commit-msg
+ *
+ * @param _tasks the task runner
+ * @param _sandbox sandbox config vars
+ * @returns
+ */
+function gitHookPrepareCommitMsg(_tasks: Tasks, _sandbox: SandboxAsset) {
+  // deno-lint-ignore require-await
+  return async () => {
+    // From: https://dev.to/craicoverflow/enforcing-conventional-commits-using-git-hooks-1o5p
+    // Build the Regular Expression Options.
+    const types =
+      "build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test";
+    const scopeMinLen = 1;
+    const scopeMaxLen = 16;
+    const scopeRegEx = `[a-z0-9_.-]{${scopeMinLen},${scopeMaxLen}}`;
+    const subjectMinLen = 4;
+    const subjectMaxLen = 120;
+    const subjectRegEx = `[a-z0-9_. -]{${subjectMinLen},${subjectMaxLen}}`;
+
+    //# Build the Regular Expression String.
+    const commitHeadRegEx = new RegExp(
+      `^(revert: )?(${types})(\(${scopeRegEx}\))?!?: ${subjectRegEx}[^.]{1,}$`,
+    );
+
+    const commitMsgHead = Deno.env.get("GITHOOK_COMMITMSG_HEAD");
+    if (commitMsgHead && commitMsgHead.trim().length > 0) {
+      //deno-fmt-ignore
+      if(!commitHeadRegEx.test(commitMsgHead)) {
+        console.info($.red("The commit message was not formatted correctly. Rejecting the commit request."));
+        console.info($.dim(" - https://www.conventionalcommits.org/en/v1.0.0/"));
+        console.info($.dim(" - https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional\n"));
+        console.info($.dim(" Having trouble with the format? Just not sure of how to commit correctly? https://commitlint.io/"));
+        console.info($.dim(" Something else happening? Use https://regexr.com/ with the following expression to validate your commit."));
+        console.info($.dim(`  - RegEx: /${commitHeadRegEx}/`));
+        Deno.exit(101);
+      }
+    } else {
+      //deno-fmt-ignore
+      console.info($.red("No commit message supplied. Rejecting the commit request."));
+      Deno.exit(102);
+    }
+    console.log($.dim("Commit message checks passed, allowing commit."));
+  };
+}
+
+/**
+ * Called from .git/hooks/pre-commit to run checks before allowing commit;
+ * To use, setup .git/hooks/pre-commit as an executable and call like this:
+ *
+ *     #!/bin/bash
+ *     # `set -e`` errors out (cancels commit) if any command returns non-zero
+ *     set -e
  *     GITHOOK_CWD=`pwd` GITHOOK_SCRIPT=$0 \
  *   	    deno run -A --unstable Taskfile.ts git-hook-pre-commit
  *
@@ -181,8 +235,9 @@ export class Tasks extends t.EventEmitter<{
   generateModelsDocs(): Promise<void>;
   prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
   preparePublish(): Promise<void>; // -- replace deps.* with remote RF locations, TODO: tag, and push to remote
-  gitHookPreCommit(): Promise<void>; // called by .git/hooks/pre-commit to ensure deno lint/fmt/etc.
-  gitHookPrePush(): Promise<void>; // called by .git/hooks/pre-push to ensure deps.ts is not pointing to local
+  gitHookPrepareCommitMsg(): Promise<void>; // called by .git/hooks/prepare-commit-msg
+  gitHookPreCommit(): Promise<void>; // called by .git/hooks/pre-commit
+  gitHookPrePush(): Promise<void>; // called by .git/hooks/pre-push
   // TODO: shellContribs(): Promise<void>; // -[ ] generate ("contribute") aliases, env vars, CLI completions, etc. useful for shells
   //                                               using shell-contribs should eliminate need for custom shells, etc. like
   //                                               github.com/netspective-studios/home-creators and allow generic shells to be used
@@ -202,6 +257,7 @@ export class Tasks extends t.EventEmitter<{
     // housekeeping tasks
     this.on("help", t.eeHelpTask(this));
     this.on("doctor", doctor(sandbox));
+    this.on("gitHookPrepareCommitMsg", gitHookPrepareCommitMsg(this, sandbox));
     this.on("gitHookPreCommit", gitHookPreCommit(this, sandbox));
     this.on("gitHookPrePush", gitHookPrePush(this, sandbox));
     this.on("updateDenoDeps", udd.updateDenoDepsTask());
