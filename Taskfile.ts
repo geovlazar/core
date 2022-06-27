@@ -17,6 +17,12 @@ type SandboxAsset = {
   };
 };
 
+// deno-lint-ignore require-await
+async function isResFactoryDepsLocal(sb: SandboxAsset) {
+  const origDepsTs = Deno.readTextFileSync(sb.depsTs);
+  return origDepsTs.indexOf('"../../resFactory/factory/') > 0;
+}
+
 /**
  * Instead of using multiple import maps, mutate the local deps.ts to point to
  * an appropriate set of https://github.com/resFactory/factory modules.
@@ -44,6 +50,43 @@ async function mutateResFactoryDeps(
   if (mutatedDepsTs != origDepsTs) {
     await Deno.writeTextFile(sb.depsTs, mutatedDepsTs);
   }
+}
+
+function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
+  return async () => {
+    const verbose = $.verbose;
+    $.verbose = true;
+    const commitList = await $o
+      `git diff --cached --name-only --diff-filter=ACM`;
+    const commitFileNames = commitList.split("\n");
+    console.log(
+      `Running pre-commit checks in Taskfile.ts from ${
+        Deno.env.get("GITHOOK_SCRIPT")
+      } for ${commitFileNames.join(", ")}`,
+    );
+    if (
+      commitFileNames.find((fn) => fn == sandbox.depsTs) &&
+      await isResFactoryDepsLocal(sandbox)
+    ) {
+      console.log(
+        `resFactory/factory URLs are local, cannot commit ${sandbox.depsTs}`,
+      );
+      Deno.exit(100);
+    }
+    await $`deno fmt`;
+    await $`deno lint`;
+    await $`deno test -A --unstable`;
+    $.verbose = verbose;
+  };
+}
+
+function gitHookPrePush(tasks: Tasks, _sandbox: SandboxAsset) {
+  return async () => {
+    const verbose = $.verbose;
+    $.verbose = true;
+    await tasks.emit("preparePublish");
+    $.verbose = verbose;
+  };
 }
 
 export function ensureProjectDeps(sandbox: SandboxAsset) {
@@ -123,6 +166,8 @@ export class Tasks extends t.EventEmitter<{
     // housekeeping tasks
     this.on("help", t.eeHelpTask(this));
     this.on("doctor", doctor(sandbox));
+    this.on("gitHookPreCommit", gitHookPreCommit(this, sandbox));
+    this.on("gitHookPrePush", gitHookPrePush(this, sandbox));
     this.on("updateDenoDeps", udd.updateDenoDepsTask());
     this.on("ensureProjectDeps", ensureProjectDeps(sandbox));
     this.on("maintain", async () => {
