@@ -16,6 +16,25 @@ an _auto_-generated file and should not be modified. Any file that has
 `*.auto.*` in the file means that it will be deleted and recreated whenever
 necessary.
 
+## Unit Tests
+
+Until better documentation is available, the best way to learn about Opsfolio is
+to review and run the unit tests (`mod_test.ts`). You can run the following in
+the base directory:
+
+```bash
+deno test -A --unstable
+```
+
+The unit tests auto-generate all files, deploy a SQLite database, and then
+execute `osqueryi` to validate ATCs. By default, OPSFOLIO_UT_CLEAN_ARTIFACTS is
+set to true but you can turn it off if you want to retain the generated
+artifacts after testing completed:
+
+```bash
+OPSFOLIO_UT_CLEAN_ARTIFACTS=false deno test -A --unstable
+```
+
 ## Development Sandbox
 
 Opsfolio Core uses Resource Factory remote URL-based modules. In most cases you
@@ -47,8 +66,10 @@ is used, a SQLite database is created along with
 they can be used via `osqueryi` or other osQuery interfaces.
 
 ```bash
-cd $OPSFOLIO_HOME
-deno run -A --unstable Taskfile.ts db-deploy
+# generate the artifacts and test automatically, but don't delete the artifacts
+OPSFOLIO_UT_CLEAN_ARTIFACTS=false deno test -A --unstable
+
+# test the artifacts manually
 osqueryi --config_path ./opsfolio.auto.osquery-atc.json "select code, value from opsfolio_execution_context"
 ```
 

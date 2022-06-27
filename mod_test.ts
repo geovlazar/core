@@ -7,6 +7,11 @@ import {
 } from "./deps.ts";
 import * as mod from "./mod.ts";
 
+const cleanArtifactEV = Deno.env.get("OPSFOLIO_UT_CLEAN_ARTIFACTS");
+const cleanArtifacts = typeof cleanArtifactEV === "undefined"
+  ? true
+  : (cleanArtifactEV == "false" || cleanArtifactEV == "0" ? false : true);
+
 Deno.test("Opsfolio generate artifacts", async (tc) => {
   const generatable = {
     sqliteSqlSrc: "opsfolio.auto.sql",
@@ -92,5 +97,5 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
     }
   });
 
-  await mod.clean(generatable);
+  if (cleanArtifacts) await mod.clean(generatable);
 });
