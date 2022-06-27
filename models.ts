@@ -54,22 +54,27 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
   },
 ) {
-  const lg = SQLaTyp.typicalLookupsGovn(ddlOptions);
-  const execCtx = lg.enumTable(
+  const mg = SQLaTyp.typicalModelsGovn(ddlOptions);
+  const enumTableDefnOptions = { isIdempotent: true };
+  const execCtx = SQLa.enumTable(
     tableName("execution_context"),
     ExecutionContext,
+    enumTableDefnOptions,
   );
-  const graphNature = lg.enumTextTable(
+  const graphNature = SQLa.enumTextTable(
     tableName("graph_nature"),
     GraphNature,
+    enumTableDefnOptions,
   );
-  const boundaryNature = lg.enumTextTable(
+  const boundaryNature = SQLa.enumTextTable(
     tableName("boundary_nature"),
     BoundaryNature,
+    enumTableDefnOptions,
   );
-  const assetRiskType = lg.enumTextTable(
+  const assetRiskType = SQLa.enumTextTable(
     tableName("asset_risk_type"),
     AssetRiskType,
+    enumTableDefnOptions,
   );
 
   // deno-fmt-ignore
@@ -91,7 +96,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       ${assetRiskType.seedDML}`;
 
   return {
-    modelsGovn: lg,
+    modelsGovn: mg,
     execCtx,
     graphNature,
     boundaryNature,
@@ -375,7 +380,7 @@ export function models<Context extends SQLa.SqlEmitContext>(
         ctx,
         function* () {
           for (const e of Object.values(enums)) {
-            if (SQLaTyp.isEnumTableDefn(e)) {
+            if (SQLa.isEnumTableDefn(e)) {
               yield e;
             }
           }
