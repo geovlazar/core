@@ -1,2 +1,5 @@
+# Don't store .envrc since it might have secrets
+.envrc
+
 # Don't store any auto-generated files
 *.auto.*

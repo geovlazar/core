@@ -9,14 +9,30 @@ met.
 - Certain _actuals_ need to be managed by Opsfolio because most tools don't
   manage non-technical _actuals_ (such as a risk register or RACI chart).
 
+## Dependencies
+
+- Install `git`, `deno`, and `direnv`
+
 ## Repo initialization after clone (one time)
 
-In order to use properly setup Git hooks, run the following in the repo root
-after the initial clone:
+In order to use properly setup Git hooks, aliases, and project-specific
+environment variables, run the following in the repo root after the initial
+clone:
 
 ```bash
 deno run -A --unstable Taskfile.ts init
+direnv allow
 ```
+
+The following shell aliases will be setup in `.envrc`:
+
+- `repo-task` - run Taskfile.ts in the root of the Git repository (this is the
+  one we'll use most often)
+- `cwd-task` - run Taskfile.ts in the current working directory (CWD)
+- `path-task` - find the first Taskfile.ts in either the current directory or
+  any parent directory
+
+See `.envrc.example` for all env vars and aliases that will be setup.
 
 The following Git hooks will be setup:
 
@@ -30,7 +46,7 @@ The following Git hooks will be setup:
 After running `Taskfile.ts init` run the `doctor` command:
 
 ```bash
-deno run -A --unstable Taskfile.ts doctor
+repo-task doctor
 ```
 
 You should see something like this:
@@ -100,14 +116,14 @@ locally you will need to do the following so that `deps.ts` refers to your local
 path:
 
 ```bash
-deno run -A --unstable Taskfile.ts prepare-sandbox
+repo-task prepare-sandbox
 ```
 
 Before you commit/push back to GitHub, though, you will need to run
 `prepare-publish` to reset `deps.ts` back to remote URLs:
 
 ```
-deno run -A --unstable Taskfile.ts prepare-publish
+repo-task prepare-publish
 # do commits, etc.
 # git semtag final
 # git push

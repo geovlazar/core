@@ -31,7 +31,9 @@ type SandboxAsset = {
 };
 
 /**
- * Sets up .githooks/* as the location for this project's Git hooks.
+ * Idempotently initializes the repo; sets up .githooks/* as the location for
+ * this project's Git hooks and, if .envrc doesn't exist, copy it from the
+ * example file.
  * @param _tasks the task runner
  * @param _sandbox sandbox config vars
  * @returns a function that can be used by Tasks event emitter
@@ -41,6 +43,7 @@ function init(_tasks: Tasks, _sandbox: SandboxAsset) {
     const verbose = $.verbose;
     $.verbose = true;
     await $`git config core.hooksPath .githooks`;
+    await $`cp --no-clobber .envrc.example .envrc`;
     $.verbose = verbose;
   };
 }
