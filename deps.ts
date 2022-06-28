@@ -17,3 +17,4 @@ export * as rflSqlite from "https://raw.githubusercontent.com/resFactory/factory
 export * as rflTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.12/lib/task/core.ts";
 export * as rflTaskUDD from "https://raw.githubusercontent.com/resFactory/factory/v0.9.12/lib/task/udd.ts";
 export * as rflGitHubTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.12/lib/task/github.ts";
+export * as rflTextWS from "https://raw.githubusercontent.com/resFactory/factory/v0.9.12/lib/text/whitespace.ts";

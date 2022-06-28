@@ -17,6 +17,7 @@ import {
   rflSQLa as SQLa,
   rflTask as t,
   rflTaskUDD as udd,
+  rflTextWS as ws,
 } from "./deps.ts";
 import * as mod from "./mod.ts";
 
@@ -43,7 +44,6 @@ function init(_tasks: Tasks, _sandbox: SandboxAsset) {
     const verbose = $.verbose;
     $.verbose = true;
     await $`git config core.hooksPath .githooks`;
-    await $`cp --no-clobber .envrc.example .envrc`;
     $.verbose = verbose;
   };
 }
@@ -234,6 +234,34 @@ export function doctor(sandbox: SandboxAsset) {
     console.info(`  * ${dot.split("\n")[0] || "graphviz dot not found in PATH, install it"}`);
     console.info(`  * ${java.split("\n")[0] || "java not found in PATH, install it"}`);
     console.info(`  * ${plantUML.split("\n")[0] || `${sandbox.plantUML.jarFileNameOnly} not found, use Taskfile.ts ensure-project-deps to download from GitHub`}`);
+    console.info($.dim(`Shell integration`));
+    console.info($.white(`  * ${await $o`echo $OPSFOLIO_SHELL_INTEGRATION` ? "Successful (repo-task alias available)" : `run \`${$.blue(`eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`)}\``}`));
+  };
+}
+
+/**
+ * Generate ("contribute") aliases, env vars, CLI completions, etc. useful for
+ * shells. Using shell-contribs should eliminate need for custom shells, etc.
+ * like github.com/netspective-studios/home-creators and allow generic shells to
+ * be used.
+ * -[ ] TODO: git semver in support/bin
+ *
+ * usage in zshrc, bashrc or CLI:
+ * $ eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"
+ *
+ * @param _tasks
+ * @param _sandbox
+ * @returns
+ */
+export function shellContribs(_tasks: Tasks, _sandbox: SandboxAsset) {
+  // deno-lint-ignore require-await
+  return async () => {
+    console.log(ws.unindentWhitespace(`
+      # run Taskfile.ts in the root of the Git repository
+      alias repo-task='OPSFOLIO_PATHTASK=yes deno run --unstable -A $(git rev-parse --show-toplevel)/Taskfile.ts'
+      # this env var acts as "marker" to indicate whether integration was successful
+      export OPSFOLIO_SHELL_INTEGRATION=$SHELL
+    `));
   };
 }
 
@@ -250,12 +278,7 @@ export class Tasks extends t.EventEmitter<{
   gitHookPrepareCommitMsg(): Promise<void>; // called by .git/hooks/prepare-commit-msg
   gitHookPreCommit(): Promise<void>; // called by .git/hooks/pre-commit
   gitHookPrePush(): Promise<void>; // called by .git/hooks/pre-push
-  // TODO: shellContribs(): Promise<void>; // -[ ] generate ("contribute") aliases, env vars, CLI completions, etc. useful for shells
-  //                                               using shell-contribs should eliminate need for custom shells, etc. like
-  //                                               github.com/netspective-studios/home-creators and allow generic shells to be used
-  //                                          -[ ] auto-detect bash and zsh and generate proper shell contributions
-  //                                          -[ ] alias path-task
-  //                                          -[ ] git semver in support/bin
+  shellContribs(): Promise<void>;
 }> {
   constructor(
     readonly config: {
@@ -273,6 +296,7 @@ export class Tasks extends t.EventEmitter<{
     this.on("gitHookPrepareCommitMsg", gitHookPrepareCommitMsg(this, sandbox));
     this.on("gitHookPreCommit", gitHookPreCommit(this, sandbox));
     this.on("gitHookPrePush", gitHookPrePush(this, sandbox));
+    this.on("shellContribs", shellContribs(this, sandbox));
     this.on("updateDenoDeps", udd.updateDenoDepsTask());
     this.on("ensureProjectDeps", ensureProjectDeps(sandbox));
     this.on("maintain", async () => {

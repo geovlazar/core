@@ -21,18 +21,7 @@ clone:
 
 ```bash
 deno run -A --unstable Taskfile.ts init
-direnv allow
 ```
-
-The following shell aliases will be setup in `.envrc`:
-
-- `repo-task` - run Taskfile.ts in the root of the Git repository (this is the
-  one we'll use most often)
-- `cwd-task` - run Taskfile.ts in the current working directory (CWD)
-- `path-task` - find the first Taskfile.ts in either the current directory or
-  any parent directory
-
-See `.envrc.example` for all env vars and aliases that will be setup.
 
 The following Git hooks will be setup:
 
@@ -60,10 +49,23 @@ Build dependencies
   * dot - graphviz version 2.43.0 (0)
   * java 17 2021-09-14 LTS
   * PlantUML version 1.2022.6 (Tue Jun 21 13:34:49 EDT 2022)
+Shell integration
+  * run `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`
 ```
 
 If you get any error messages for `dot`, `Java`, or `PlantUML` then you will not
 get auto-generated entity relationship diagrams (ERDs).
+
+For "Shell integration" you can run
+`eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"` in each shell you
+start or add the `eval` to your ZSH/Bash config.
+
+Once you run `eval` of `shell-contribs` then you'll have the `path-task` alias
+available in your shell.
+
+The `path-task` alias is a convenient way of calling `Taskfile.ts` tasks without
+giving the full `deno run -A --unstable Taskfile.ts` prefix before the
+command/task.
 
 ## Conventions
 
