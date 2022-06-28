@@ -35,7 +35,7 @@ The following Git hooks will be setup:
 After running `Taskfile.ts init` run the `doctor` command:
 
 ```bash
-repo-task doctor
+deno run -A --unstable doctor
 ```
 
 You should see something like this:
@@ -66,6 +66,17 @@ available in your shell.
 The `path-task` alias is a convenient way of calling `Taskfile.ts` tasks without
 giving the full `deno run -A --unstable Taskfile.ts` prefix before the
 command/task.
+
+If, at any time, the `path-task` alias is not working you can simply use
+`deno run...` directly. The following two styles are identical:
+
+```bash
+repo-task <task_name>                           # uses alias to run task `task_name`
+deno run -A --unstable Taskfile.ts <task_name>  # same as above, does not use alias
+
+repo-task doctor                              # uses alias to run task `doctor`
+deno run -A --unstable Taskfile.ts doctor     # same as above, does not use alias
+```
 
 ## Conventions
 
