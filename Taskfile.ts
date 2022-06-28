@@ -44,6 +44,7 @@ function init(_tasks: Tasks, _sandbox: SandboxAsset) {
     const verbose = $.verbose;
     $.verbose = true;
     await $`git config core.hooksPath .githooks`;
+    await $`git config pull.rebase false`;
     $.verbose = verbose;
   };
 }
