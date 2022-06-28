@@ -11,7 +11,7 @@ met.
 
 ## Dependencies
 
-- Install `git`, `deno`, and `direnv`
+- Install `git` and `deno`.
 
 ## Repo initialization after clone (one time)
 
