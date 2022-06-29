@@ -6,15 +6,15 @@ export * as dzx from "https://deno.land/x/dzx@0.3.1/mod.ts";
 //   Taksfile.ts prepare-sandbox will switch RF URLs to local mGit location
 //   Taksfile.ts prepare-publish will switch RF URLs to remote GitHub location (using latest tag)
 
-export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/safety/axiom.ts";
-export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sql/mod.ts";
-export * as rflSQLa from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sql/render/mod.ts";
-export * as rflSqlTypical from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sql/models/typical.ts";
-export * as rflSqlShellTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sql/shell/task.ts";
-export * as rflSqlDiagram from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sql/diagram/mod.ts";
-export * as rflSqlOsQuery from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sql/shell/osquery.ts";
-export * as rflSqlite from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/sqlite/mod.ts";
-export * as rflTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/task/core.ts";
-export * as rflTaskUDD from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/task/udd.ts";
-export * as rflGitHubTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/task/github.ts";
-export * as rflTextWS from "https://raw.githubusercontent.com/resFactory/factory/v0.9.19/lib/text/whitespace.ts";
+export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/safety/axiom.ts";
+export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sql/mod.ts";
+export * as rflSQLa from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sql/render/mod.ts";
+export * as rflSqlTypical from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sql/models/typical.ts";
+export * as rflSqlShellTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sql/shell/task.ts";
+export * as rflSqlDiagram from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sql/diagram/mod.ts";
+export * as rflSqlOsQuery from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sql/shell/osquery.ts";
+export * as rflSqlite from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/sqlite/mod.ts";
+export * as rflTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/task/core.ts";
+export * as rflTaskUDD from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/task/udd.ts";
+export * as rflGitHubTask from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/task/github.ts";
+export * as rflTextWS from "https://raw.githubusercontent.com/resFactory/factory/v0.9.20/lib/text/whitespace.ts";
