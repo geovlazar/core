@@ -1,9 +1,10 @@
-import { rflWS as ws, testingAsserts as ta } from "./deps-test.ts";
+import { testingAsserts as ta } from "./deps-test.ts";
 import {
   dzx,
   rflSQL as sql,
   rflSQLa as SQLa,
   rflSqlite as sqlite,
+  rflTextWS as ws,
 } from "./deps.ts";
 import * as mod from "./mod.ts";
 
