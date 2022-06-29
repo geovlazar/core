@@ -125,7 +125,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
   const boundaryId = mg.primaryKey();
   const boundary = mg.table(tableName("boundary"), {
     boundary_id: boundaryId,
-    parent_boundary_id: SQLa.selfRefNullableForeignKey(boundaryId),
+    parent_boundary_id: SQLa.selfRefForeignKeyNullable(boundaryId),
     graph_id: graph.foreignKeyRef.graph_id(),
     boundary_nature_id: enums.boundaryNature.foreignKeyRef.code(),
     name: SQLa.text(),
