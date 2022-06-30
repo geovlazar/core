@@ -138,7 +138,15 @@ export class Tasks extends t.EventEmitter<{
       "gitHookPreCommit",
       gt.decoratedHook(async () =>
         await gt.hooks.preCommit({
-          sandboxDepsFound: (depsTs) => rfDepsMutator.isSandbox(depsTs),
+          sandboxGuard: {
+            isSandboxDeps: () => {
+              // deno-fmt-ignore
+              if (rfDepsMutator.isSandbox(sandbox.depsTs)) {
+                return [100, "☢️  Remote resFactory URLs in deps.ts, cannot commit."];
+              }
+              return false;
+            },
+          },
         })
       ),
     );
