@@ -24,12 +24,34 @@ import * as mod from "./mod.ts";
 
 type SandboxAsset = {
   depsTs: string;
+  isSandbox: () => boolean;
   plantUML: {
     gitHubDownloadDestPath: string;
     jarFileNameOnly: string;
     localJarPathAndName: string;
   };
 };
+
+const rfDepsMutator = await depsH.resFactoryDepsMutator(
+  Deno.cwd(),
+  (d) => d.found.pathRelative(Deno.cwd()),
+  {
+    onSrcNotFound: {
+      gitHub: {
+        // deno-lint-ignore require-await
+        prepareSandbox: async (d, depsTs) => {
+          // deno-fmt-ignore
+          console.log(`Unsable to mutate ${depsTs} for sandbox:`, d.searchGlob, "not found in", d.startSearchInAbsPath);
+        },
+        // deno-lint-ignore require-await
+        prepareRemote: async (d, depsTs) => {
+          // deno-fmt-ignore
+          console.log(`Unsable to mutate ${depsTs} for remote:`, d.searchGlob, "not found in", d.startSearchInAbsPath);
+        },
+      },
+    },
+  },
+);
 
 /**
  * Idempotently initializes the repo; sets up .githooks/* as the location for
@@ -113,10 +135,7 @@ function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
         Deno.env.get("GITHOOK_SCRIPT")
       } for ${commitList.join(", ")}`,
     );
-    if (
-      commitList.find((fn) => fn == sandbox.depsTs) &&
-      await depsH.isResFactoryDepsLocal(sandbox.depsTs)
-    ) {
+    if (commitList.find((fn) => fn == sandbox.depsTs) && sandbox.isSandbox()) {
       console.error(
         $.brightRed(
           `resFactory/factory URLs are local, cannot commit ${sandbox.depsTs}`,
@@ -278,32 +297,13 @@ export class Tasks extends t.EventEmitter<{
         `java -jar ${sandbox.plantUML.localJarPathAndName} -svg ${pumlDestFile}`;
     });
 
-    const mutateResFactoryDeps = async (prepare: "sandbox" | "publish") => {
-      await depsH.mutateResFactoryDeps(
-        [sandbox.depsTs],
-        prepare,
-        (src) =>
-          src.found.pathRelative(
-            path.dirname(path.fromFileUrl(import.meta.url)),
-          ),
-        {
-          // deno-lint-ignore require-await
-          onSrcNotFound: async (d) => {
-            // deno-fmt-ignore
-            console.log(`[${prepare}]`, d.searchGlob, "not found in", d.startSearchInAbsPath);
-            return false;
-          },
-        },
-      );
-    };
-
     this.on(
       "prepareSandbox",
-      async () => await mutateResFactoryDeps("sandbox"),
+      async () => await rfDepsMutator.gitHub.prepareSandbox(sandbox.depsTs),
     );
     this.on("preparePublish", async () => {
       await this.emit("generateModelsDocs");
-      await mutateResFactoryDeps("publish");
+      await rfDepsMutator.gitHub.prepareRemote(sandbox.depsTs);
     });
   }
 }
@@ -316,6 +316,7 @@ if (import.meta.main) {
     new Tasks({
       sandbox: {
         depsTs: "deps.ts",
+        isSandbox: () => rfDepsMutator.isSandbox("deps.ts"),
         plantUML: {
           jarFileNameOnly: "plantuml.jar",
           gitHubDownloadDestPath: "support/bin",
