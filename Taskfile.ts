@@ -14,7 +14,9 @@
 import {
   dzx,
   rflDepsHelpers as depsH,
+  rflDoctorTask as dt,
   rflGitHubTask as gh,
+  rflGitTask as git,
   rflSQLa as SQLa,
   rflTask as t,
   rflTaskUDD as udd,
@@ -197,25 +199,41 @@ export function ensureProjectDeps(sandbox: SandboxAsset) {
   };
 }
 
-export function doctor(sandbox: SandboxAsset) {
-  // deno-fmt-ignore
-  return async () => {
-    console.info($.dim(`Git repo configuration`));
-    console.info($.yellow(`  * ${await $o`git config core.hooksPath` == ".githooks" ? '.githooks setup properly' : '.githooks not setup properly, run Taskfile.ts init'}`));
-    console.info($.dim(`Runtime dependencies`));
-    console.info($.yellow(`  * ${(await $o`deno --version`).split("\n")[0]}`));
-    console.info($.dim(`Build dependencies`));
-    const dot = await dzx.$e`dot -V`;
-    const java = await dzx.$o`java --version`;
-    const plantUML = await dzx.$o
-      `java -jar ${sandbox.plantUML.localJarPathAndName} -version`;
-    console.info(`  * ${dot.split("\n")[0] || "graphviz dot not found in PATH, install it"}`);
-    console.info(`  * ${java.split("\n")[0] || "java not found in PATH, install it"}`);
-    console.info(`  * ${plantUML.split("\n")[0] || `${sandbox.plantUML.jarFileNameOnly} not found, use Taskfile.ts ensure-project-deps to download from GitHub`}`);
-    console.info($.dim(`Shell integration`));
-    console.info($.white(`  * ${await $o`echo $OPSFOLIO_SHELL_INTEGRATION` ? "Successful (repo-task alias available)" : `run \`${$.blue(`eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`)}\``}`));
-  };
+function* doctorCategories(sandbox: SandboxAsset) {
+  yield dt.doctorCategory("Runtime dependencies", function* () {
+    yield* dt.denoDoctor().diagnostics();
+  });
+  yield dt.doctorCategory("Build dependencies", function* () {
+    yield {
+      // deno-fmt-ignore
+      diagnose: async (report) => {
+        report({ expectText: (await dzx.$e`dot -V`).split("\n")[0], unexpected: "graphviz dot not found in PATH, install it" });
+        report({ expectText: (await dzx.$o`java --version`).split("\n")[0], unexpected: "java not found in PATH, install it" });
+        report({ expectText: (await dzx.$o`java -jar ${sandbox.plantUML.localJarPathAndName} -version`).split("\n")[0], unexpected: `${sandbox.plantUML.jarFileNameOnly} not found, use Taskfile.ts ensure-project-deps to download from GitHub` });
+      },
+    };
+  });
 }
+
+// export function doctor(sandbox: SandboxAsset) {
+//   // deno-fmt-ignore
+//   return async () => {
+//     console.info($.dim(`Git repo configuration`));
+//     console.info($.yellow(`  * ${await $o`git config core.hooksPath` == ".githooks" ? '.githooks setup properly' : '.githooks not setup properly, run Taskfile.ts init'}`));
+//     console.info($.dim(`Runtime dependencies`));
+//     console.info($.yellow(`  * ${(await $o`deno --version`).split("\n")[0]}`));
+//     console.info($.dim(`Build dependencies`));
+//     const dot = await dzx.$e`dot -V`;
+//     const java = await dzx.$o`java --version`;
+//     const plantUML = await dzx.$o
+//       `java -jar ${sandbox.plantUML.localJarPathAndName} -version`;
+//     console.info(`  * ${dot.split("\n")[0] || "graphviz dot not found in PATH, install it"}`);
+//     console.info(`  * ${java.split("\n")[0] || "java not found in PATH, install it"}`);
+//     console.info(`  * ${plantUML.split("\n")[0] || `${sandbox.plantUML.jarFileNameOnly} not found, use Taskfile.ts ensure-project-deps to download from GitHub`}`);
+//     console.info($.dim(`Shell integration`));
+//     console.info($.white(`  * ${await $o`echo $OPSFOLIO_SHELL_INTEGRATION` ? "Successful (repo-task alias available)" : `run \`${$.blue(`eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`)}\``}`));
+//   };
+// }
 
 /**
  * Generate ("contribute") aliases, env vars, CLI completions, etc. useful for
@@ -270,10 +288,6 @@ export class Tasks extends t.EventEmitter<{
     // housekeeping tasks
     this.on("init", init(this, sandbox));
     this.on("help", t.eeHelpTask(this));
-    this.on("doctor", doctor(sandbox));
-    this.on("gitHookPrepareCommitMsg", gitHookPrepareCommitMsg(this, sandbox));
-    this.on("gitHookPreCommit", gitHookPreCommit(this, sandbox));
-    this.on("gitHookPrePush", gitHookPrePush(this, sandbox));
     this.on("shellContribs", shellContribs(this, sandbox));
     this.on("updateDenoDeps", udd.updateDenoDepsTask());
     this.on("ensureProjectDeps", ensureProjectDeps(sandbox));
@@ -281,6 +295,26 @@ export class Tasks extends t.EventEmitter<{
       await this.emit("ensureProjectDeps");
       await this.emit("updateDenoDeps");
     });
+
+    const gt = git.gitTasks();
+    this.on(
+      "gitHookPrepareCommitMsg",
+      gt.decoratedHook(gt.hooks.prepareCommitMsg),
+    );
+    this.on("gitHookPreCommit", gt.decoratedHook(gt.hooks.preCommit));
+    this.on("gitHookPrePush", async () => {
+      await this.emit("generateModelsDocs");
+    });
+
+    this.on(
+      "doctor",
+      dt.doctor(function* () {
+        yield dt.doctorCategory("Git dependencies", function* () {
+          yield { diagnose: gt.doctor };
+        });
+        yield* doctorCategories(sandbox);
+      }),
+    );
 
     this.on("generateModelsDocs", async () => {
       const models = mod.models();
