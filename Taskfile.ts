@@ -13,6 +13,7 @@
 
 import {
   dzx,
+  rflDepsHelpers as depsH,
   rflGitHubTask as gh,
   rflSQLa as SQLa,
   rflTask as t,
@@ -23,7 +24,6 @@ import * as mod from "./mod.ts";
 
 type SandboxAsset = {
   depsTs: string;
-  resFactoryTag: () => Promise<string>;
   plantUML: {
     gitHubDownloadDestPath: string;
     jarFileNameOnly: string;
@@ -47,48 +47,6 @@ function init(_tasks: Tasks, _sandbox: SandboxAsset) {
     await $`git config pull.rebase false`;
     $.verbose = verbose;
   };
-}
-
-/**
- * Test to see if any of the imports in deps.ts contains relative paths URIs
- * such as ../resFactory/factory/. If so, it means that the deps.ts refers to
- * "local" Resource Factory modules.
- * @param sb the sandbox asset locations
- * @returns true if deps.ts refers to "local" Resource Factory modules, false if refers to remotes
- */
-// deno-lint-ignore require-await
-async function isResFactoryDepsLocal(sb: SandboxAsset) {
-  const origDepsTs = Deno.readTextFileSync(sb.depsTs);
-  return origDepsTs.indexOf("../resFactory/factory/") > 0;
-}
-
-/**
- * Instead of using multiple import maps, mutate the local deps.ts to point to
- * an appropriate set of https://github.com/resFactory/factory modules.
- * When local (mGit path conventions): ../../../github.com/resFactory/factory*
- * when remote (latest): https://raw.githubusercontent.com/resFactory/factory/main*
- * when remote (pinned): https://raw.githubusercontent.com/resFactory/factory/${tag}*
- * @param sb the sandbox asset locations
- * @param prepare whether we're pointing to resFactory in local sandbox or publish (GitHub) location
- */
-async function mutateResFactoryDeps(
-  sb: SandboxAsset,
-  prepare: "sandbox" | "publish",
-) {
-  const origDepsTs = Deno.readTextFileSync(sb.depsTs);
-  const mutatedDepsTs = prepare == "sandbox"
-    ? origDepsTs.replaceAll(
-      /"https:\/\/raw.githubusercontent.com\/resFactory\/factory\/.*?\//g,
-      `"../../resFactory/factory/`,
-    )
-    : origDepsTs.replaceAll(
-      '"../../resFactory/factory/',
-      `"https://raw.githubusercontent.com/resFactory/factory/${await sb
-        .resFactoryTag()}/`,
-    );
-  if (mutatedDepsTs != origDepsTs) {
-    await Deno.writeTextFile(sb.depsTs, mutatedDepsTs);
-  }
 }
 
 /**
@@ -157,7 +115,7 @@ function gitHookPreCommit(_tasks: Tasks, sandbox: SandboxAsset) {
     );
     if (
       commitList.find((fn) => fn == sandbox.depsTs) &&
-      await isResFactoryDepsLocal(sandbox)
+      await depsH.isResFactoryDepsLocal(sandbox.depsTs)
     ) {
       console.error(
         $.brightRed(
@@ -320,13 +278,32 @@ export class Tasks extends t.EventEmitter<{
         `java -jar ${sandbox.plantUML.localJarPathAndName} -svg ${pumlDestFile}`;
     });
 
+    const mutateResFactoryDeps = async (prepare: "sandbox" | "publish") => {
+      await depsH.mutateResFactoryDeps(
+        [sandbox.depsTs],
+        prepare,
+        (src) =>
+          src.found.pathRelative(
+            path.dirname(path.fromFileUrl(import.meta.url)),
+          ),
+        {
+          // deno-lint-ignore require-await
+          onSrcNotFound: async (d) => {
+            // deno-fmt-ignore
+            console.log(`[${prepare}]`, d.searchGlob, "not found in", d.startSearchInAbsPath);
+            return false;
+          },
+        },
+      );
+    };
+
     this.on(
       "prepareSandbox",
-      async () => await mutateResFactoryDeps(sandbox, "sandbox"),
+      async () => await mutateResFactoryDeps("sandbox"),
     );
     this.on("preparePublish", async () => {
       await this.emit("generateModelsDocs");
-      await mutateResFactoryDeps(sandbox, "publish");
+      await mutateResFactoryDeps("publish");
     });
   }
 }
@@ -339,8 +316,6 @@ if (import.meta.main) {
     new Tasks({
       sandbox: {
         depsTs: "deps.ts",
-        resFactoryTag: async () =>
-          await gh.latestGitHubRepoTag({ repo: "resFactory/factory" }, "main"),
         plantUML: {
           jarFileNameOnly: "plantuml.jar",
           gitHubDownloadDestPath: "support/bin",
