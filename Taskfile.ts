@@ -134,7 +134,14 @@ export class Tasks extends t.EventEmitter<{
       "gitHookPrepareCommitMsg",
       gt.decoratedHook(gt.hooks.prepareCommitMsg),
     );
-    this.on("gitHookPreCommit", gt.decoratedHook(gt.hooks.preCommit));
+    this.on(
+      "gitHookPreCommit",
+      gt.decoratedHook(async () =>
+        await gt.hooks.preCommit({
+          sandboxDepsFound: (depsTs) => rfDepsMutator.isSandbox(depsTs),
+        })
+      ),
+    );
     this.on("gitHookPrePush", async () => {
       await this.emit("generateModelsDocs");
     });
