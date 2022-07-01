@@ -64,23 +64,27 @@ For "Shell integration" you can run
 start or add the `eval` to your ZSH/Bash config.
 
 If you'd like to use `deno task` you can generate a `deno.jsonc` file using
-`deno run -A --unstable Taskfile.ts update-deno-config`.
+`deno run -A --unstable Taskfile.ts update-deno-config`. Once you setup
+`deno.jsonc` you can then use `deno task doctor` or `deno task <task_name>`
+where `<task_name>` is any task defined in Taskfile.ts.
 
-Once you run `eval` of `shell-contribs` then you'll have the `path-task` alias
+Once you run `eval` of `shell-contribs` then you'll have the `repo-task` alias
 available in your shell.
 
-The `path-task` alias is a convenient way of calling `Taskfile.ts` tasks without
+The `repo-task` alias is a convenient way of calling `Taskfile.ts` tasks without
 giving the full `deno run -A --unstable Taskfile.ts` prefix before the
 command/task.
 
-If, at any time, the `path-task` alias is not working you can simply use
+If, at any time, the `repo-task` alias is not working you can simply use
 `deno run...` directly. The following two styles are identical:
 
 ```bash
-repo-task <task_name>                           # uses alias to run task `task_name`
-deno run -A --unstable Taskfile.ts <task_name>  # same as above, does not use alias
+repo-task <task_name>                           # uses shell alias to run task `task_name`
+deno task <task_name>                           # uses deno.jsonc if you used `Taskfile.ts update-deno-config`
+deno run -A --unstable Taskfile.ts <task_name>  # same as above, does not use alias or deno task
 
 repo-task doctor                              # uses alias to run task `doctor`
+deno task doctor                              # uses deno.jsonc if you used `Taskfile.ts update-deno-config`
 deno run -A --unstable Taskfile.ts doctor     # same as above, does not use alias
 ```
 
