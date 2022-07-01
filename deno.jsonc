@@ -1,18 +1,18 @@
 {
   "tasks": {
     "help": "deno run -A --unstable Taskfile.ts help",
-    "updateDenoDeps": "deno run -A --unstable Taskfile.ts updateDenoDeps",
-    "ensureProjectDeps": "deno run -A --unstable Taskfile.ts ensureProjectDeps",
+    "update-deno-deps": "deno run -A --unstable Taskfile.ts updateDenoDeps",
+    "ensure-project-deps": "deno run -A --unstable Taskfile.ts ensureProjectDeps",
     "maintain": "deno run -A --unstable Taskfile.ts maintain",
-    "updateDenoConfig": "deno run -A --unstable Taskfile.ts updateDenoConfig",
+    "update-deno-config": "deno run -A --unstable Taskfile.ts updateDenoConfig",
     "init": "deno run -A --unstable Taskfile.ts init",
-    "gitHookPreCommit": "deno run -A --unstable Taskfile.ts gitHookPreCommit",
-    "gitHookPrePush": "deno run -A --unstable Taskfile.ts gitHookPrePush",
-    "shellContribs": "deno run -A --unstable Taskfile.ts shellContribs",
+    "git-hook-prepare-commit-msg": "deno run -A --unstable Taskfile.ts gitHookPrepareCommitMsg",
+    "git-hook-pre-commit": "deno run -A --unstable Taskfile.ts gitHookPreCommit",
+    "git-hook-pre-push": "deno run -A --unstable Taskfile.ts gitHookPrePush",
+    "shell-contribs": "deno run -A --unstable Taskfile.ts shellContribs",
     "doctor": "deno run -A --unstable Taskfile.ts doctor",
-    "generateModelsDocs": "deno run -A --unstable Taskfile.ts generateModelsDocs",
-    "prepareSandbox": "deno run -A --unstable Taskfile.ts prepareSandbox",
-    "preparePublish": "deno run -A --unstable Taskfile.ts preparePublish",
-    "gitHookPrepareCommitMsg": "deno run -A --unstable Taskfile.ts gitHookPrepareCommitMsg"
+    "generate-models-docs": "deno run -A --unstable Taskfile.ts generateModelsDocs",
+    "prepare-sandbox": "deno run -A --unstable Taskfile.ts prepareSandbox",
+    "prepare-publish": "deno run -A --unstable Taskfile.ts preparePublish"
   }
 }

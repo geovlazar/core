@@ -13,7 +13,7 @@
 
 import {
   dzx,
-  rflDenoConfigTask as dct,
+  rflDenoConfigHelpers as dch,
   rflDepsHelpers as depsH,
   rflDoctorTask as dt,
   rflGitHubTask as gh,
@@ -130,7 +130,7 @@ export class Tasks extends t.EventEmitter<{
       await this.emit("updateDenoDeps");
     });
 
-    const denoCfg = dct.denoConfigTasks();
+    const denoCfg = dch.denoConfigHelpers();
     this.on("updateDenoConfig", denoCfg.persistTaskAdapters(this));
 
     const gt = git.gitTasks();
