@@ -11,7 +11,8 @@ met.
 
 ## Dependencies
 
-- Install `git` and `deno`.
+- Production: install `deno` on any supported platform
+- Development: install `git` and `deno` on a Linux-based platform
 
 ## Repo initialization after clone (one time)
 
@@ -53,8 +54,14 @@ Build dependencies
   🆗 java 17 2021-09-14 LTS
   🆗 PlantUML version 1.2022.6 (Tue Jun 21 13:34:49 EDT 2022)
 Shell integration
-  🚫 run `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`
+  💡 run `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`
 ```
+
+Doctor task legend:
+
+- 🚫 is used to indicate a warning or error and should be corrected
+- 💡 is used to indicate an (optional) _suggestion_
+- 🆗 is used to indicate success
 
 If you get any error messages for `dot`, `Java`, or `PlantUML` then you will not
 get auto-generated entity relationship diagrams (ERDs).
@@ -63,11 +70,6 @@ For "Shell integration" you can run
 `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"` in each shell you
 start or add the `eval` to your ZSH/Bash config.
 
-If you'd like to use `deno task` you can generate a `deno.jsonc` file using
-`deno run -A --unstable Taskfile.ts update-deno-config`. Once you setup
-`deno.jsonc` you can then use `deno task doctor` or `deno task <task_name>`
-where `<task_name>` is any task defined in Taskfile.ts.
-
 Once you run `eval` of `shell-contribs` then you'll have the `repo-task` alias
 available in your shell.
 
@@ -75,17 +77,26 @@ The `repo-task` alias is a convenient way of calling `Taskfile.ts` tasks without
 giving the full `deno run -A --unstable Taskfile.ts` prefix before the
 command/task.
 
+If you'd like to use `deno task` you can generate a `deno.jsonc` file using
+`deno run -A --unstable Taskfile.ts update-deno-config`. Once you setup
+`deno.jsonc` you can then use `deno task doctor` or `deno task <task_name>`
+where `<task_name>` is any task defined in Taskfile.ts.
+
 If, at any time, the `repo-task` alias is not working you can simply use
-`deno run...` directly. The following two styles are identical:
+`deno run...Taskfile <task_name>` directly. `repo-task` alias works in a
+Linux-like shell, `deno task` and `deno run...Taskfile.ts <task_name>` both work
+cross-platform.
+
+Examples:
 
 ```bash
-repo-task <task_name>                           # uses shell alias to run task `task_name`
-deno task <task_name>                           # uses deno.jsonc if you used `Taskfile.ts update-deno-config`
-deno run -A --unstable Taskfile.ts <task_name>  # same as above, does not use alias or deno task
+repo-task <task_name>                           # uses shell alias to run task `task_name` from any directory in the repo
+deno task <task_name>                           # uses deno.jsonc in root of repo, if you used `Taskfile.ts update-deno-config`
+deno run -A --unstable Taskfile.ts <task_name>  # same as above, run in repo root, does not use alias or deno task
 
-repo-task doctor                              # uses alias to run task `doctor`
-deno task doctor                              # uses deno.jsonc if you used `Taskfile.ts update-deno-config`
-deno run -A --unstable Taskfile.ts doctor     # same as above, does not use alias
+repo-task doctor                              # uses alias to run task `doctor` from any directory in the repo
+deno task doctor                              # uses deno.jsonc in root of repo, if you used `Taskfile.ts update-deno-config`
+deno run -A --unstable Taskfile.ts doctor     # same as above, run in repo root, does not use alias or deno task
 ```
 
 ## Conventions
@@ -242,8 +253,15 @@ Look for lines like this:
 - **Label**. A label can be applied across graph structures to allow
   non-hiearachical grouping. While categories imply ownership (e.g. "belongs to"
   relationships), labels imply more generalized associations.
-- **Context**. A _context_ is similar to a label but it is specialized to allow
-  depiction of environments such as dev/test/stage/prod/etc.
+- **Execution Context**. An _execution context_ is similar to a label but it is
+  specialized to allow depiction of environments such as
+  dev/test/stage/prod/etc.
+
+- [ ] Implement translator for all SCF Excel workbooks and sheets into Opsfolio
+      models and content that can be reused
+- [ ] Implement
+      [Roadmap to Zero Trust Architecture](https://zerotrustroadmap.org/) using
+      Opsfolio Data Models
 
 ## Visualizing Entity-Relationship Diagrams (ERDs) using PlantUML in VS Code
 
@@ -265,6 +283,7 @@ sudo apt-get update && sudo apt-get install graphviz
 To install Java (you can use any version, below are just examples):
 
 ```bash
+asdf plugin add java
 asdf install java oracle-17
 asdf global java oracle-17
 whereis java
