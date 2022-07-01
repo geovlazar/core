@@ -12,6 +12,7 @@
     "doctor": "deno run -A --unstable Taskfile.ts doctor",
     "generateModelsDocs": "deno run -A --unstable Taskfile.ts generateModelsDocs",
     "prepareSandbox": "deno run -A --unstable Taskfile.ts prepareSandbox",
-    "preparePublish": "deno run -A --unstable Taskfile.ts preparePublish"
+    "preparePublish": "deno run -A --unstable Taskfile.ts preparePublish",
+    "gitHookPrepareCommitMsg": "deno run -A --unstable Taskfile.ts gitHookPrepareCommitMsg"
   }
 }
