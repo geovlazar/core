@@ -35,22 +35,25 @@ The following Git hooks will be setup:
 After running `Taskfile.ts init` run the `doctor` command:
 
 ```bash
-deno run -A --unstable doctor
+deno run -A --unstable Taskfile.ts doctor
 ```
 
 You should see something like this:
 
 ```bash
-Git repo configuration
-  * .githooks setup properly
+Git dependencies
+  🆗 .githooks path exists
+  🆗 .githooks setup properly in git config
 Runtime dependencies
-  * deno 1.23.0 (release, x86_64-unknown-linux-gnu)
+  🆗 deno 1.23.0 (release, x86_64-unknown-linux-gnu)
+  💡 deno.jsonc not available (can be auto-generated with Taskfile.ts tasks)
+  🚫 deps.ts using sandbox resFactory files
 Build dependencies
-  * dot - graphviz version 2.43.0 (0)
-  * java 17 2021-09-14 LTS
-  * PlantUML version 1.2022.6 (Tue Jun 21 13:34:49 EDT 2022)
+  🆗 dot - graphviz version 2.43.0 (0)
+  🆗 java 17 2021-09-14 LTS
+  🆗 PlantUML version 1.2022.6 (Tue Jun 21 13:34:49 EDT 2022)
 Shell integration
-  * run `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`
+  🚫 run `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"`
 ```
 
 If you get any error messages for `dot`, `Java`, or `PlantUML` then you will not
@@ -59,6 +62,9 @@ get auto-generated entity relationship diagrams (ERDs).
 For "Shell integration" you can run
 `eval "$(deno run -A --unstable Taskfile.ts shell-contribs)"` in each shell you
 start or add the `eval` to your ZSH/Bash config.
+
+If you'd like to use `deno task` you can generate a `deno.jsonc` file using
+`deno run -A --unstable Taskfile.ts update-deno-config`.
 
 Once you run `eval` of `shell-contribs` then you'll have the `path-task` alias
 available in your shell.

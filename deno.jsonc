@@ -1,0 +1,17 @@
+{
+  "tasks": {
+    "help": "deno run -A --unstable Taskfile.ts help",
+    "updateDenoDeps": "deno run -A --unstable Taskfile.ts updateDenoDeps",
+    "ensureProjectDeps": "deno run -A --unstable Taskfile.ts ensureProjectDeps",
+    "maintain": "deno run -A --unstable Taskfile.ts maintain",
+    "updateDenoConfig": "deno run -A --unstable Taskfile.ts updateDenoConfig",
+    "init": "deno run -A --unstable Taskfile.ts init",
+    "gitHookPreCommit": "deno run -A --unstable Taskfile.ts gitHookPreCommit",
+    "gitHookPrePush": "deno run -A --unstable Taskfile.ts gitHookPrePush",
+    "shellContribs": "deno run -A --unstable Taskfile.ts shellContribs",
+    "doctor": "deno run -A --unstable Taskfile.ts doctor",
+    "generateModelsDocs": "deno run -A --unstable Taskfile.ts generateModelsDocs",
+    "prepareSandbox": "deno run -A --unstable Taskfile.ts prepareSandbox",
+    "preparePublish": "deno run -A --unstable Taskfile.ts preparePublish"
+  }
+}

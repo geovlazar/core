@@ -13,6 +13,7 @@
 
 import {
   dzx,
+  rflDenoConfigTask as dct,
   rflDepsHelpers as depsH,
   rflDoctorTask as dt,
   rflGitHubTask as gh,
@@ -102,6 +103,7 @@ export class Tasks extends t.EventEmitter<{
   doctor(): Promise<void>; // test that all dependencies are available
   ensureProjectDeps(): Promise<void>; // download binaries from sources
   updateDenoDeps(): Promise<void>;
+  updateDenoConfig(): Promise<void>; // contribute Taskfile.ts tasks, etc. to deno.jsonc
   maintain(): Promise<void>;
   generateModelsDocs(): Promise<void>;
   prepareSandbox(): Promise<void>; // -- replace deps.* with local Resource Factory locations
@@ -127,6 +129,9 @@ export class Tasks extends t.EventEmitter<{
       await this.emit("ensureProjectDeps");
       await this.emit("updateDenoDeps");
     });
+
+    const denoCfg = dct.denoConfigTasks();
+    this.on("updateDenoConfig", denoCfg.persistTaskAdapters(this));
 
     const gt = git.gitTasks();
     this.on("init", gt.init);
@@ -159,6 +164,8 @@ export class Tasks extends t.EventEmitter<{
     });
     this.on("shellContribs", shTasks.shellContribs);
 
+    // deno-lint-ignore no-this-alias
+    const eeThis = this;
     this.on(
       "doctor",
       dt.doctor(function* () {
@@ -167,6 +174,7 @@ export class Tasks extends t.EventEmitter<{
         });
         yield dt.doctorCategory("Runtime dependencies", function* () {
           yield* dt.denoDoctor().diagnostics();
+          yield { diagnose: denoCfg.doctor(eeThis) };
           yield {
             diagnose: rfDepsMutator.doctor("resFactory", sandbox.depsTs),
           };
