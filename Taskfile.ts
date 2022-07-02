@@ -138,7 +138,8 @@ export class Tasks extends t.EventEmitter<{
         "prepareCommitMsg": git.prepareCommitMsgGitHook(),
         "preCommit": git.preCommitGitHook({
           sandboxGuard: {
-            isSandboxDeps: () => {
+            // deno-lint-ignore require-await
+            isSandboxDeps: async () => {
               // deno-fmt-ignore
               if (rfDepsMutator.isSandbox(sandbox.depsTs)) {
                 return [100, "☢️  Sandbox resFactory URLs in deps.ts, cannot commit unless remotes are used."];
