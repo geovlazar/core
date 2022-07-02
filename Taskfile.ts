@@ -133,31 +133,28 @@ export class Tasks extends t.EventEmitter<{
     const denoCfg = dch.denoConfigHelpers();
     this.on("updateDenoConfig", denoCfg.persistTaskAdapters(this));
 
-    const gt = git.gitTasks();
-    this.on("init", gt.init);
-    this.on(
-      "gitHookPrepareCommitMsg",
-      gt.decoratedHook(gt.hooks.prepareCommitMsg),
-    );
-    this.on(
-      "gitHookPreCommit",
-      gt.decoratedHook(async () =>
-        await gt.hooks.preCommit({
+    const gt = git.gitTasks({
+      hooks: {
+        "prepareCommitMsg": git.prepareCommitMsgGitHook(),
+        "preCommit": git.preCommitGitHook({
           sandboxGuard: {
             isSandboxDeps: () => {
               // deno-fmt-ignore
               if (rfDepsMutator.isSandbox(sandbox.depsTs)) {
-                return [100, "☢️  Remote resFactory URLs in deps.ts, cannot commit."];
+                return [100, "☢️  Sandbox resFactory URLs in deps.ts, cannot commit unless remotes are used."];
               }
               return false;
             },
           },
-        })
-      ),
-    );
-    this.on("gitHookPrePush", async () => {
-      await this.emit("generateModelsDocs");
+        }),
+        "prePush": git.gitHookIntegration("prePush", async () => {
+          await this.emit("generateModelsDocs");
+          return 0; // always successful
+        }),
+      },
     });
+    this.on("init", gt.init);
+    gt.registerHooks(this);
 
     const shTasks = sht.shellTasks({
       integrationMarkerEV: "OPSFOLIO_SHELL_INTEGRATION",

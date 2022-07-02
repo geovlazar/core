@@ -259,6 +259,11 @@ Look for lines like this:
 
 - [ ] Implement translator for all SCF Excel workbooks and sheets into Opsfolio
       models and content that can be reused
+  - [ ] Since SCF uses native Excel workbooks, see if
+        [xlite](https://github.com/x2bool/xlite), a SQLite extension to query
+        Excel (.xlsx, .xls, .ods) files as virtual tables, will fit the bill.
+        Since Opsfolio relies on Deno SQLite WASM module, it's possible that we
+        need to embed the Excel virtual tables capabilities into WASM.
 - [ ] Implement
       [Roadmap to Zero Trust Architecture](https://zerotrustroadmap.org/) using
       Opsfolio Data Models
