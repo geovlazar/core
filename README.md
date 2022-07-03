@@ -300,3 +300,7 @@ pick up the location of Java and any other ASDF-based executables:
 ```bash
 export PATH=$PATH:$HOME/.asdf/shims
 ```
+
+## Dependencies
+
+![Deno Dependencies](https://deno-visualizer.danopia.net/dependencies-of/https/raw.githubusercontent.com/opsfolio/core/main/mod.ts?renderer=interactive&format=svg)
