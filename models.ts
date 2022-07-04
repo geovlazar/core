@@ -35,6 +35,34 @@ export enum ExecutionContext {
   PRODUCTION,
 }
 
+
+export enum SecurityIncidentRole {
+  PROJECT_MANAGER_TECHNOLOGY = "Project Manager Technology",
+  PROJECT_MANAGER_QUALITY = "Project Manager Quality",
+  PROJECT_MANAGER_DEVOPS = "Project Manager DevOps",
+  ASSOCIATE_MANAGER_TECHNOLOGY = "Associated Manager Technology",
+  ASSOCIATE_MANAGER_QUALITY = "Associated Manager Technology",
+  ASSOCIATE_MANAGER_DEVOPS = "Associate Manager DevOps",
+  SENIOR_LEAD_SOFTWARE_ENGINEER_ARCHITECT =
+    "Senior Lead Software Engineer Architect",
+  LEAD_SOFTWARE_ENGINEER_ARCHITECT = "Lead Software Engineer Architect",
+  SENIOR_LEAD_SOFTWARE_QUALITY_ENGINEER =
+    "Senior Lead Software Quality Engineer",
+  SENIOR_LEAD_SOFTWARE_DEVOPS_ENGINEER =
+    "Senior Lead Software DevOps Engineer",
+  LEAD_SOFTWARE_ENGINEER =
+    "Lead Software Engineer",
+  LEAD_SOFTWARE_QUALITY_ENGINEER =
+    "Lead Software Quality Engineer",
+  LEAD_SOFTWARE_DEVOPS_ENGINEER =
+    "Lead Software DevOps Engineer",
+  LEAD_SYSTEM_NETWORK_ENGINEER = "Lead System Network Engineer",
+  SENIOR_SOFTWARE_ENGINEER = "Senior Software Engineer",
+  SENIOR_SOFTWARE_QUALITY_ENGINEER = "Senior Software Quality Engineer",
+  SOFTWARE_QUALITY_ENGINEER = "Software Quality Engineer",
+  SECURITY_ENGINEER = "Security Engineer",
+}
+
 export enum AssetRiskType {
   TYPE1 = "asset risk type 1",
   TYPE2 = "asset risk type 2",
@@ -76,6 +104,11 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     AssetRiskType,
     enumTableDefnOptions,
   );
+  const securityIncidentRole = SQLa.enumTextTable(
+    tableName("security_incident_role"),
+    SecurityIncidentRole,
+    enumTableDefnOptions,
+  );
 
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
@@ -87,13 +120,17 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${assetRiskType}
 
+      ${securityIncidentRole}
+
       ${execCtx.seedDML}
 
       ${graphNature.seedDML}
 
       ${boundaryNature.seedDML}
 
-      ${assetRiskType.seedDML}`;
+      ${assetRiskType.seedDML}
+      
+      ${securityIncidentRole.seedDML}`;
 
   return {
     modelsGovn: mg,
@@ -101,8 +138,9 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     graphNature,
     boundaryNature,
     assetRiskType,
+    securityIncidentRole,
     seedDDL,
-    exposeATC: [execCtx, assetRiskType],
+    exposeATC: [execCtx, assetRiskType,securityIncidentRole],
   };
 }
 
