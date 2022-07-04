@@ -35,7 +35,6 @@ export enum ExecutionContext {
   PRODUCTION,
 }
 
-
 export enum SecurityIncidentRole {
   PROJECT_MANAGER_TECHNOLOGY = "Project Manager Technology",
   PROJECT_MANAGER_QUALITY = "Project Manager Quality",
@@ -48,14 +47,10 @@ export enum SecurityIncidentRole {
   LEAD_SOFTWARE_ENGINEER_ARCHITECT = "Lead Software Engineer Architect",
   SENIOR_LEAD_SOFTWARE_QUALITY_ENGINEER =
     "Senior Lead Software Quality Engineer",
-  SENIOR_LEAD_SOFTWARE_DEVOPS_ENGINEER =
-    "Senior Lead Software DevOps Engineer",
-  LEAD_SOFTWARE_ENGINEER =
-    "Lead Software Engineer",
-  LEAD_SOFTWARE_QUALITY_ENGINEER =
-    "Lead Software Quality Engineer",
-  LEAD_SOFTWARE_DEVOPS_ENGINEER =
-    "Lead Software DevOps Engineer",
+  SENIOR_LEAD_SOFTWARE_DEVOPS_ENGINEER = "Senior Lead Software DevOps Engineer",
+  LEAD_SOFTWARE_ENGINEER = "Lead Software Engineer",
+  LEAD_SOFTWARE_QUALITY_ENGINEER = "Lead Software Quality Engineer",
+  LEAD_SOFTWARE_DEVOPS_ENGINEER = "Lead Software DevOps Engineer",
   LEAD_SYSTEM_NETWORK_ENGINEER = "Lead System Network Engineer",
   SENIOR_SOFTWARE_ENGINEER = "Senior Software Engineer",
   SENIOR_SOFTWARE_QUALITY_ENGINEER = "Senior Software Quality Engineer",
@@ -140,7 +135,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     assetRiskType,
     securityIncidentRole,
     seedDDL,
-    exposeATC: [execCtx, assetRiskType,securityIncidentRole],
+    exposeATC: [execCtx, assetRiskType, securityIncidentRole],
   };
 }
 
