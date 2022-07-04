@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS "asset_risk_type" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "security_incident_role" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO "execution_context" ("code", "value") VALUES (0, 'DEVELOPMENT');
 INSERT INTO "execution_context" ("code", "value") VALUES (1, 'TEST');
 INSERT INTO "execution_context" ("code", "value") VALUES (2, 'PRODUCTION');
@@ -40,6 +46,25 @@ INSERT INTO "boundary_nature" ("code", "value") VALUES ('REGULATORY_TAX_ID', 'Re
 
 INSERT INTO "asset_risk_type" ("code", "value") VALUES ('TYPE1', 'asset risk type 1');
 INSERT INTO "asset_risk_type" ("code", "value") VALUES ('TYPE2', 'asset risk type 2');
+
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('PROJECT_MANAGER_TECHNOLOGY', 'Project Manager Technology');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('PROJECT_MANAGER_QUALITY', 'Project Manager Quality');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('PROJECT_MANAGER_DEVOPS', 'Project Manager DevOps');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('ASSOCIATE_MANAGER_TECHNOLOGY', 'Associated Manager Technology');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('ASSOCIATE_MANAGER_QUALITY', 'Associated Manager Technology');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('ASSOCIATE_MANAGER_DEVOPS', 'Associate Manager DevOps');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_ENGINEER_ARCHITECT', 'Senior Lead Software Engineer Architect');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_ENGINEER_ARCHITECT', 'Lead Software Engineer Architect');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_QUALITY_ENGINEER', 'Senior Lead Software Quality Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_DEVOPS_ENGINEER', 'Senior Lead Software DevOps Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_ENGINEER', 'Lead Software Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_QUALITY_ENGINEER', 'Lead Software Quality Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_DEVOPS_ENGINEER', 'Lead Software DevOps Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SYSTEM_NETWORK_ENGINEER', 'Lead System Network Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_SOFTWARE_ENGINEER', 'Senior Software Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_SOFTWARE_QUALITY_ENGINEER', 'Senior Software Quality Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SOFTWARE_QUALITY_ENGINEER', 'Software Quality Engineer');
+INSERT INTO "security_incident_role" ("code", "value") VALUES ('SECURITY_ENGINEER', 'Security Engineer');
 
 -- content tables
 CREATE TABLE IF NOT EXISTS "host" (

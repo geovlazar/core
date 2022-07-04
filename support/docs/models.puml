@@ -38,6 +38,13 @@
       created_at: DATETIME
   }
 
+  entity "security_incident_role" as security_incident_role {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
   entity "host" as host {
     * **host_id**: INTEGER
     --
