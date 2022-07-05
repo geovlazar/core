@@ -1,7 +1,6 @@
 import { testingAsserts as ta } from "./deps-test.ts";
 import {
   dzx,
-  rflSQL as sql,
   rflSQLa as SQLa,
   rflSqlite as sqlite,
   rflTextWS as ws,
@@ -22,6 +21,7 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
   };
 
   const ctx = SQLa.typicalSqlEmitContext();
+  const sqlEngine = sqlite.sqliteEngine();
   const models = mod.models();
   const assets = {
     sqliteSql: models.seedDDL.SQL(ctx),
@@ -47,17 +47,22 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
 
   await tc.step(generatable.sqliteDb, async () => {
     await mod.dbDeploy(assets, generatable);
-    const db = new sqlite.SqliteDatabase({
+    const db = sqlEngine.instance({
       storageFileName: () => generatable.sqliteDb,
-      events: () => new sql.SqlEventEmitter(),
     });
 
-    // in the SQLite database the table is called `execution_context`
+    // in the SQLite database the table is called `execution_context` but we
+    // use SQLa.SQL({ symbolsFirst: true }) to automatically find colum names
+    // and table name based on type-safe generics
+    const ec = models.enumerations.execCtx;
+    const ecc = ec.columns;
     const ee = await db.recordsDQL(
-      "select code, value from execution_context",
+      ctx,
+      SQLa.SQL({ symbolsFirst: true })
+        `SELECT ${ecc.code}, ${ecc.value} from ${ec}`,
     );
     ta.assert(ee);
-    ta.assert(ee.records.length > 0);
+    ta.assert(ee.records.length == 3);
 
     // TODO: loop through each TableDefinition and check if it was added to
     // SQLite schema; this allows testing whether a table was defined but

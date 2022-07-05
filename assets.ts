@@ -1,4 +1,4 @@
-import { hex, rflSQL as sql, rflSqlite as sqlite } from "./deps.ts";
+import { hex, rflSqlite as sqlite } from "./deps.ts";
 
 // deno-lint-ignore no-explicit-any
 type Any = any;
@@ -45,9 +45,9 @@ export async function generateArtifacts(assets: {
 export async function dbDeploy(assets: {
   readonly sqliteSql: string;
 }, ga: AssetsConfig) {
-  const db = new sqlite.SqliteDatabase({
+  const sqlEngine = sqlite.sqliteEngine();
+  const db = sqlEngine.instance({
     storageFileName: () => ga.sqliteDb,
-    events: () => new sql.SqlEventEmitter(),
   });
   db.dbStore.execute(assets.sqliteSql);
   db.close();
