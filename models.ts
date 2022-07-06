@@ -58,6 +58,19 @@ export enum SecurityIncidentRole {
   SECURITY_ENGINEER = "Security Engineer",
 }
 
+export enum PartyType {
+  PERSON = "Person",
+  POSITION = "Position",
+  ORGANIZATION = "Organization",
+  USER_LIST = "User List",
+  ACCESS_GROUP = "Access Group",
+}
+
+export enum PersonType {
+  INDIVIDUAL = "Individual",
+  PROFESSIONAL = "Professional",
+}
+
 export enum AssetRiskType {
   TYPE1 = "asset risk type 1",
   TYPE2 = "asset risk type 2",
@@ -105,6 +118,18 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
+  const partyType = SQLa.enumTextTable(
+    tableName("party_type"),
+    PartyType,
+    enumTableDefnOptions,
+  );
+
+  const personType = SQLa.enumTextTable(
+    tableName("person_type"),
+    PersonType,
+    enumTableDefnOptions,
+  );
+
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
       ${execCtx}
@@ -117,6 +142,10 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${securityIncidentRole}
 
+      ${partyType}
+
+      ${personType}
+
       ${execCtx.seedDML}
 
       ${graphNature.seedDML}
@@ -124,8 +153,12 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       ${boundaryNature.seedDML}
 
       ${assetRiskType.seedDML}
-      
-      ${securityIncidentRole.seedDML}`;
+
+      ${securityIncidentRole.seedDML}
+
+      ${partyType.seedDML}
+
+      ${personType.seedDML}`;
 
   return {
     modelsGovn: mg,
@@ -134,8 +167,16 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     boundaryNature,
     assetRiskType,
     securityIncidentRole,
+    partyType,
+    personType,
     seedDDL,
-    exposeATC: [execCtx, assetRiskType, securityIncidentRole],
+    exposeATC: [
+      execCtx,
+      assetRiskType,
+      securityIncidentRole,
+      partyType,
+      personType,
+    ],
   };
 }
 
@@ -298,6 +339,33 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
+  const party = mg.table(tableName("party"), {
+    party_id: mg.primaryKey(),
+    party_type: enums.partyType.foreignKeyRef.code(),
+    party_name: SQLa.text(),
+    record_status_id: SQLa.integer(),
+    ...mg.housekeeping(),
+  });
+
+  const person = mg.table(tableName("person"), {
+    person_id: mg.primaryKey(),
+    party_id: party.foreignKeyRef.party_id(),
+    person_type: enums.personType.foreignKeyRef.code(),
+    person_first_name: SQLa.text(),
+    person_last_name: SQLa.text(),
+    record_status_id: SQLa.text(),
+    ...mg.housekeeping(),
+  });
+
+  const organization = mg.table(tableName("organization"), {
+    organization_id: mg.primaryKey(),
+    party_id: party.foreignKeyRef.party_id(),
+    name: SQLa.text(),
+    license: SQLa.text(),
+    registration_date: SQLa.date(),
+    ...mg.housekeeping(),
+  });
+
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
       ${host}
@@ -326,7 +394,13 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${certificate}
 
-      ${device}`;
+      ${device}
+
+      ${party}
+
+      ${person}
+
+      ${organization}`;
 
   return {
     modelsGovn: mg,
@@ -344,8 +418,20 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     timesheet,
     certificate,
     device,
+    party,
+    person,
+    organization,
     seedDDL,
-    exposeATC: [host, graph, boundary, hostBoundary, raciMatrix],
+    exposeATC: [
+      host,
+      graph,
+      boundary,
+      hostBoundary,
+      raciMatrix,
+      party,
+      person,
+      organization,
+    ],
   };
 }
 
