@@ -45,6 +45,20 @@
       created_at: DATETIME
   }
 
+  entity "party_type" as party_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "person_type" as person_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
   entity "host" as host {
     * **host_id**: INTEGER
     --
@@ -209,6 +223,36 @@
       created_at: DATETIME
   }
 
+  entity "party" as party {
+    * **party_id**: INTEGER
+    --
+    * party_type: TEXT <<ENUM(party_type)>>
+    * party_name: TEXT
+    * record_status_id: INTEGER
+      created_at: DATETIME
+  }
+
+  entity "person" as person {
+    * **person_id**: INTEGER
+    --
+    * party_id: INTEGER <<FK(party)>>
+    * person_type: TEXT <<ENUM(person_type)>>
+    * person_first_name: TEXT
+    * person_last_name: TEXT
+    * record_status_id: TEXT
+      created_at: DATETIME
+  }
+
+  entity "organization" as organization {
+    * **organization_id**: INTEGER
+    --
+    * party_id: INTEGER <<FK(party)>>
+    * name: TEXT
+    * license: TEXT
+    * registration_date: DATE
+      created_at: DATETIME
+  }
+
   graph_nature |o..o| graph
   boundary |o..o{ boundary
   graph |o..o{ boundary
@@ -216,4 +260,8 @@
   host |o..o{ host_boundary
   boundary |o..o{ host_boundary
   asset_risk_type |o..o| asset_risk
+  party_type |o..o| party
+  party |o..o{ person
+  person_type |o..o| person
+  party |o..o{ organization
 @enduml

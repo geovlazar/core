@@ -35,6 +35,18 @@ CREATE TABLE IF NOT EXISTS "security_incident_role" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "party_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "person_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO "execution_context" ("code", "value") VALUES (0, 'DEVELOPMENT');
 INSERT INTO "execution_context" ("code", "value") VALUES (1, 'TEST');
 INSERT INTO "execution_context" ("code", "value") VALUES (2, 'PRODUCTION');
@@ -65,6 +77,15 @@ INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_SOFTWARE_
 INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_SOFTWARE_QUALITY_ENGINEER', 'Senior Software Quality Engineer');
 INSERT INTO "security_incident_role" ("code", "value") VALUES ('SOFTWARE_QUALITY_ENGINEER', 'Software Quality Engineer');
 INSERT INTO "security_incident_role" ("code", "value") VALUES ('SECURITY_ENGINEER', 'Security Engineer');
+
+INSERT INTO "party_type" ("code", "value") VALUES ('PERSON', 'Person');
+INSERT INTO "party_type" ("code", "value") VALUES ('POSITION', 'Position');
+INSERT INTO "party_type" ("code", "value") VALUES ('ORGANIZATION', 'Organization');
+INSERT INTO "party_type" ("code", "value") VALUES ('USER_LIST', 'User List');
+INSERT INTO "party_type" ("code", "value") VALUES ('ACCESS_GROUP', 'Access Group');
+
+INSERT INTO "person_type" ("code", "value") VALUES ('INDIVIDUAL', 'Individual');
+INSERT INTO "person_type" ("code", "value") VALUES ('PROFESSIONAL', 'Professional');
 
 -- content tables
 CREATE TABLE IF NOT EXISTS "host" (
@@ -223,6 +244,37 @@ CREATE TABLE IF NOT EXISTS "device" (
     "purpose" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "party" (
+    "party_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_type" TEXT NOT NULL,
+    "party_name" TEXT NOT NULL,
+    "record_status_id" INTEGER NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_type") REFERENCES "party_type"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "person" (
+    "person_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "person_type" TEXT NOT NULL,
+    "person_first_name" TEXT NOT NULL,
+    "person_last_name" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("person_type") REFERENCES "person_type"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "organization" (
+    "organization_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "license" TEXT NOT NULL,
+    "registration_date" DATE NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id")
 );
 
 -- no template engine lint issues
