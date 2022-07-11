@@ -47,6 +47,30 @@ CREATE TABLE IF NOT EXISTS "person_type" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "contact_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "training_status" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "party_relation_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "record_status" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO "execution_context" ("code", "value") VALUES (0, 'DEVELOPMENT');
 INSERT INTO "execution_context" ("code", "value") VALUES (1, 'TEST');
 INSERT INTO "execution_context" ("code", "value") VALUES (2, 'PRODUCTION');
@@ -86,6 +110,23 @@ INSERT INTO "party_type" ("code", "value") VALUES ('ACCESS_GROUP', 'Access Group
 
 INSERT INTO "person_type" ("code", "value") VALUES ('INDIVIDUAL', 'Individual');
 INSERT INTO "person_type" ("code", "value") VALUES ('PROFESSIONAL', 'Professional');
+
+INSERT INTO "contact_type" ("code", "value") VALUES ('HOME_ADDRESS', 'Home Address');
+INSERT INTO "contact_type" ("code", "value") VALUES ('OFFICIAL_ADDRESS', 'Official Address');
+INSERT INTO "contact_type" ("code", "value") VALUES ('MOBILE_PHONE_NUMBER', 'Mobile Phone Number');
+INSERT INTO "contact_type" ("code", "value") VALUES ('LAND_PHONE_NUMBER', 'Land Phone Number');
+INSERT INTO "contact_type" ("code", "value") VALUES ('OFFICIAL_EMAIL', 'Official Email');
+INSERT INTO "contact_type" ("code", "value") VALUES ('PERSONAL_EMAIL', 'Personal Email');
+
+INSERT INTO "training_status" ("code", "value") VALUES ('YES', 'Yes');
+INSERT INTO "training_status" ("code", "value") VALUES ('NO', 'No');
+
+INSERT INTO "party_relation_type" ("code", "value") VALUES ('ORGANIZATION_TO_PERSON', 'Organization To Person');
+
+INSERT INTO "record_status" ("code", "value") VALUES ('ACTIVE', 'Active');
+INSERT INTO "record_status" ("code", "value") VALUES ('PENDING', 'Pending');
+INSERT INTO "record_status" ("code", "value") VALUES ('ARCHIVED', 'Archived');
+INSERT INTO "record_status" ("code", "value") VALUES ('DELETED', 'Deleted');
 
 -- content tables
 CREATE TABLE IF NOT EXISTS "host" (
@@ -248,23 +289,25 @@ CREATE TABLE IF NOT EXISTS "device" (
 
 CREATE TABLE IF NOT EXISTS "party" (
     "party_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "party_type" TEXT NOT NULL,
+    "party_type_id" TEXT NOT NULL,
     "party_name" TEXT NOT NULL,
-    "record_status_id" INTEGER NOT NULL,
+    "record_status_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY("party_type") REFERENCES "party_type"("code")
+    FOREIGN KEY("party_type_id") REFERENCES "party_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
 CREATE TABLE IF NOT EXISTS "person" (
     "person_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "party_id" INTEGER NOT NULL,
-    "person_type" TEXT NOT NULL,
+    "person_type_id" TEXT NOT NULL,
     "person_first_name" TEXT NOT NULL,
     "person_last_name" TEXT NOT NULL,
     "record_status_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
-    FOREIGN KEY("person_type") REFERENCES "person_type"("code")
+    FOREIGN KEY("person_type_id") REFERENCES "person_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
 CREATE TABLE IF NOT EXISTS "organization" (
@@ -273,8 +316,52 @@ CREATE TABLE IF NOT EXISTS "organization" (
     "name" TEXT NOT NULL,
     "license" TEXT NOT NULL,
     "registration_date" DATE NOT NULL,
+    "record_status_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY("party_id") REFERENCES "party"("party_id")
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "contact_electronics" (
+    "contact_electronics_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "contact_type_id" TEXT NOT NULL,
+    "party_id" INTEGER NOT NULL,
+    "electronics_details" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("contact_type_id") REFERENCES "contact_type"("code"),
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "contact_land" (
+    "contact_land_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "contact_type_id" TEXT NOT NULL,
+    "party_id" INTEGER NOT NULL,
+    "address_line1" TEXT NOT NULL,
+    "address_line2" TEXT NOT NULL,
+    "address_zip" TEXT NOT NULL,
+    "address_city" TEXT NOT NULL,
+    "address_state" TEXT NOT NULL,
+    "address_country" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("contact_type_id") REFERENCES "contact_type"("code"),
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "party_relation" (
+    "party_relation_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "related_party_id" INTEGER NOT NULL,
+    "relation_type_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("related_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("relation_type_id") REFERENCES "party_relation_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
 -- no template engine lint issues
