@@ -71,6 +71,31 @@ export enum PersonType {
   PROFESSIONAL = "Professional",
 }
 
+export enum ContactType {
+  HOME_ADDRESS = "Home Address",
+  OFFICIAL_ADDRESS = "Official Address",
+  MOBILE_PHONE_NUMBER = "Mobile Phone Number",
+  LAND_PHONE_NUMBER = "Land Phone Number",
+  OFFICIAL_EMAIL = "Official Email",
+  PERSONAL_EMAIL = "Personal Email",
+}
+
+export enum OpsfolioTrainingStatus {
+  YES = "Yes",
+  NO = "No",
+}
+
+export enum PartyRelationType {
+  ORGANIZATION_TO_PERSON = "Organization To Person",
+}
+
+export enum RecordStatus {
+  ACTIVE = "Active",
+  PENDING = "Pending",
+  ARCHIVED = "Archived",
+  DELETED = "Deleted",
+}
+
 export enum AssetRiskType {
   TYPE1 = "asset risk type 1",
   TYPE2 = "asset risk type 2",
@@ -130,6 +155,30 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
+  const contactType = SQLa.enumTextTable(
+    tableName("contact_type"),
+    ContactType,
+    enumTableDefnOptions,
+  );
+
+  const opsfolioTrainingStatus = SQLa.enumTextTable(
+    tableName("training_status"),
+    OpsfolioTrainingStatus,
+    enumTableDefnOptions,
+  );
+
+  const partyRelationType = SQLa.enumTextTable(
+    tableName("party_relation_type"),
+    PartyRelationType,
+    enumTableDefnOptions,
+  );
+
+  const recordStatus = SQLa.enumTextTable(
+    tableName("record_status"),
+    RecordStatus,
+    enumTableDefnOptions,
+  );
+
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
       ${execCtx}
@@ -146,6 +195,14 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${personType}
 
+      ${contactType}
+
+      ${opsfolioTrainingStatus}
+
+      ${partyRelationType}
+
+      ${recordStatus}
+
       ${execCtx.seedDML}
 
       ${graphNature.seedDML}
@@ -158,7 +215,15 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${partyType.seedDML}
 
-      ${personType.seedDML}`;
+      ${personType.seedDML}
+
+      ${contactType.seedDML}
+
+      ${opsfolioTrainingStatus.seedDML}
+
+      ${partyRelationType.seedDML}
+
+      ${recordStatus.seedDML}`;
 
   return {
     modelsGovn: mg,
@@ -169,6 +234,9 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     securityIncidentRole,
     partyType,
     personType,
+    contactType,
+    partyRelationType,
+    recordStatus,
     seedDDL,
     exposeATC: [
       execCtx,
@@ -176,6 +244,9 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       securityIncidentRole,
       partyType,
       personType,
+      contactType,
+      partyRelationType,
+      recordStatus,
     ],
   };
 }
@@ -341,19 +412,28 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
   const party = mg.table(tableName("party"), {
     party_id: mg.primaryKey(),
-    party_type: enums.partyType.foreignKeyRef.code(),
+    party_type_id: enums.partyType.foreignKeyRef.code(),
     party_name: SQLa.text(),
-    record_status_id: SQLa.integer(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
 
   const person = mg.table(tableName("person"), {
     person_id: mg.primaryKey(),
     party_id: party.foreignKeyRef.party_id(),
-    person_type: enums.personType.foreignKeyRef.code(),
+    person_type_id: enums.personType.foreignKeyRef.code(),
     person_first_name: SQLa.text(),
     person_last_name: SQLa.text(),
-    record_status_id: SQLa.text(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    ...mg.housekeeping(),
+  });
+
+  const partyRelation = mg.table(tableName("party_relation"), {
+    party_relation_id: mg.primaryKey(),
+    party_id: party.foreignKeyRef.party_id(),
+    related_party_id: party.foreignKeyRef.party_id(),
+    relation_type_id: enums.partyRelationType.foreignKeyRef.code(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
 
@@ -363,6 +443,30 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     name: SQLa.text(),
     license: SQLa.text(),
     registration_date: SQLa.date(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    ...mg.housekeeping(),
+  });
+
+  const contactElectronics = mg.table(tableName("contact_electronics"), {
+    contact_electronics_id: mg.primaryKey(),
+    contact_type_id: enums.contactType.foreignKeyRef.code(),
+    party_id: party.foreignKeyRef.party_id(),
+    electronics_details: SQLa.text(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    ...mg.housekeeping(),
+  });
+
+  const contactLand = mg.table(tableName("contact_land"), {
+    contact_land_id: mg.primaryKey(),
+    contact_type_id: enums.contactType.foreignKeyRef.code(),
+    party_id: party.foreignKeyRef.party_id(),
+    address_line1: SQLa.text(),
+    address_line2: SQLa.text(),
+    address_zip: SQLa.text(),
+    address_city: SQLa.text(),
+    address_state: SQLa.text(),
+    address_country: SQLa.text(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
 
@@ -400,7 +504,13 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${person}
 
-      ${organization}`;
+      ${organization}
+
+      ${contactElectronics}
+
+      ${contactLand}
+
+      ${partyRelation}`;
 
   return {
     modelsGovn: mg,
@@ -421,6 +531,9 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     party,
     person,
     organization,
+    partyRelation,
+    contactElectronics,
+    contactLand,
     seedDDL,
     exposeATC: [
       host,
@@ -430,7 +543,10 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       raciMatrix,
       party,
       person,
+      partyRelation,
       organization,
+      contactElectronics,
+      contactLand,
     ],
   };
 }
