@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "asset_risk_type" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "security_incident_role" (
+CREATE TABLE IF NOT EXISTS "organization_role_type" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -53,7 +53,13 @@ CREATE TABLE IF NOT EXISTS "contact_type" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "training_status" (
+CREATE TABLE IF NOT EXISTS "training_subject" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "status_value" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -71,6 +77,72 @@ CREATE TABLE IF NOT EXISTS "record_status" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "rating_value" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "contract_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "agreement_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "risk_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "severity_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "priority_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "incident_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "incident_status" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "incident_category_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "risk_subject" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "party_role_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO "execution_context" ("code", "value") VALUES (0, 'DEVELOPMENT');
 INSERT INTO "execution_context" ("code", "value") VALUES (1, 'TEST');
 INSERT INTO "execution_context" ("code", "value") VALUES (2, 'PRODUCTION');
@@ -83,30 +155,27 @@ INSERT INTO "boundary_nature" ("code", "value") VALUES ('REGULATORY_TAX_ID', 'Re
 INSERT INTO "asset_risk_type" ("code", "value") VALUES ('TYPE1', 'asset risk type 1');
 INSERT INTO "asset_risk_type" ("code", "value") VALUES ('TYPE2', 'asset risk type 2');
 
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('PROJECT_MANAGER_TECHNOLOGY', 'Project Manager Technology');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('PROJECT_MANAGER_QUALITY', 'Project Manager Quality');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('PROJECT_MANAGER_DEVOPS', 'Project Manager DevOps');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('ASSOCIATE_MANAGER_TECHNOLOGY', 'Associated Manager Technology');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('ASSOCIATE_MANAGER_QUALITY', 'Associated Manager Technology');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('ASSOCIATE_MANAGER_DEVOPS', 'Associate Manager DevOps');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_ENGINEER_ARCHITECT', 'Senior Lead Software Engineer Architect');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_ENGINEER_ARCHITECT', 'Lead Software Engineer Architect');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_QUALITY_ENGINEER', 'Senior Lead Software Quality Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_DEVOPS_ENGINEER', 'Senior Lead Software DevOps Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_ENGINEER', 'Lead Software Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_QUALITY_ENGINEER', 'Lead Software Quality Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SOFTWARE_DEVOPS_ENGINEER', 'Lead Software DevOps Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('LEAD_SYSTEM_NETWORK_ENGINEER', 'Lead System Network Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_SOFTWARE_ENGINEER', 'Senior Software Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SENIOR_SOFTWARE_QUALITY_ENGINEER', 'Senior Software Quality Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SOFTWARE_QUALITY_ENGINEER', 'Software Quality Engineer');
-INSERT INTO "security_incident_role" ("code", "value") VALUES ('SECURITY_ENGINEER', 'Security Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('PROJECT_MANAGER_TECHNOLOGY', 'Project Manager Technology');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('PROJECT_MANAGER_QUALITY', 'Project Manager Quality');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('PROJECT_MANAGER_DEVOPS', 'Project Manager DevOps');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('ASSOCIATE_MANAGER_TECHNOLOGY', 'Associated Manager Technology');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('ASSOCIATE_MANAGER_QUALITY', 'Associated Manager Technology');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('ASSOCIATE_MANAGER_DEVOPS', 'Associate Manager DevOps');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_ENGINEER_ARCHITECT', 'Senior Lead Software Engineer Architect');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('LEAD_SOFTWARE_ENGINEER_ARCHITECT', 'Lead Software Engineer Architect');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_QUALITY_ENGINEER', 'Senior Lead Software Quality Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SENIOR_LEAD_SOFTWARE_DEVOPS_ENGINEER', 'Senior Lead Software DevOps Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('LEAD_SOFTWARE_ENGINEER', 'Lead Software Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('LEAD_SOFTWARE_QUALITY_ENGINEER', 'Lead Software Quality Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('LEAD_SOFTWARE_DEVOPS_ENGINEER', 'Lead Software DevOps Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('LEAD_SYSTEM_NETWORK_ENGINEER', 'Lead System Network Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SENIOR_SOFTWARE_ENGINEER', 'Senior Software Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SENIOR_SOFTWARE_QUALITY_ENGINEER', 'Senior Software Quality Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SOFTWARE_QUALITY_ENGINEER', 'Software Quality Engineer');
+INSERT INTO "organization_role_type" ("code", "value") VALUES ('SECURITY_ENGINEER', 'Security Engineer');
 
 INSERT INTO "party_type" ("code", "value") VALUES ('PERSON', 'Person');
-INSERT INTO "party_type" ("code", "value") VALUES ('POSITION', 'Position');
 INSERT INTO "party_type" ("code", "value") VALUES ('ORGANIZATION', 'Organization');
-INSERT INTO "party_type" ("code", "value") VALUES ('USER_LIST', 'User List');
-INSERT INTO "party_type" ("code", "value") VALUES ('ACCESS_GROUP', 'Access Group');
 
 INSERT INTO "person_type" ("code", "value") VALUES ('INDIVIDUAL', 'Individual');
 INSERT INTO "person_type" ("code", "value") VALUES ('PROFESSIONAL', 'Professional');
@@ -118,15 +187,57 @@ INSERT INTO "contact_type" ("code", "value") VALUES ('LAND_PHONE_NUMBER', 'Land 
 INSERT INTO "contact_type" ("code", "value") VALUES ('OFFICIAL_EMAIL', 'Official Email');
 INSERT INTO "contact_type" ("code", "value") VALUES ('PERSONAL_EMAIL', 'Personal Email');
 
-INSERT INTO "training_status" ("code", "value") VALUES ('YES', 'Yes');
-INSERT INTO "training_status" ("code", "value") VALUES ('NO', 'No');
+INSERT INTO "training_subject" ("code", "value") VALUES ('HIPPA', 'HIPPA');
 
+INSERT INTO "status_value" ("code", "value") VALUES ('YES', 'Yes');
+INSERT INTO "status_value" ("code", "value") VALUES ('NO', 'No');
+
+INSERT INTO "party_relation_type" ("code", "value") VALUES ('PERSON_TO_PERSON', 'Person To Person');
 INSERT INTO "party_relation_type" ("code", "value") VALUES ('ORGANIZATION_TO_PERSON', 'Organization To Person');
+INSERT INTO "party_relation_type" ("code", "value") VALUES ('ORGANIZATION_TO_ORGANIZATION', 'Organization To Organization');
 
 INSERT INTO "record_status" ("code", "value") VALUES ('ACTIVE', 'Active');
 INSERT INTO "record_status" ("code", "value") VALUES ('PENDING', 'Pending');
 INSERT INTO "record_status" ("code", "value") VALUES ('ARCHIVED', 'Archived');
 INSERT INTO "record_status" ("code", "value") VALUES ('DELETED', 'Deleted');
+
+INSERT INTO "rating_value" ("code", "value") VALUES ('ONE', '1');
+INSERT INTO "rating_value" ("code", "value") VALUES ('TWO', '2');
+INSERT INTO "rating_value" ("code", "value") VALUES ('THREE', '3');
+INSERT INTO "rating_value" ("code", "value") VALUES ('FOUR', '4');
+INSERT INTO "rating_value" ("code", "value") VALUES ('FIVE', '5');
+
+INSERT INTO "contract_type" ("code", "value") VALUES ('GENERAL_CONTRACT_FOR_SERVICES', 'General Contract for Services');
+INSERT INTO "contract_type" ("code", "value") VALUES ('EMPLOYMENT_AGREEMENT', 'Employment Agreement');
+INSERT INTO "contract_type" ("code", "value") VALUES ('NONCOMPETE_AGREEMENT', 'Noncompete Agreement');
+
+INSERT INTO "agreement_type" ("code", "value") VALUES ('VENDOR_SLA', 'Vendor SLA');
+INSERT INTO "agreement_type" ("code", "value") VALUES ('VENDOR_NDA', 'Vendor NDA');
+
+INSERT INTO "risk_type" ("code", "value") VALUES ('TECHNICAL_RISK', 'Technical Risk');
+
+INSERT INTO "severity_type" ("code", "value") VALUES ('CRITICAL', 'Critical');
+INSERT INTO "severity_type" ("code", "value") VALUES ('MAJOR', 'Major');
+INSERT INTO "severity_type" ("code", "value") VALUES ('MINOR', 'Minor');
+INSERT INTO "severity_type" ("code", "value") VALUES ('LOW', 'Low');
+
+INSERT INTO "priority_type" ("code", "value") VALUES ('HIGH', 'High');
+INSERT INTO "priority_type" ("code", "value") VALUES ('MEDIUM', 'Medium');
+INSERT INTO "priority_type" ("code", "value") VALUES ('LOW', 'Low');
+
+INSERT INTO "incident_type" ("code", "value") VALUES ('INTERNAL', 'Server Issue');
+INSERT INTO "incident_type" ("code", "value") VALUES ('EXTERNAL', 'Out of Memory');
+
+INSERT INTO "incident_status" ("code", "value") VALUES ('CLOSED', 'Closed');
+INSERT INTO "incident_status" ("code", "value") VALUES ('OPEN', 'Open');
+INSERT INTO "incident_status" ("code", "value") VALUES ('RE_OPEN', 'Reopen');
+
+INSERT INTO "incident_category_type" ("code", "value") VALUES ('TECHNICAL_RISK', 'Technical Risk');
+
+INSERT INTO "risk_subject" ("code", "value") VALUES ('TECHNICAL_RISK', 'Technical Risk');
+
+INSERT INTO "party_role_type" ("code", "value") VALUES ('CUSTOMER', 'Customer');
+INSERT INTO "party_role_type" ("code", "value") VALUES ('VENDOR', 'Vendor');
 
 -- content tables
 CREATE TABLE IF NOT EXISTS "host" (
@@ -356,11 +467,176 @@ CREATE TABLE IF NOT EXISTS "party_relation" (
     "party_id" INTEGER NOT NULL,
     "related_party_id" INTEGER NOT NULL,
     "relation_type_id" TEXT NOT NULL,
+    "party_role_id" TEXT NOT NULL,
     "record_status_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("related_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("relation_type_id") REFERENCES "party_relation_type"("code"),
+    FOREIGN KEY("party_role_id") REFERENCES "party_role_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "organization_role" (
+    "organization_role_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "person_party_id" INTEGER NOT NULL,
+    "organization_party_id" INTEGER NOT NULL,
+    "organization_role_type_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("organization_role_type_id") REFERENCES "organization_role_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "security_incident_response_team" (
+    "security_incident_response_team_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "person_party_id" INTEGER NOT NULL,
+    "organization_party_id" INTEGER NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "awareness_training" (
+    "awareness_training_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "training_subject_id" TEXT NOT NULL,
+    "person_party_id" INTEGER NOT NULL,
+    "organization_party_id" INTEGER NOT NULL,
+    "training_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("training_subject_id") REFERENCES "training_subject"("code"),
+    FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("training_status_id") REFERENCES "status_value"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "rating" (
+    "rating_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "score_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("score_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "contract" (
+    "contract_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "contract_type_id" TEXT NOT NULL,
+    "date_contract_signed" DATETIME NOT NULL,
+    "date_contract_expires" DATETIME NOT NULL,
+    "date_of_last_review" DATETIME NOT NULL,
+    "date_of_next_review" DATETIME NOT NULL,
+    "date_of_contract_review" DATETIME NOT NULL,
+    "date_of_contract_approval" DATETIME NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("contract_type_id") REFERENCES "contract_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "note" (
+    "note_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "note" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "agreement" (
+    "agreement_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "party_id" INTEGER NOT NULL,
+    "agreement_type_id" TEXT NOT NULL,
+    "signed_status_id" TEXT NOT NULL,
+    "document_path" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("agreement_type_id") REFERENCES "agreement_type"("code"),
+    FOREIGN KEY("signed_status_id") REFERENCES "status_value"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "risk_register" (
+    "risk_register_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "description" TEXT NOT NULL,
+    "risk_subject_id" TEXT NOT NULL,
+    "risk_type_id" TEXT NOT NULL,
+    "impact_to_the_organization" TEXT NOT NULL,
+    "rating_likelihood_id" TEXT NOT NULL,
+    "rating_impact_id" TEXT NOT NULL,
+    "rating_overall_risk_id" TEXT NOT NULL,
+    "control_effectivenes_controls_in_place" TEXT NOT NULL,
+    "control_effectivenes_control_effectiveness_id" TEXT NOT NULL,
+    "control_effectivenes_over_all_residual_risk_rating_id" TEXT NOT NULL,
+    "mitigation_further_actions" TEXT NOT NULL,
+    "control_monitor_mitigation_actions_tracking_strategy" TEXT NOT NULL,
+    "control_monitor_action_due_date" DATE NOT NULL,
+    "control_monitor_risk_owner_id" INTEGER NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("risk_subject_id") REFERENCES "risk_subject"("code"),
+    FOREIGN KEY("risk_type_id") REFERENCES "risk_type"("code"),
+    FOREIGN KEY("rating_likelihood_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("rating_impact_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("rating_overall_risk_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("control_effectivenes_control_effectiveness_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("control_effectivenes_over_all_residual_risk_rating_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("control_monitor_risk_owner_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "incident" (
+    "incident_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "incident_date" DATE NOT NULL,
+    "time_and_time_zone" DATETIME NOT NULL,
+    "category_id" TEXT NOT NULL,
+    "severity_id" TEXT NOT NULL,
+    "priority_id" TEXT NOT NULL,
+    "internal_or_external_id" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "it_service_impacted" TEXT NOT NULL,
+    "impacted_modules" TEXT NOT NULL,
+    "impacted_dept" TEXT NOT NULL,
+    "reported_by_id" INTEGER NOT NULL,
+    "reported_to_id" INTEGER NOT NULL,
+    "brief_description" TEXT NOT NULL,
+    "detailed_description" TEXT NOT NULL,
+    "assigned_to_id" INTEGER NOT NULL,
+    "assigned_date" DATE NOT NULL,
+    "investigation_details" TEXT NOT NULL,
+    "containment_details" TEXT NOT NULL,
+    "eradication_details" TEXT NOT NULL,
+    "bussiness_impact" TEXT NOT NULL,
+    "lessons_learned" TEXT NOT NULL,
+    "status_id" TEXT NOT NULL,
+    "closed_date" DATE NOT NULL,
+    "feedback_from_business" TEXT NOT NULL,
+    "reported_to_regulatory" TEXT NOT NULL,
+    "report_date" DATE NOT NULL,
+    "report_time" DATETIME NOT NULL,
+    "record_status_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("category_id") REFERENCES "incident_category_type"("code"),
+    FOREIGN KEY("severity_id") REFERENCES "severity_type"("code"),
+    FOREIGN KEY("priority_id") REFERENCES "priority_type"("code"),
+    FOREIGN KEY("internal_or_external_id") REFERENCES "incident_type"("code"),
+    FOREIGN KEY("reported_by_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("reported_to_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("assigned_to_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("status_id") REFERENCES "incident_status"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 

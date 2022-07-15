@@ -38,7 +38,7 @@
       created_at: DATETIME
   }
 
-  entity "security_incident_role" as security_incident_role {
+  entity "organization_role_type" as organization_role_type {
     * **code**: TEXT
     --
     * value: TEXT
@@ -74,6 +74,97 @@
   }
 
   entity "record_status" as record_status {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "training_subject" as training_subject {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "status_value" as status_value {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "rating_value" as rating_value {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "contract_type" as contract_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "agreement_type" as agreement_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "risk_type" as risk_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "severity_type" as severity_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "priority_type" as priority_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "incident_type" as incident_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "incident_status" as incident_status {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "incident_category_type" as incident_category_type {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "risk_subject" as risk_subject {
+    * **code**: TEXT
+    --
+    * value: TEXT
+      created_at: DATETIME
+  }
+
+  entity "party_role_type" as party_role_type {
     * **code**: TEXT
     --
     * value: TEXT
@@ -281,6 +372,7 @@
     * party_id: INTEGER <<FK(party)>>
     * related_party_id: INTEGER <<FK(party)>>
     * relation_type_id: TEXT <<ENUM(party_relation_type)>>
+    * party_role_id: TEXT <<ENUM(party_role_type)>>
     * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
   }
@@ -310,6 +402,116 @@
       created_at: DATETIME
   }
 
+  entity "organization_role" as organization_role {
+    * **organization_role_id**: INTEGER
+    --
+    * person_party_id: INTEGER <<FK(party)>>
+    * organization_party_id: INTEGER <<FK(party)>>
+    * organization_role_type_id: TEXT <<ENUM(organization_role_type)>>
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
+  entity "rating" as rating {
+    * **rating_id**: INTEGER
+    --
+    * party_id: INTEGER <<FK(party)>>
+    * score_id: TEXT <<ENUM(rating_value)>>
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
+  entity "contract" as contract {
+    * **contract_id**: INTEGER
+    --
+    * party_id: INTEGER <<FK(party)>>
+    * contract_type_id: TEXT <<ENUM(contract_type)>>
+    * date_contract_signed: DATETIME
+    * date_contract_expires: DATETIME
+    * date_of_last_review: DATETIME
+    * date_of_next_review: DATETIME
+    * date_of_contract_review: DATETIME
+    * date_of_contract_approval: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
+  entity "note" as note {
+    * **note_id**: INTEGER
+    --
+    * party_id: INTEGER <<FK(party)>>
+    * note: TEXT
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
+  entity "agreement" as agreement {
+    * **agreement_id**: INTEGER
+    --
+    * party_id: INTEGER <<FK(party)>>
+    * agreement_type_id: TEXT <<ENUM(agreement_type)>>
+    * signed_status_id: TEXT <<ENUM(status_value)>>
+    * document_path: TEXT
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
+  entity "risk_register" as risk_register {
+    * **risk_register_id**: INTEGER
+    --
+    * description: TEXT
+    * risk_subject_id: TEXT <<ENUM(risk_subject)>>
+    * risk_type_id: TEXT <<ENUM(risk_type)>>
+    * impact_to_the_organization: TEXT
+    * rating_likelihood_id: TEXT <<ENUM(rating_value)>>
+    * rating_impact_id: TEXT <<ENUM(rating_value)>>
+    * rating_overall_risk_id: TEXT <<ENUM(rating_value)>>
+    * control_effectivenes_controls_in_place: TEXT
+    * control_effectivenes_control_effectiveness_id: TEXT <<ENUM(rating_value)>>
+    * control_effectivenes_over_all_residual_risk_rating_id: TEXT <<ENUM(rating_value)>>
+    * mitigation_further_actions: TEXT
+    * control_monitor_mitigation_actions_tracking_strategy: TEXT
+    * control_monitor_action_due_date: DATE
+    * control_monitor_risk_owner_id: INTEGER <<FK(party)>>
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
+  entity "incident" as incident {
+    * **incident_id**: INTEGER
+    --
+    * title: TEXT
+    * incident_date: DATE
+    * time_and_time_zone: DATETIME
+    * category_id: TEXT <<ENUM(incident_category_type)>>
+    * severity_id: TEXT <<ENUM(severity_type)>>
+    * priority_id: TEXT <<ENUM(priority_type)>>
+    * internal_or_external_id: TEXT <<ENUM(incident_type)>>
+    * location: TEXT
+    * it_service_impacted: TEXT
+    * impacted_modules: TEXT
+    * impacted_dept: TEXT
+    * reported_by_id: INTEGER <<FK(party)>>
+    * reported_to_id: INTEGER <<FK(party)>>
+    * brief_description: TEXT
+    * detailed_description: TEXT
+    * assigned_to_id: INTEGER <<FK(party)>>
+    * assigned_date: DATE
+    * investigation_details: TEXT
+    * containment_details: TEXT
+    * eradication_details: TEXT
+    * bussiness_impact: TEXT
+    * lessons_learned: TEXT
+    * status_id: TEXT <<ENUM(incident_status)>>
+    * closed_date: DATE
+    * feedback_from_business: TEXT
+    * reported_to_regulatory: TEXT
+    * report_date: DATE
+    * report_time: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+      created_at: DATETIME
+  }
+
   graph_nature |o..o| graph
   boundary |o..o{ boundary
   graph |o..o{ boundary
@@ -327,6 +529,7 @@
   party |o..o{ party_relation
   party |o..o{ party_relation
   party_relation_type |o..o| party_relation
+  party_role_type |o..o| party_relation
   record_status |o..o| party_relation
   contact_type |o..o| contact_electronics
   party |o..o{ contact_electronics
@@ -334,4 +537,38 @@
   contact_type |o..o| contact_land
   party |o..o{ contact_land
   record_status |o..o| contact_land
+  party |o..o{ organization_role
+  party |o..o{ organization_role
+  organization_role_type |o..o| organization_role
+  record_status |o..o| organization_role
+  party |o..o{ rating
+  rating_value |o..o| rating
+  record_status |o..o| rating
+  party |o..o{ contract
+  contract_type |o..o| contract
+  record_status |o..o| contract
+  party |o..o{ note
+  record_status |o..o| note
+  party |o..o{ agreement
+  agreement_type |o..o| agreement
+  status_value |o..o| agreement
+  record_status |o..o| agreement
+  risk_subject |o..o| risk_register
+  risk_type |o..o| risk_register
+  rating_value |o..o| risk_register
+  rating_value |o..o| risk_register
+  rating_value |o..o| risk_register
+  rating_value |o..o| risk_register
+  rating_value |o..o| risk_register
+  party |o..o{ risk_register
+  record_status |o..o| risk_register
+  incident_category_type |o..o| incident
+  severity_type |o..o| incident
+  priority_type |o..o| incident
+  incident_type |o..o| incident
+  party |o..o{ incident
+  party |o..o{ incident
+  party |o..o{ incident
+  incident_status |o..o| incident
+  record_status |o..o| incident
 @enduml

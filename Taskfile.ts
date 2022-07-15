@@ -195,7 +195,7 @@ export class Tasks extends t.EventEmitter<{
       const pumlDestFile = "support/docs/models.puml";
       const puml = models.plantUmlIE(SQLa.typicalSqlEmitContext(), "models");
       await Deno.writeTextFile(pumlDestFile, puml);
-      dzx.$
+      await dzx.$
         `java -jar ${sandbox.plantUML.localJarPathAndName} -svg ${pumlDestFile}`;
     });
 
