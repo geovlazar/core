@@ -1072,11 +1072,13 @@ export function models<Context extends SQLa.SqlEmitContext>(
         sqlD.typicalPlantUmlIeOptions({
           ...ents.modelsGovn.erdConfig,
           diagramName,
+          // because showing enum relationships can get "noisy", don't add enum
+          // entities or edge connections for enums
+          includeEntity: (entity) =>
+            SQLa.isEnumTableDefn(entity) ? false : true,
           relationshipIndicator: (edge) => {
             const refIsEnum = SQLa.isEnumTableDefn(edge.ref.entity);
             // Relationship types ref: https://plantuml.com/es/ie-diagram
-            // because showing enum relationships can get "noisy", don't add edge
-            // connections for enums
             return refIsEnum ? false : "|o..o{";
           },
         }),
