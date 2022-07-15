@@ -512,63 +512,24 @@
       created_at: DATETIME
   }
 
-  graph_nature |o..o| graph
   boundary |o..o{ boundary
   graph |o..o{ boundary
-  boundary_nature |o..o| boundary
   host |o..o{ host_boundary
   boundary |o..o{ host_boundary
-  asset_risk_type |o..o| asset_risk
-  party_type |o..o| party
-  record_status |o..o| party
   party |o..o{ person
-  person_type |o..o| person
-  record_status |o..o| person
   party |o..o{ organization
-  record_status |o..o| organization
   party |o..o{ party_relation
   party |o..o{ party_relation
-  party_relation_type |o..o| party_relation
-  party_role_type |o..o| party_relation
-  record_status |o..o| party_relation
-  contact_type |o..o| contact_electronics
   party |o..o{ contact_electronics
-  record_status |o..o| contact_electronics
-  contact_type |o..o| contact_land
   party |o..o{ contact_land
-  record_status |o..o| contact_land
   party |o..o{ organization_role
   party |o..o{ organization_role
-  organization_role_type |o..o| organization_role
-  record_status |o..o| organization_role
   party |o..o{ rating
-  rating_value |o..o| rating
-  record_status |o..o| rating
   party |o..o{ contract
-  contract_type |o..o| contract
-  record_status |o..o| contract
   party |o..o{ note
-  record_status |o..o| note
   party |o..o{ agreement
-  agreement_type |o..o| agreement
-  status_value |o..o| agreement
-  record_status |o..o| agreement
-  risk_subject |o..o| risk_register
-  risk_type |o..o| risk_register
-  rating_value |o..o| risk_register
-  rating_value |o..o| risk_register
-  rating_value |o..o| risk_register
-  rating_value |o..o| risk_register
-  rating_value |o..o| risk_register
   party |o..o{ risk_register
-  record_status |o..o| risk_register
-  incident_category_type |o..o| incident
-  severity_type |o..o| incident
-  priority_type |o..o| incident
-  incident_type |o..o| incident
   party |o..o{ incident
   party |o..o{ incident
   party |o..o{ incident
-  incident_status |o..o| incident
-  record_status |o..o| incident
 @enduml

@@ -1070,8 +1070,15 @@ export function models<Context extends SQLa.SqlEmitContext>(
           }
         },
         sqlD.typicalPlantUmlIeOptions({
-          diagramName,
           ...ents.modelsGovn.erdConfig,
+          diagramName,
+          relationshipIndicator: (edge) => {
+            const refIsEnum = SQLa.isEnumTableDefn(edge.ref.entity);
+            // Relationship types ref: https://plantuml.com/es/ie-diagram
+            // because showing enum relationships can get "noisy", don't add edge
+            // connections for enums
+            return refIsEnum ? false : "|o..o{";
+          },
         }),
       ),
   };
