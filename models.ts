@@ -35,7 +35,7 @@ export enum ExecutionContext {
   PRODUCTION,
 }
 
-export enum SecurityIncidentRole {
+export enum OrganizationRoleType {
   PROJECT_MANAGER_TECHNOLOGY = "Project Manager Technology",
   PROJECT_MANAGER_QUALITY = "Project Manager Quality",
   PROJECT_MANAGER_DEVOPS = "Project Manager DevOps",
@@ -60,10 +60,24 @@ export enum SecurityIncidentRole {
 
 export enum PartyType {
   PERSON = "Person",
-  POSITION = "Position",
   ORGANIZATION = "Organization",
-  USER_LIST = "User List",
-  ACCESS_GROUP = "Access Group",
+}
+
+// Reference URL: https://docs.oracle.com/cd/E29633_01/CDMRF/GUID-F52E49F4-AE6F-4FF5-8EEB-8366A66AF7E9.htm
+// TODO:- [ ] increase number of entries by refering more examples
+
+export enum PartyRole {
+  CUSTOMER = "Customer",
+  VENDOR = "Vendor",
+}
+
+// Reference URL: https://docs.oracle.com/cd/E63029_01/books/Secur/secur_accesscontrol022.htm
+// TODO:- [ ] increase number of entries by refering more examples
+
+export enum PartyRelationType {
+  PERSON_TO_PERSON = "Person To Person",
+  ORGANIZATION_TO_PERSON = "Organization To Person",
+  ORGANIZATION_TO_ORGANIZATION = "Organization To Organization",
 }
 
 export enum PersonType {
@@ -80,14 +94,20 @@ export enum ContactType {
   PERSONAL_EMAIL = "Personal Email",
 }
 
-export enum OpsfolioTrainingStatus {
+// TODO:- [ ] Enhance by referring UDM
+
+export enum TrainingSubject {
+  HIPPA = "HIPPA",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum StatusValues {
   YES = "Yes",
   NO = "No",
 }
 
-export enum PartyRelationType {
-  ORGANIZATION_TO_PERSON = "Organization To Person",
-}
+// TODO:- [ ] Enhance by referring UDM
 
 export enum RecordStatus {
   ACTIVE = "Active",
@@ -95,6 +115,85 @@ export enum RecordStatus {
   ARCHIVED = "Archived",
   DELETED = "Deleted",
 }
+
+// TODO:- [ ] Enhance by referring UDM
+// TODO:- [ ] Need to change RatingScore to  RatingValue if no other UDM found other than Schema.org
+// https://schema.org/ratingValue
+
+export enum RatingScore {
+  ONE = "1",
+  TWO = "2",
+  THREE = "3",
+  FOUR = "4",
+  FIVE = "5",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum ContractType {
+  GENERAL_CONTRACT_FOR_SERVICES = "General Contract for Services",
+  EMPLOYMENT_AGREEMENT = "Employment Agreement",
+  NONCOMPETE_AGREEMENT = "Noncompete Agreement",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum RiskType {
+  TECHNICAL_RISK = "Technical Risk",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum SeverityType {
+  CRITICAL = "Critical",
+  MAJOR = "Major",
+  MINOR = "Minor",
+  LOW = "Low",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum PriorityType {
+  HIGH = "High",
+  MEDIUM = "Medium",
+  LOW = "Low",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum IncidentCategoryType {
+  TECHNICAL_RISK = "Technical Risk",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum IncidentType {
+  INTERNAL = "Server Issue",
+  EXTERNAL = "Out of Memory",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum IncidentStatus {
+  CLOSED = "Closed",
+  OPEN = "Open",
+  RE_OPEN = "Reopen",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum AgreementType {
+  VENDOR_SLA = "Vendor SLA",
+  VENDOR_NDA = "Vendor NDA",
+}
+
+// TODO:- [ ] Enhance by referring UDM
+
+export enum RiskSubject {
+  TECHNICAL_RISK = "Technical Risk",
+}
+
+// TODO:- [ ] Enhance by referring UDM
 
 export enum AssetRiskType {
   TYPE1 = "asset risk type 1",
@@ -122,24 +221,28 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     ExecutionContext,
     enumTableDefnOptions,
   );
+
   const graphNature = SQLa.enumTextTable(
     tableName("graph_nature"),
     GraphNature,
     enumTableDefnOptions,
   );
+
   const boundaryNature = SQLa.enumTextTable(
     tableName("boundary_nature"),
     BoundaryNature,
     enumTableDefnOptions,
   );
+
   const assetRiskType = SQLa.enumTextTable(
     tableName("asset_risk_type"),
     AssetRiskType,
     enumTableDefnOptions,
   );
-  const securityIncidentRole = SQLa.enumTextTable(
-    tableName("security_incident_role"),
-    SecurityIncidentRole,
+
+  const organizationRoleType = SQLa.enumTextTable(
+    tableName("organization_role_type"),
+    OrganizationRoleType,
     enumTableDefnOptions,
   );
 
@@ -161,9 +264,15 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
-  const opsfolioTrainingStatus = SQLa.enumTextTable(
-    tableName("training_status"),
-    OpsfolioTrainingStatus,
+  const trainingSubject = SQLa.enumTextTable(
+    tableName("training_subject"),
+    TrainingSubject,
+    enumTableDefnOptions,
+  );
+
+  const statusValues = SQLa.enumTextTable(
+    tableName("status_value"),
+    StatusValues,
     enumTableDefnOptions,
   );
 
@@ -179,6 +288,71 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
+  const ratingScore = SQLa.enumTextTable(
+    tableName("rating_value"),
+    RatingScore,
+    enumTableDefnOptions,
+  );
+
+  const contractType = SQLa.enumTextTable(
+    tableName("contract_type"),
+    ContractType,
+    enumTableDefnOptions,
+  );
+
+  const agreementType = SQLa.enumTextTable(
+    tableName("agreement_type"),
+    AgreementType,
+    enumTableDefnOptions,
+  );
+
+  const riskType = SQLa.enumTextTable(
+    tableName("risk_type"),
+    RiskType,
+    enumTableDefnOptions,
+  );
+
+  const severityType = SQLa.enumTextTable(
+    tableName("severity_type"),
+    SeverityType,
+    enumTableDefnOptions,
+  );
+
+  const priorityType = SQLa.enumTextTable(
+    tableName("priority_type"),
+    PriorityType,
+    enumTableDefnOptions,
+  );
+
+  const incidentType = SQLa.enumTextTable(
+    tableName("incident_type"),
+    IncidentType,
+    enumTableDefnOptions,
+  );
+
+  const incidentStatus = SQLa.enumTextTable(
+    tableName("incident_status"),
+    IncidentStatus,
+    enumTableDefnOptions,
+  );
+
+  const incidentCategoryType = SQLa.enumTextTable(
+    tableName("incident_category_type"),
+    IncidentCategoryType,
+    enumTableDefnOptions,
+  );
+
+  const riskSubject = SQLa.enumTextTable(
+    tableName("risk_subject"),
+    RiskSubject,
+    enumTableDefnOptions,
+  );
+
+  const partyRole = SQLa.enumTextTable(
+    tableName("party_role_type"),
+    PartyRole,
+    enumTableDefnOptions,
+  );
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
       ${execCtx}
@@ -189,7 +363,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${assetRiskType}
 
-      ${securityIncidentRole}
+      ${organizationRoleType}
 
       ${partyType}
 
@@ -197,11 +371,35 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${contactType}
 
-      ${opsfolioTrainingStatus}
+      ${trainingSubject}
+
+      ${statusValues}
 
       ${partyRelationType}
 
       ${recordStatus}
+
+      ${ratingScore}
+
+      ${contractType}
+
+      ${agreementType}
+
+      ${riskType}
+
+      ${severityType}
+
+      ${priorityType}
+
+      ${incidentType}
+
+      ${incidentStatus}
+
+      ${incidentCategoryType}
+
+      ${riskSubject}
+
+      ${partyRole}
 
       ${execCtx.seedDML}
 
@@ -211,7 +409,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${assetRiskType.seedDML}
 
-      ${securityIncidentRole.seedDML}
+      ${organizationRoleType.seedDML}
 
       ${partyType.seedDML}
 
@@ -219,11 +417,35 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${contactType.seedDML}
 
-      ${opsfolioTrainingStatus.seedDML}
+      ${trainingSubject.seedDML}
+
+      ${statusValues.seedDML}
 
       ${partyRelationType.seedDML}
 
-      ${recordStatus.seedDML}`;
+      ${recordStatus.seedDML}
+
+      ${ratingScore.seedDML}
+
+      ${contractType.seedDML}
+
+      ${agreementType.seedDML}
+
+      ${riskType.seedDML}
+
+      ${severityType.seedDML}
+
+      ${priorityType.seedDML}
+
+      ${incidentType.seedDML}
+
+      ${incidentStatus.seedDML}
+
+      ${incidentCategoryType.seedDML}
+
+      ${riskSubject.seedDML}
+
+      ${partyRole.seedDML}`;
 
   return {
     modelsGovn: mg,
@@ -231,22 +453,48 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     graphNature,
     boundaryNature,
     assetRiskType,
-    securityIncidentRole,
+    organizationRoleType,
     partyType,
     personType,
     contactType,
     partyRelationType,
     recordStatus,
+    trainingSubject,
+    statusValues,
+    ratingScore,
+    contractType,
+    agreementType,
+    riskType,
+    severityType,
+    priorityType,
+    incidentType,
+    incidentStatus,
+    incidentCategoryType,
+    riskSubject,
+    partyRole,
     seedDDL,
     exposeATC: [
       execCtx,
       assetRiskType,
-      securityIncidentRole,
+      organizationRoleType,
       partyType,
       personType,
       contactType,
       partyRelationType,
       recordStatus,
+      trainingSubject,
+      statusValues,
+      ratingScore,
+      contractType,
+      agreementType,
+      riskType,
+      severityType,
+      priorityType,
+      incidentType,
+      incidentStatus,
+      incidentCategoryType,
+      riskSubject,
+      partyRole,
     ],
   };
 }
@@ -371,6 +619,10 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
+  // TODO:- [ ] Enhance by referring UDM
+  // Found another model in UDM as TimeEntry
+  // https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+
   const timesheet = mg.table(tableName("timesheet"), {
     timesheet_id: mg.primaryKey(),
     time_hour: SQLa.integer(),
@@ -379,6 +631,10 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     end_time: SQLa.text(),
     ...mg.housekeeping(),
   });
+
+  // TODO:- [ ] Enhance by referring UDM
+  // Found another model in UDM as DigitalCertificate
+  // https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
 
   const certificate = mg.table(tableName("certificate"), {
     certificate_id: mg.primaryKey(),
@@ -428,11 +684,14 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
+  // Reference URL:  https://docs.oracle.com/cd/E29633_01/CDMRF/GUID-F52E49F4-AE6F-4FF5-8EEB-8366A66AF7E9.htm
+
   const partyRelation = mg.table(tableName("party_relation"), {
     party_relation_id: mg.primaryKey(),
     party_id: party.foreignKeyRef.party_id(),
     related_party_id: party.foreignKeyRef.party_id(),
     relation_type_id: enums.partyRelationType.foreignKeyRef.code(),
+    party_role_id: enums.partyRole.foreignKeyRef.code(),
     record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
@@ -443,6 +702,15 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     name: SQLa.text(),
     license: SQLa.text(),
     registration_date: SQLa.date(),
+    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    ...mg.housekeeping(),
+  });
+
+  const organizationRole = mg.table(tableName("organization_role"), {
+    organization_role_id: mg.primaryKey(),
+    person_party_id: party.foreignKeyRef.party_id(),
+    organization_party_id: party.foreignKeyRef.party_id(),
+    organization_role_type_id: enums.organizationRoleType.foreignKeyRef.code(),
     record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
@@ -469,6 +737,150 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
+
+  const securityIncidentResponseTeam = mg.table(
+    tableName("security_incident_response_team"),
+    {
+      security_incident_response_team_id: mg.primaryKey(),
+      person_party_id: party.foreignKeyRef.party_id(),
+      organization_party_id: party.foreignKeyRef.party_id(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  const awarenessTraining = mg.table(
+    tableName("awareness_training"),
+    {
+      awareness_training_id: mg.primaryKey(),
+      training_subject_id: enums.trainingSubject.foreignKeyRef.code(),
+      person_party_id: party.foreignKeyRef.party_id(),
+      organization_party_id: party.foreignKeyRef.party_id(),
+      training_status_id: enums.statusValues.foreignKeyRef.code(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  // TODO:- [ ] Need to enhance this model from UDM or https://schema.org/Rating
+
+  const rating = mg.table(
+    tableName("rating"),
+    {
+      rating_id: mg.primaryKey(),
+      party_id: party.foreignKeyRef.party_id(),
+      score_id: enums.ratingScore.foreignKeyRef.code(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  const notes = mg.table(
+    tableName("note"),
+    {
+      note_id: mg.primaryKey(),
+      party_id: party.foreignKeyRef.party_id(),
+      note: SQLa.text(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  // TODO: Need to enhance this model from https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+
+  const contract = mg.table(
+    tableName("contract"),
+    {
+      contract_id: mg.primaryKey(),
+      party_id: party.foreignKeyRef.party_id(),
+      contract_type_id: enums.contractType.foreignKeyRef.code(),
+      date_contract_signed: SQLa.dateTime(),
+      date_contract_expires: SQLa.dateTime(),
+      date_of_last_review: SQLa.dateTime(),
+      date_of_next_review: SQLa.dateTime(),
+      date_of_contract_review: SQLa.dateTime(),
+      date_of_contract_approval: SQLa.dateTime(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  // TODO: Need to combine this model with contract model (According to UDM agreement is similar to contract)
+
+  const agreement = mg.table(
+    tableName("agreement"),
+    {
+      agreement_id: mg.primaryKey(),
+      party_id: party.foreignKeyRef.party_id(),
+      agreement_type_id: enums.agreementType.foreignKeyRef.code(),
+      signed_status_id: enums.statusValues.foreignKeyRef.code(),
+      document_path: SQLa.text(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  const riskRegister = mg.table(
+    tableName("risk_register"),
+    {
+      risk_register_id: mg.primaryKey(),
+      description: SQLa.text(),
+      risk_subject_id: enums.riskSubject.foreignKeyRef.code(),
+      risk_type_id: enums.riskType.foreignKeyRef.code(),
+      impact_to_the_organization: SQLa.text(),
+      rating_likelihood_id: enums.ratingScore.foreignKeyRef.code(),
+      rating_impact_id: enums.ratingScore.foreignKeyRef.code(),
+      rating_overall_risk_id: enums.ratingScore.foreignKeyRef.code(),
+      control_effectivenes_controls_in_place: SQLa.text(),
+      control_effectivenes_control_effectiveness_id: enums.ratingScore
+        .foreignKeyRef.code(),
+      control_effectivenes_over_all_residual_risk_rating_id: enums.ratingScore
+        .foreignKeyRef.code(),
+      mitigation_further_actions: SQLa.text(),
+      control_monitor_mitigation_actions_tracking_strategy: SQLa.text(),
+      control_monitor_action_due_date: SQLa.date(),
+      control_monitor_risk_owner_id: party.foreignKeyRef.party_id(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  const incident = mg.table(
+    tableName("incident"),
+    {
+      incident_id: mg.primaryKey(),
+      title: SQLa.text(),
+      incident_date: SQLa.date(),
+      time_and_time_zone: SQLa.dateTime(),
+      category_id: enums.incidentCategoryType.foreignKeyRef.code(),
+      severity_id: enums.severityType.foreignKeyRef.code(),
+      priority_id: enums.priorityType.foreignKeyRef.code(),
+      internal_or_external_id: enums.incidentType.foreignKeyRef.code(),
+      location: SQLa.text(),
+      it_service_impacted: SQLa.text(),
+      impacted_modules: SQLa.text(),
+      impacted_dept: SQLa.text(),
+      reported_by_id: party.foreignKeyRef.party_id(),
+      reported_to_id: party.foreignKeyRef.party_id(),
+      brief_description: SQLa.text(),
+      detailed_description: SQLa.text(),
+      assigned_to_id: party.foreignKeyRef.party_id(),
+      assigned_date: SQLa.date(),
+      investigation_details: SQLa.text(),
+      containment_details: SQLa.text(),
+      eradication_details: SQLa.text(),
+      bussiness_impact: SQLa.text(),
+      lessons_learned: SQLa.text(),
+      status_id: enums.incidentStatus.foreignKeyRef.code(),
+      closed_date: SQLa.date(),
+      feedback_from_business: SQLa.text(),
+      reported_to_regulatory: SQLa.text(),
+      report_date: SQLa.date(),
+      report_time: SQLa.dateTime(),
+      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
 
   // deno-fmt-ignore
   const seedDDL = SQLa.SQL<Context>(ddlOptions)`
@@ -510,7 +922,25 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${contactLand}
 
-      ${partyRelation}`;
+      ${partyRelation}
+
+      ${organizationRole}
+
+      ${securityIncidentResponseTeam}
+
+      ${awarenessTraining}
+
+      ${rating}
+
+      ${contract}
+
+      ${notes}
+
+      ${agreement}
+
+      ${riskRegister}
+
+      ${incident}`;
 
   return {
     modelsGovn: mg,
@@ -534,6 +964,13 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     partyRelation,
     contactElectronics,
     contactLand,
+    organizationRole,
+    rating,
+    contract,
+    notes,
+    agreement,
+    riskRegister,
+    incident,
     seedDDL,
     exposeATC: [
       host,
@@ -547,6 +984,13 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       organization,
       contactElectronics,
       contactLand,
+      organizationRole,
+      rating,
+      contract,
+      notes,
+      agreement,
+      riskRegister,
+      incident,
     ],
   };
 }
