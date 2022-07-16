@@ -15,6 +15,7 @@
     --
     * host_name: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "graph" as graph {
@@ -24,6 +25,7 @@
     * name: TEXT
       description: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "boundary" as boundary {
@@ -34,6 +36,7 @@
     * boundary_nature_id: TEXT <<ENUM(boundary_nature)>>
     * name: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "host_boundary" as host_boundary {
@@ -42,6 +45,7 @@
     * host_id: INTEGER <<FK(host)>>
     * boundary_id: INTEGER <<FK(boundary)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "raci_matrix" as raci_matrix {
@@ -53,6 +57,7 @@
     * consulted: TEXT
     * informed: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "asset_risk" as asset_risk {
@@ -65,6 +70,7 @@
     * likelihood: TEXT
     * impact: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "vulnerability" as vulnerability {
@@ -81,6 +87,7 @@
     * tags: TEXT
     * description: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "threat_source" as threat_source {
@@ -95,6 +102,7 @@
     * targeting: TEXT
     * description: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "threat_event" as threat_event {
@@ -107,6 +115,7 @@
     * source_of_information: TEXT
     * description: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "billing" as billing {
@@ -119,6 +128,7 @@
     * effective_to_date: TEXT
     * prorate: INTEGER
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "scheduled_task" as scheduled_task {
@@ -130,6 +140,7 @@
     * assigned_to: TEXT
     * reminder_to: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "timesheet" as timesheet {
@@ -140,6 +151,7 @@
     * start_time: TEXT
     * end_time: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "certificate" as certificate {
@@ -156,6 +168,7 @@
     * key_size: INTEGER
     * path: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "device" as device {
@@ -172,6 +185,7 @@
     * purpose: TEXT
     * description: TEXT
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "party" as party {
@@ -179,8 +193,8 @@
     --
     * party_type_id: TEXT <<ENUM(party_type)>>
     * party_name: TEXT
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "person" as person {
@@ -190,8 +204,8 @@
     * person_type_id: TEXT <<ENUM(person_type)>>
     * person_first_name: TEXT
     * person_last_name: TEXT
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "organization" as organization {
@@ -201,8 +215,8 @@
     * name: TEXT
     * license: TEXT
     * registration_date: DATE
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "party_relation" as party_relation {
@@ -212,8 +226,8 @@
     * related_party_id: INTEGER <<FK(party)>>
     * relation_type_id: TEXT <<ENUM(party_relation_type)>>
     * party_role_id: TEXT <<ENUM(party_role_type)>>
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "contact_electronics" as contact_electronics {
@@ -222,8 +236,8 @@
     * contact_type_id: TEXT <<ENUM(contact_type)>>
     * party_id: INTEGER <<FK(party)>>
     * electronics_details: TEXT
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "contact_land" as contact_land {
@@ -237,8 +251,8 @@
     * address_city: TEXT
     * address_state: TEXT
     * address_country: TEXT
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "organization_role" as organization_role {
@@ -247,8 +261,8 @@
     * person_party_id: INTEGER <<FK(party)>>
     * organization_party_id: INTEGER <<FK(party)>>
     * organization_role_type_id: TEXT <<ENUM(organization_role_type)>>
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "rating" as rating {
@@ -256,8 +270,8 @@
     --
     * party_id: INTEGER <<FK(party)>>
     * score_id: TEXT <<ENUM(rating_value)>>
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "contract" as contract {
@@ -271,8 +285,8 @@
     * date_of_next_review: DATETIME
     * date_of_contract_review: DATETIME
     * date_of_contract_approval: DATETIME
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "note" as note {
@@ -280,8 +294,8 @@
     --
     * party_id: INTEGER <<FK(party)>>
     * note: TEXT
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "agreement" as agreement {
@@ -291,8 +305,8 @@
     * agreement_type_id: TEXT <<ENUM(agreement_type)>>
     * signed_status_id: TEXT <<ENUM(status_value)>>
     * document_path: TEXT
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "risk_register" as risk_register {
@@ -312,8 +326,8 @@
     * control_monitor_mitigation_actions_tracking_strategy: TEXT
     * control_monitor_action_due_date: DATE
     * control_monitor_risk_owner_id: INTEGER <<FK(party)>>
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   entity "incident" as incident {
@@ -347,8 +361,8 @@
     * reported_to_regulatory: TEXT
     * report_date: DATE
     * report_time: DATETIME
-    * record_status_id: TEXT <<ENUM(record_status)>>
       created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
   boundary |o..o{ boundary

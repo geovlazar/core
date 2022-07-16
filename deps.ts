@@ -11,7 +11,6 @@ export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/
 export * as rflDiscoverFS from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/fs/discover.ts";
 export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/sql/mod.ts";
 export * as rflSQLa from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/sql/render/mod.ts";
-export * as rflSqlTypical from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/sql/models/typical.ts";
 export * as rflSqlShellTask from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/sql/shell/task.ts";
 export * as rflSqlDiagram from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/sql/diagram/mod.ts";
 export * as rflSqlOsQuery from "https://raw.githubusercontent.com/resFactory/factory/v0.11.5/lib/sql/shell/osquery.ts";

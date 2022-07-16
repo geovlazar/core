@@ -3,31 +3,15 @@ import {
   rflSQLa as SQLa,
   rflSqlDiagram as sqlD,
   rflSqlOsQuery as osQ,
-  rflSqlTypical as SQLaTyp,
 } from "./deps.ts";
+import * as govn from "./governance.ts";
+import { enumTableDefnOptions, tableName } from "./governance.ts";
 
 // TODO:
 // - [ ] increase number of enums for proper typing of lookups
 // - [ ] strongly type all text to ints/date/etc. where necessary
 // - [ ] convert relevant legacy Opsfolio Drupal CTVs to SQLa entities
 // - [ ] convert relevant legacy IGS Operations Portfolio Specification (OPS) repo models to SQLa entities
-
-// TODO: introduce Party, Person, etc. "typical" tables so in case "graph",
-// "boundary", etc. are not as useful. Better to leave data models general
-// instead of using Party or other universal models?
-
-/**
- * All our table names should be strongly typed and consistent. Generics are
- * used so that they are passed into Axiom, SQLa domain, etc. properly typed.
- * @param name the name of the table
- * @returns the transformed table name (e.g. in case prefixes should be added)
- */
-export function tableName<Name extends string, Qualified extends string = Name>(
-  name: Name,
-): Qualified {
-  // for now we're not doing anything special but that could change in future
-  return name as unknown as Qualified;
-}
 
 export enum ExecutionContext {
   DEVELOPMENT,
@@ -105,15 +89,6 @@ export enum TrainingSubject {
 export enum StatusValues {
   YES = "Yes",
   NO = "No",
-}
-
-// TODO:- [ ] Enhance by referring UDM
-
-export enum RecordStatus {
-  ACTIVE = "Active",
-  PENDING = "Pending",
-  ARCHIVED = "Archived",
-  DELETED = "Deleted",
 }
 
 // TODO:- [ ] Enhance by referring UDM
@@ -214,147 +189,140 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
   },
 ) {
-  const mg = SQLaTyp.typicalModelsGovn(ddlOptions);
-  const enumTableDefnOptions = { isIdempotent: true };
-  const execCtx = SQLa.enumTable(
+  const mg = govn.typicalModelsGovn(ddlOptions);
+  const execCtx = mg.enumTable(
     tableName("execution_context"),
     ExecutionContext,
     enumTableDefnOptions,
   );
 
-  const graphNature = SQLa.enumTextTable(
+  const graphNature = mg.enumTextTable(
     tableName("graph_nature"),
     GraphNature,
     enumTableDefnOptions,
   );
 
-  const boundaryNature = SQLa.enumTextTable(
+  const boundaryNature = mg.enumTextTable(
     tableName("boundary_nature"),
     BoundaryNature,
     enumTableDefnOptions,
   );
 
-  const assetRiskType = SQLa.enumTextTable(
+  const assetRiskType = mg.enumTextTable(
     tableName("asset_risk_type"),
     AssetRiskType,
     enumTableDefnOptions,
   );
 
-  const organizationRoleType = SQLa.enumTextTable(
+  const organizationRoleType = mg.enumTextTable(
     tableName("organization_role_type"),
     OrganizationRoleType,
     enumTableDefnOptions,
   );
 
-  const partyType = SQLa.enumTextTable(
+  const partyType = mg.enumTextTable(
     tableName("party_type"),
     PartyType,
     enumTableDefnOptions,
   );
 
-  const personType = SQLa.enumTextTable(
+  const personType = mg.enumTextTable(
     tableName("person_type"),
     PersonType,
     enumTableDefnOptions,
   );
 
-  const contactType = SQLa.enumTextTable(
+  const contactType = mg.enumTextTable(
     tableName("contact_type"),
     ContactType,
     enumTableDefnOptions,
   );
 
-  const trainingSubject = SQLa.enumTextTable(
+  const trainingSubject = mg.enumTextTable(
     tableName("training_subject"),
     TrainingSubject,
     enumTableDefnOptions,
   );
 
-  const statusValues = SQLa.enumTextTable(
+  const statusValues = mg.enumTextTable(
     tableName("status_value"),
     StatusValues,
     enumTableDefnOptions,
   );
 
-  const partyRelationType = SQLa.enumTextTable(
+  const partyRelationType = mg.enumTextTable(
     tableName("party_relation_type"),
     PartyRelationType,
     enumTableDefnOptions,
   );
 
-  const recordStatus = SQLa.enumTextTable(
-    tableName("record_status"),
-    RecordStatus,
-    enumTableDefnOptions,
-  );
-
-  const ratingScore = SQLa.enumTextTable(
+  const ratingScore = mg.enumTextTable(
     tableName("rating_value"),
     RatingScore,
     enumTableDefnOptions,
   );
 
-  const contractType = SQLa.enumTextTable(
+  const contractType = mg.enumTextTable(
     tableName("contract_type"),
     ContractType,
     enumTableDefnOptions,
   );
 
-  const agreementType = SQLa.enumTextTable(
+  const agreementType = mg.enumTextTable(
     tableName("agreement_type"),
     AgreementType,
     enumTableDefnOptions,
   );
 
-  const riskType = SQLa.enumTextTable(
+  const riskType = mg.enumTextTable(
     tableName("risk_type"),
     RiskType,
     enumTableDefnOptions,
   );
 
-  const severityType = SQLa.enumTextTable(
+  const severityType = mg.enumTextTable(
     tableName("severity_type"),
     SeverityType,
     enumTableDefnOptions,
   );
 
-  const priorityType = SQLa.enumTextTable(
+  const priorityType = mg.enumTextTable(
     tableName("priority_type"),
     PriorityType,
     enumTableDefnOptions,
   );
 
-  const incidentType = SQLa.enumTextTable(
+  const incidentType = mg.enumTextTable(
     tableName("incident_type"),
     IncidentType,
     enumTableDefnOptions,
   );
 
-  const incidentStatus = SQLa.enumTextTable(
+  const incidentStatus = mg.enumTextTable(
     tableName("incident_status"),
     IncidentStatus,
     enumTableDefnOptions,
   );
 
-  const incidentCategoryType = SQLa.enumTextTable(
+  const incidentCategoryType = mg.enumTextTable(
     tableName("incident_category_type"),
     IncidentCategoryType,
     enumTableDefnOptions,
   );
 
-  const riskSubject = SQLa.enumTextTable(
+  const riskSubject = mg.enumTextTable(
     tableName("risk_subject"),
     RiskSubject,
     enumTableDefnOptions,
   );
 
-  const partyRole = SQLa.enumTextTable(
+  const partyRole = mg.enumTextTable(
     tableName("party_role_type"),
     PartyRole,
     enumTableDefnOptions,
   );
   // deno-fmt-ignore
-  const seedDDL = SQLa.SQL<Context>(ddlOptions)`
+  const seedDDL = mg.prepareSeedDDL`
       ${execCtx}
 
       ${graphNature}
@@ -377,7 +345,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${partyRelationType}
 
-      ${recordStatus}
+      ${govn.recordStatus}
 
       ${ratingScore}
 
@@ -423,7 +391,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${partyRelationType.seedDML}
 
-      ${recordStatus.seedDML}
+      ${govn.recordStatus.seedDML}
 
       ${ratingScore.seedDML}
 
@@ -458,7 +426,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     personType,
     contactType,
     partyRelationType,
-    recordStatus,
+    recordStatus: govn.recordStatus,
     trainingSubject,
     statusValues,
     ratingScore,
@@ -481,7 +449,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       personType,
       contactType,
       partyRelationType,
-      recordStatus,
+      govn.recordStatus,
       trainingSubject,
       statusValues,
       ratingScore,
@@ -504,14 +472,15 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
   },
 ) {
-  const mg = SQLaTyp.typicalModelsGovn(ddlOptions);
+  const mg = govn.typicalModelsGovn(ddlOptions);
+  const mgd = mg.domains;
   const enums = enumerations(ddlOptions);
 
   const graph = mg.table(tableName("graph"), {
     graph_id: mg.primaryKey(),
     graph_nature_id: enums.graphNature.foreignKeyRef.code(),
-    name: SQLa.text(),
-    description: SQLa.textNullable(),
+    name: mgd.text(),
+    description: mgd.textNullable(),
     ...mg.housekeeping(),
   });
 
@@ -521,13 +490,13 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     parent_boundary_id: SQLa.selfRefForeignKeyNullable(boundaryId),
     graph_id: graph.foreignKeyRef.graph_id(),
     boundary_nature_id: enums.boundaryNature.foreignKeyRef.code(),
-    name: SQLa.text(),
+    name: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const host = mg.table(tableName("host"), {
     host_id: mg.primaryKey(),
-    host_name: SQLa.unique(SQLa.text()),
+    host_name: SQLa.unique(mgd.text()),
     ...mg.housekeeping(),
   });
 
@@ -540,82 +509,82 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
   const raciMatrix = mg.table(tableName("raci_matrix"), {
     raci_matrix_id: mg.primaryKey(),
-    asset: SQLa.text(),
-    responsible: SQLa.text(),
-    accountable: SQLa.text(),
-    consulted: SQLa.text(),
-    informed: SQLa.text(),
+    asset: mgd.text(),
+    responsible: mgd.text(),
+    accountable: mgd.text(),
+    consulted: mgd.text(),
+    informed: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const assetRisk = mg.table(tableName("asset_risk"), {
     asset_risk_id: mg.primaryKey(),
     asset_risk_type_id: enums.assetRiskType.foreignKeyRef.code(),
-    asset: SQLa.text(),
-    threat_event: SQLa.text(),
-    relevance: SQLa.text(),
-    likelihood: SQLa.text(),
-    impact: SQLa.text(),
+    asset: mgd.text(),
+    threat_event: mgd.text(),
+    relevance: mgd.text(),
+    likelihood: mgd.text(),
+    impact: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const vulnerability = mg.table(tableName("vulnerability"), {
     vulnerability_id: mg.primaryKey(),
-    short_name: SQLa.text(),
-    source: SQLa.text(),
-    affected_software: SQLa.text(),
-    reference: SQLa.text(),
-    status: SQLa.text(),
-    patch_availability: SQLa.text(),
-    severity: SQLa.text(),
-    solutions: SQLa.text(),
-    tags: SQLa.text(),
-    description: SQLa.text(),
+    short_name: mgd.text(),
+    source: mgd.text(),
+    affected_software: mgd.text(),
+    reference: mgd.text(),
+    status: mgd.text(),
+    patch_availability: mgd.text(),
+    severity: mgd.text(),
+    solutions: mgd.text(),
+    tags: mgd.text(),
+    description: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const threatSource = mg.table(tableName("threat_source"), {
     threat_source_id: mg.primaryKey(),
-    threat_source: SQLa.text(),
-    identifier: SQLa.text(),
-    threat_source_type: SQLa.text(),
-    source_of_information: SQLa.text(),
-    capability: SQLa.text(),
-    intent: SQLa.text(),
-    targeting: SQLa.text(),
-    description: SQLa.text(),
+    threat_source: mgd.text(),
+    identifier: mgd.text(),
+    threat_source_type: mgd.text(),
+    source_of_information: mgd.text(),
+    capability: mgd.text(),
+    intent: mgd.text(),
+    targeting: mgd.text(),
+    description: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const threatEvent = mg.table(tableName("threat_event"), {
     threat_event_id: mg.primaryKey(),
-    threat_event: SQLa.text(),
-    identifier: SQLa.text(),
-    threat_event_type: SQLa.integer(),
-    event_classification: SQLa.text(),
-    source_of_information: SQLa.text(),
-    description: SQLa.text(),
+    threat_event: mgd.text(),
+    identifier: mgd.text(),
+    threat_event_type: mgd.integer(),
+    event_classification: mgd.text(),
+    source_of_information: mgd.text(),
+    description: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const billing = mg.table(tableName("billing"), {
     billing_id: mg.primaryKey(),
-    purpose: SQLa.text(),
-    bill_rate: SQLa.text(),
-    period: SQLa.text(),
-    effective_from_date: SQLa.dateTime(),
-    effective_to_date: SQLa.text(),
-    prorate: SQLa.integer(),
+    purpose: mgd.text(),
+    bill_rate: mgd.text(),
+    period: mgd.text(),
+    effective_from_date: mgd.dateTime(),
+    effective_to_date: mgd.text(),
+    prorate: mgd.integer(),
     ...mg.housekeeping(),
   });
 
   const scheduledTask = mg.table(tableName("scheduled_task"), {
     scheduled_task_id: mg.primaryKey(),
-    description: SQLa.text(),
-    task_date: SQLa.dateTime(),
-    reminder_date: SQLa.dateTime(),
-    assigned_to: SQLa.text(),
-    reminder_to: SQLa.text(),
+    description: mgd.text(),
+    task_date: mgd.dateTime(),
+    reminder_date: mgd.dateTime(),
+    assigned_to: mgd.text(),
+    reminder_to: mgd.text(),
     ...mg.housekeeping(),
   });
 
@@ -625,10 +594,10 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
   const timesheet = mg.table(tableName("timesheet"), {
     timesheet_id: mg.primaryKey(),
-    time_hour: SQLa.integer(),
-    timesheet_summary: SQLa.text(),
-    start_time: SQLa.text(),
-    end_time: SQLa.text(),
+    time_hour: mgd.integer(),
+    timesheet_summary: mgd.text(),
+    start_time: mgd.text(),
+    end_time: mgd.text(),
     ...mg.housekeeping(),
   });
 
@@ -638,39 +607,38 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
   const certificate = mg.table(tableName("certificate"), {
     certificate_id: mg.primaryKey(),
-    certificate_name: SQLa.text(),
-    short_name: SQLa.text(),
-    certificate_category: SQLa.text(),
-    certificate_type: SQLa.text(),
-    certificate_authority: SQLa.text(),
-    validity: SQLa.text(),
-    expiration_date: SQLa.dateTime(),
-    domain_name: SQLa.text(),
-    key_size: SQLa.integer(),
-    path: SQLa.text(),
+    certificate_name: mgd.text(),
+    short_name: mgd.text(),
+    certificate_category: mgd.text(),
+    certificate_type: mgd.text(),
+    certificate_authority: mgd.text(),
+    validity: mgd.text(),
+    expiration_date: mgd.dateTime(),
+    domain_name: mgd.text(),
+    key_size: mgd.integer(),
+    path: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const device = mg.table(tableName("device"), {
     device_id: mg.primaryKey(),
-    device_name: SQLa.text(),
-    short_name: SQLa.text(),
-    barcode: SQLa.text(),
-    model: SQLa.text(),
-    serial_number: SQLa.text(),
-    firmware: SQLa.text(),
-    data_center: SQLa.text(),
-    location: SQLa.text(),
-    purpose: SQLa.text(),
-    description: SQLa.text(),
+    device_name: mgd.text(),
+    short_name: mgd.text(),
+    barcode: mgd.text(),
+    model: mgd.text(),
+    serial_number: mgd.text(),
+    firmware: mgd.text(),
+    data_center: mgd.text(),
+    location: mgd.text(),
+    purpose: mgd.text(),
+    description: mgd.text(),
     ...mg.housekeeping(),
   });
 
   const party = mg.table(tableName("party"), {
     party_id: mg.primaryKey(),
     party_type_id: enums.partyType.foreignKeyRef.code(),
-    party_name: SQLa.text(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    party_name: mgd.text(),
     ...mg.housekeeping(),
   });
 
@@ -678,9 +646,8 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     person_id: mg.primaryKey(),
     party_id: party.foreignKeyRef.party_id(),
     person_type_id: enums.personType.foreignKeyRef.code(),
-    person_first_name: SQLa.text(),
-    person_last_name: SQLa.text(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    person_first_name: mgd.text(),
+    person_last_name: mgd.text(),
     ...mg.housekeeping(),
   });
 
@@ -692,17 +659,15 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     related_party_id: party.foreignKeyRef.party_id(),
     relation_type_id: enums.partyRelationType.foreignKeyRef.code(),
     party_role_id: enums.partyRole.foreignKeyRef.code(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
 
   const organization = mg.table(tableName("organization"), {
     organization_id: mg.primaryKey(),
     party_id: party.foreignKeyRef.party_id(),
-    name: SQLa.text(),
-    license: SQLa.text(),
-    registration_date: SQLa.date(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    name: mgd.text(),
+    license: mgd.text(),
+    registration_date: mgd.date(),
     ...mg.housekeeping(),
   });
 
@@ -711,7 +676,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     person_party_id: party.foreignKeyRef.party_id(),
     organization_party_id: party.foreignKeyRef.party_id(),
     organization_role_type_id: enums.organizationRoleType.foreignKeyRef.code(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
 
@@ -719,8 +683,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     contact_electronics_id: mg.primaryKey(),
     contact_type_id: enums.contactType.foreignKeyRef.code(),
     party_id: party.foreignKeyRef.party_id(),
-    electronics_details: SQLa.text(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    electronics_details: mgd.text(),
     ...mg.housekeeping(),
   });
 
@@ -728,13 +691,12 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     contact_land_id: mg.primaryKey(),
     contact_type_id: enums.contactType.foreignKeyRef.code(),
     party_id: party.foreignKeyRef.party_id(),
-    address_line1: SQLa.text(),
-    address_line2: SQLa.text(),
-    address_zip: SQLa.text(),
-    address_city: SQLa.text(),
-    address_state: SQLa.text(),
-    address_country: SQLa.text(),
-    record_status_id: enums.recordStatus.foreignKeyRef.code(),
+    address_line1: mgd.text(),
+    address_line2: mgd.text(),
+    address_zip: mgd.text(),
+    address_city: mgd.text(),
+    address_state: mgd.text(),
+    address_country: mgd.text(),
     ...mg.housekeeping(),
   });
 
@@ -744,7 +706,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       security_incident_response_team_id: mg.primaryKey(),
       person_party_id: party.foreignKeyRef.party_id(),
       organization_party_id: party.foreignKeyRef.party_id(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
       ...mg.housekeeping(),
     },
   );
@@ -757,7 +718,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       person_party_id: party.foreignKeyRef.party_id(),
       organization_party_id: party.foreignKeyRef.party_id(),
       training_status_id: enums.statusValues.foreignKeyRef.code(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
       ...mg.housekeeping(),
     },
   );
@@ -770,7 +730,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       rating_id: mg.primaryKey(),
       party_id: party.foreignKeyRef.party_id(),
       score_id: enums.ratingScore.foreignKeyRef.code(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
       ...mg.housekeeping(),
     },
   );
@@ -780,8 +739,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     {
       note_id: mg.primaryKey(),
       party_id: party.foreignKeyRef.party_id(),
-      note: SQLa.text(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      note: mgd.text(),
       ...mg.housekeeping(),
     },
   );
@@ -794,13 +752,12 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       contract_id: mg.primaryKey(),
       party_id: party.foreignKeyRef.party_id(),
       contract_type_id: enums.contractType.foreignKeyRef.code(),
-      date_contract_signed: SQLa.dateTime(),
-      date_contract_expires: SQLa.dateTime(),
-      date_of_last_review: SQLa.dateTime(),
-      date_of_next_review: SQLa.dateTime(),
-      date_of_contract_review: SQLa.dateTime(),
-      date_of_contract_approval: SQLa.dateTime(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      date_contract_signed: mgd.dateTime(),
+      date_contract_expires: mgd.dateTime(),
+      date_of_last_review: mgd.dateTime(),
+      date_of_next_review: mgd.dateTime(),
+      date_of_contract_review: mgd.dateTime(),
+      date_of_contract_approval: mgd.dateTime(),
       ...mg.housekeeping(),
     },
   );
@@ -814,8 +771,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       party_id: party.foreignKeyRef.party_id(),
       agreement_type_id: enums.agreementType.foreignKeyRef.code(),
       signed_status_id: enums.statusValues.foreignKeyRef.code(),
-      document_path: SQLa.text(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      document_path: mgd.text(),
       ...mg.housekeeping(),
     },
   );
@@ -824,23 +780,22 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     tableName("risk_register"),
     {
       risk_register_id: mg.primaryKey(),
-      description: SQLa.text(),
+      description: mgd.text(),
       risk_subject_id: enums.riskSubject.foreignKeyRef.code(),
       risk_type_id: enums.riskType.foreignKeyRef.code(),
-      impact_to_the_organization: SQLa.text(),
+      impact_to_the_organization: mgd.text(),
       rating_likelihood_id: enums.ratingScore.foreignKeyRef.code(),
       rating_impact_id: enums.ratingScore.foreignKeyRef.code(),
       rating_overall_risk_id: enums.ratingScore.foreignKeyRef.code(),
-      control_effectivenes_controls_in_place: SQLa.text(),
+      control_effectivenes_controls_in_place: mgd.text(),
       control_effectivenes_control_effectiveness_id: enums.ratingScore
         .foreignKeyRef.code(),
       control_effectivenes_over_all_residual_risk_rating_id: enums.ratingScore
         .foreignKeyRef.code(),
-      mitigation_further_actions: SQLa.text(),
-      control_monitor_mitigation_actions_tracking_strategy: SQLa.text(),
-      control_monitor_action_due_date: SQLa.date(),
+      mitigation_further_actions: mgd.text(),
+      control_monitor_mitigation_actions_tracking_strategy: mgd.text(),
+      control_monitor_action_due_date: mgd.date(),
       control_monitor_risk_owner_id: party.foreignKeyRef.party_id(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
       ...mg.housekeeping(),
     },
   );
@@ -849,41 +804,40 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     tableName("incident"),
     {
       incident_id: mg.primaryKey(),
-      title: SQLa.text(),
-      incident_date: SQLa.date(),
-      time_and_time_zone: SQLa.dateTime(),
+      title: mgd.text(),
+      incident_date: mgd.date(),
+      time_and_time_zone: mgd.dateTime(),
       category_id: enums.incidentCategoryType.foreignKeyRef.code(),
       severity_id: enums.severityType.foreignKeyRef.code(),
       priority_id: enums.priorityType.foreignKeyRef.code(),
       internal_or_external_id: enums.incidentType.foreignKeyRef.code(),
-      location: SQLa.text(),
-      it_service_impacted: SQLa.text(),
-      impacted_modules: SQLa.text(),
-      impacted_dept: SQLa.text(),
+      location: mgd.text(),
+      it_service_impacted: mgd.text(),
+      impacted_modules: mgd.text(),
+      impacted_dept: mgd.text(),
       reported_by_id: party.foreignKeyRef.party_id(),
       reported_to_id: party.foreignKeyRef.party_id(),
-      brief_description: SQLa.text(),
-      detailed_description: SQLa.text(),
+      brief_description: mgd.text(),
+      detailed_description: mgd.text(),
       assigned_to_id: party.foreignKeyRef.party_id(),
-      assigned_date: SQLa.date(),
-      investigation_details: SQLa.text(),
-      containment_details: SQLa.text(),
-      eradication_details: SQLa.text(),
-      bussiness_impact: SQLa.text(),
-      lessons_learned: SQLa.text(),
+      assigned_date: mgd.date(),
+      investigation_details: mgd.text(),
+      containment_details: mgd.text(),
+      eradication_details: mgd.text(),
+      bussiness_impact: mgd.text(),
+      lessons_learned: mgd.text(),
       status_id: enums.incidentStatus.foreignKeyRef.code(),
-      closed_date: SQLa.date(),
-      feedback_from_business: SQLa.text(),
-      reported_to_regulatory: SQLa.text(),
-      report_date: SQLa.date(),
-      report_time: SQLa.dateTime(),
-      record_status_id: enums.recordStatus.foreignKeyRef.code(),
+      closed_date: mgd.date(),
+      feedback_from_business: mgd.text(),
+      reported_to_regulatory: mgd.text(),
+      report_date: mgd.date(),
+      report_time: mgd.dateTime(),
       ...mg.housekeeping(),
     },
   );
 
   // deno-fmt-ignore
-  const seedDDL = SQLa.SQL<Context>(ddlOptions)`
+  const seedDDL = mg.prepareSeedDDL`
       ${host}
 
       ${graph}
