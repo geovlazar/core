@@ -37,8 +37,16 @@ export const recordStatus = SQLa.enumTextTable(
 
 export type HousekeepingColumnsDefns<Context extends SQLa.SqlEmitContext> = {
   readonly created_at: SQLa.AxiomSqlDomain<Date | undefined, Context>;
-  readonly record_status_id: SQLa.AxiomSqlDomain<string, Context>;
+  readonly record_status_id: SQLa.AxiomSqlDomain<string | undefined, Context>;
 };
+
+export function recordStatusId<
+  Context extends SQLa.SqlEmitContext,
+>(): SQLa.AxiomSqlDomain<string | undefined, Context> {
+  return recordStatus.foreignKeyRef.code(undefined, {
+    sqlDefaultValue: () => ({ SQL: () => `'ACTIVE'` }),
+  });
+}
 
 /**
  * typicalModelsGovn is a "models governer" helpers object that supplies
@@ -62,18 +70,21 @@ export function typicalModelsGovn<Context extends SQLa.SqlEmitContext>(
   >(): HousekeepingColumnsDefns<Context> {
     return {
       created_at: SQLa.createdAt(),
-      record_status_id: recordStatus.foreignKeyRef.code(),
+      record_status_id: recordStatusId(),
     };
   }
 
-  // "created_at" is considered "housekeeping" with a default so don't
-  // emit it as part of the insert DML statement
+  // "created_at" and "record_status_id" are considered "housekeeping" with a
+  // defaults so don't emit as part of the insert DML statement
   const defaultIspOptions: SQLa.InsertStmtPreparerOptions<
     Any,
     Any,
     Any,
     Context
-  > = { isColumnEmittable: (name) => name == "created_at" ? false : true };
+  > = {
+    isColumnEmittable: (name) =>
+      (name == "created_at" || name == "record_status_id") ? false : true,
+  };
 
   /**
    * All of our "content" or "transaction" tables will follow a specific format,

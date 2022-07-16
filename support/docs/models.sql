@@ -244,7 +244,7 @@ CREATE TABLE IF NOT EXISTS "host" (
     "host_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "host_name" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     UNIQUE("host_name"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -255,7 +255,7 @@ CREATE TABLE IF NOT EXISTS "graph" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("graph_nature_id") REFERENCES "graph_nature"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -267,7 +267,7 @@ CREATE TABLE IF NOT EXISTS "boundary" (
     "boundary_nature_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("parent_boundary_id") REFERENCES "boundary"("boundary_id"),
     FOREIGN KEY("graph_id") REFERENCES "graph"("graph_id"),
     FOREIGN KEY("boundary_nature_id") REFERENCES "boundary_nature"("code"),
@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS "host_boundary" (
     "host_id" INTEGER NOT NULL,
     "boundary_id" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("host_id") REFERENCES "host"("host_id"),
     FOREIGN KEY("boundary_id") REFERENCES "boundary"("boundary_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -293,7 +293,7 @@ CREATE TABLE IF NOT EXISTS "raci_matrix" (
     "consulted" TEXT NOT NULL,
     "informed" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -306,7 +306,7 @@ CREATE TABLE IF NOT EXISTS "asset_risk" (
     "likelihood" TEXT NOT NULL,
     "impact" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("asset_risk_type_id") REFERENCES "asset_risk_type"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -324,7 +324,7 @@ CREATE TABLE IF NOT EXISTS "vulnerability" (
     "tags" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -339,7 +339,7 @@ CREATE TABLE IF NOT EXISTS "threat_source" (
     "targeting" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -352,7 +352,7 @@ CREATE TABLE IF NOT EXISTS "threat_event" (
     "source_of_information" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -365,7 +365,7 @@ CREATE TABLE IF NOT EXISTS "billing" (
     "effective_to_date" TEXT NOT NULL,
     "prorate" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -377,7 +377,7 @@ CREATE TABLE IF NOT EXISTS "scheduled_task" (
     "assigned_to" TEXT NOT NULL,
     "reminder_to" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -388,7 +388,7 @@ CREATE TABLE IF NOT EXISTS "timesheet" (
     "start_time" TEXT NOT NULL,
     "end_time" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -405,7 +405,7 @@ CREATE TABLE IF NOT EXISTS "certificate" (
     "key_size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -422,7 +422,7 @@ CREATE TABLE IF NOT EXISTS "device" (
     "purpose" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -431,7 +431,7 @@ CREATE TABLE IF NOT EXISTS "party" (
     "party_type_id" TEXT NOT NULL,
     "party_name" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_type_id") REFERENCES "party_type"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -443,7 +443,7 @@ CREATE TABLE IF NOT EXISTS "person" (
     "person_first_name" TEXT NOT NULL,
     "person_last_name" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("person_type_id") REFERENCES "person_type"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -456,7 +456,7 @@ CREATE TABLE IF NOT EXISTS "organization" (
     "license" TEXT NOT NULL,
     "registration_date" DATE NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -467,7 +467,7 @@ CREATE TABLE IF NOT EXISTS "contact_electronics" (
     "party_id" INTEGER NOT NULL,
     "electronics_details" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("contact_type_id") REFERENCES "contact_type"("code"),
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -484,7 +484,7 @@ CREATE TABLE IF NOT EXISTS "contact_land" (
     "address_state" TEXT NOT NULL,
     "address_country" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("contact_type_id") REFERENCES "contact_type"("code"),
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -497,7 +497,7 @@ CREATE TABLE IF NOT EXISTS "party_relation" (
     "relation_type_id" TEXT NOT NULL,
     "party_role_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("related_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("relation_type_id") REFERENCES "party_relation_type"("code"),
@@ -511,7 +511,7 @@ CREATE TABLE IF NOT EXISTS "organization_role" (
     "organization_party_id" INTEGER NOT NULL,
     "organization_role_type_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("organization_role_type_id") REFERENCES "organization_role_type"("code"),
@@ -523,7 +523,7 @@ CREATE TABLE IF NOT EXISTS "security_incident_response_team" (
     "person_party_id" INTEGER NOT NULL,
     "organization_party_id" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -536,7 +536,7 @@ CREATE TABLE IF NOT EXISTS "awareness_training" (
     "organization_party_id" INTEGER NOT NULL,
     "training_status_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("training_subject_id") REFERENCES "training_subject"("code"),
     FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
@@ -549,7 +549,7 @@ CREATE TABLE IF NOT EXISTS "rating" (
     "party_id" INTEGER NOT NULL,
     "score_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("score_id") REFERENCES "rating_value"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -566,7 +566,7 @@ CREATE TABLE IF NOT EXISTS "contract" (
     "date_of_contract_review" DATETIME NOT NULL,
     "date_of_contract_approval" DATETIME NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("contract_type_id") REFERENCES "contract_type"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -577,7 +577,7 @@ CREATE TABLE IF NOT EXISTS "note" (
     "party_id" INTEGER NOT NULL,
     "note" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -589,7 +589,7 @@ CREATE TABLE IF NOT EXISTS "agreement" (
     "signed_status_id" TEXT NOT NULL,
     "document_path" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("agreement_type_id") REFERENCES "agreement_type"("code"),
     FOREIGN KEY("signed_status_id") REFERENCES "status_value"("code"),
@@ -613,7 +613,7 @@ CREATE TABLE IF NOT EXISTS "risk_register" (
     "control_monitor_action_due_date" DATE NOT NULL,
     "control_monitor_risk_owner_id" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("risk_subject_id") REFERENCES "risk_subject"("code"),
     FOREIGN KEY("risk_type_id") REFERENCES "risk_type"("code"),
     FOREIGN KEY("rating_likelihood_id") REFERENCES "rating_value"("code"),
@@ -656,7 +656,7 @@ CREATE TABLE IF NOT EXISTS "incident" (
     "report_date" DATE NOT NULL,
     "report_time" DATETIME NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("category_id") REFERENCES "incident_category_type"("code"),
     FOREIGN KEY("severity_id") REFERENCES "severity_type"("code"),
     FOREIGN KEY("priority_id") REFERENCES "priority_type"("code"),
