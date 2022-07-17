@@ -86,6 +86,8 @@ export function typicalModelsGovn<Context extends SQLa.SqlEmitContext>(
       (name == "created_at" || name == "record_status_id") ? false : true,
   };
 
+  const tableLintRules = SQLa.tableLintRules();
+
   /**
    * All of our "content" or "transaction" tables will follow a specific format,
    * namely that they will have a single primary key with the same name as the
@@ -107,9 +109,9 @@ export function typicalModelsGovn<Context extends SQLa.SqlEmitContext>(
     tableName: TableName,
     props: TPropAxioms,
     options?: {
-      readonly lint?: {
-        readonly ignoreTableNameEndsWithS: boolean;
-      };
+      readonly lint?:
+        & SQLa.TableNameConsistencyLintOptions
+        & SQLa.FKeyColNameConsistencyLintOptions<Context>;
     },
   ) => {
     const result = {
@@ -127,45 +129,8 @@ export function typicalModelsGovn<Context extends SQLa.SqlEmitContext>(
       defaultIspOptions, // in case others need to wrap the call
     };
 
-    if (!options?.lint?.ignoreTableNameEndsWithS && tableName.endsWith("s")) {
-      result.registerLintIssue({
-        lintIssue:
-          `table name '${tableName}' ends with an 's' (should be singular, not plural)`,
-      });
-    }
-
-    for (const rd of result.domains) {
-      if (SQLa.isTableForeignKeyColumnDefn(rd)) {
-        let suggestion = `end with '_id'`;
-        if (SQLa.isIdentifiableSqlDomain(rd.foreignDomain)) {
-          // if the foreign key column name is the same as our column we're usually OK
-          if (rd.foreignDomain.identity == rd.identity) {
-            continue;
-          }
-          suggestion =
-            `should be named "${rd.foreignDomain.identity}" or end with '_id'`;
-        }
-        if (!rd.identity.endsWith("_id")) {
-          SQLa.lintedSqlDomain(
-            rd,
-            SQLa.domainLintIssue(
-              `Foreign key column "${rd.identity}" in "${result.tableName}" ${suggestion}`,
-            ),
-          );
-        }
-      } else {
-        if (
-          !SQLa.isTablePrimaryKeyColumnDefn(rd) && rd.identity.endsWith("_id")
-        ) {
-          SQLa.lintedSqlDomain(
-            rd,
-            SQLa.domainLintIssue(
-              `Column "${rd.identity}" in "${result.tableName}" ends with '_id' but is neither a primary key nor a foreign key.`,
-            ),
-          );
-        }
-      }
-    }
+    const rules = tableLintRules.typical(result);
+    rules.lint(result, options?.lint);
 
     return result;
   };
@@ -186,6 +151,7 @@ export function typicalModelsGovn<Context extends SQLa.SqlEmitContext>(
     primaryKey,
     housekeeping,
     table,
+    tableLintRules,
     enumTable: SQLa.enumTable,
     enumTextTable: SQLa.enumTextTable,
     prepareSeedDDL: SQLa.SQL<Context>(ddlOptions),

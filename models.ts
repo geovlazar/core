@@ -685,7 +685,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     party_id: party.foreignKeyRef.party_id(),
     electronics_details: mgd.text(),
     ...mg.housekeeping(),
-  }, { lint: { ignoreTableNameEndsWithS: true } });
+  }, { lint: { ignorePluralTableName: true } });
 
   const contactLand = mg.table(tableName("contact_land"), {
     contact_land_id: mg.primaryKey(),
