@@ -2,7 +2,7 @@
 
 PRAGMA foreign_keys = ON;
 
--- no SQL lint issues
+-- no SQL lint issues (typicalSqlTextLintManager)
 
 -- enumeration tables
 CREATE TABLE IF NOT EXISTS "execution_context" (
@@ -668,4 +668,4 @@ CREATE TABLE IF NOT EXISTS "incident" (
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
--- no template engine lint issues
+-- no template engine lint issues (typicalSqlTextLintManager)

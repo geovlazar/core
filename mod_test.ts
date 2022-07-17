@@ -20,9 +20,10 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
     sqliteDb: "opsfolio.auto.sqlite.db",
   };
 
+  const ddlOptions = SQLa.typicalSqlTextSupplierOptions();
   const ctx = SQLa.typicalSqlEmitContext();
   const sqlEngine = sqlite.sqliteEngine();
-  const models = mod.models();
+  const models = mod.models(ddlOptions);
   const assets = {
     sqliteSql: models.seedDDL.SQL(ctx),
     osQueryATCConfig: (sqliteDbPath: string) =>
@@ -101,6 +102,19 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
         `unable to run osqueryi ATC test case: osqueryi executable not found in path`,
       );
     }
+  });
+
+  await tc.step(`no lint issues`, () => {
+    ta.assertEquals(
+      ddlOptions.sqlTextLintState?.lintedSqlText.lintIssues.length,
+      0,
+      `Please see ${generatable.sqliteSqlSrc} for SQL lint issues`,
+    );
+    ta.assertEquals(
+      ddlOptions.sqlTextLintState?.lintedSqlTmplEngine.lintIssues.length,
+      0,
+      `Please see ${generatable.sqliteSqlSrc} for template engine lint issues`,
+    );
   });
 
   if (cleanArtifacts) await mod.clean(generatable);

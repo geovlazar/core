@@ -185,7 +185,7 @@ export class Tasks extends t.EventEmitter<{
     );
 
     this.on("generateModelsDocs", async () => {
-      const models = mod.models();
+      const models = mod.models(SQLa.typicalSqlTextSupplierOptions());
       const ctx = SQLa.typicalSqlEmitContext();
       await Deno.writeTextFile(
         "support/docs/models.sql",
