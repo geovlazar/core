@@ -80,6 +80,7 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
 
   await tc.step(`osqueryi ATC`, async () => {
     try {
+      dzx.$.verbose = false;
       // in the SQLite database the table is called `execution_context` but when
       // accessed through osQuery, it's called opsfolio_execution_context since
       // all tables in the ATC database prefixed with `opsfolio_`.
