@@ -89,12 +89,6 @@ CREATE TABLE IF NOT EXISTS "contract_type" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "agreement_type" (
-    "code" TEXT PRIMARY KEY,
-    "value" TEXT NOT NULL,
-    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE IF NOT EXISTS "risk_type" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
@@ -125,7 +119,13 @@ CREATE TABLE IF NOT EXISTS "incident_status" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "incident_category_type" (
+CREATE TABLE IF NOT EXISTS "incident_category" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "incident_sub_category" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -138,6 +138,30 @@ CREATE TABLE IF NOT EXISTS "risk_subject" (
 );
 
 CREATE TABLE IF NOT EXISTS "party_role_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "contract_status" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "payment_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "periodicity" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "time_entry_category" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -210,11 +234,13 @@ INSERT INTO "rating_value" ("code", "value") VALUES ('FIVE', '5');
 INSERT INTO "contract_type" ("code", "value") VALUES ('GENERAL_CONTRACT_FOR_SERVICES', 'General Contract for Services');
 INSERT INTO "contract_type" ("code", "value") VALUES ('EMPLOYMENT_AGREEMENT', 'Employment Agreement');
 INSERT INTO "contract_type" ("code", "value") VALUES ('NONCOMPETE_AGREEMENT', 'Noncompete Agreement');
+INSERT INTO "contract_type" ("code", "value") VALUES ('VENDOR_SLA', 'Vendor SLA');
+INSERT INTO "contract_type" ("code", "value") VALUES ('VENDOR_NDA', 'Vendor NDA');
 
-INSERT INTO "agreement_type" ("code", "value") VALUES ('VENDOR_SLA', 'Vendor SLA');
-INSERT INTO "agreement_type" ("code", "value") VALUES ('VENDOR_NDA', 'Vendor NDA');
-
-INSERT INTO "risk_type" ("code", "value") VALUES ('TECHNICAL_RISK', 'Technical Risk');
+INSERT INTO "risk_type" ("code", "value") VALUES ('BUDGET', 'Budget');
+INSERT INTO "risk_type" ("code", "value") VALUES ('QUALITY', 'Quality');
+INSERT INTO "risk_type" ("code", "value") VALUES ('SCHEDULE', 'Schedule');
+INSERT INTO "risk_type" ("code", "value") VALUES ('SCHEDULE_AND_BUDGET', 'Schedule And Budget');
 
 INSERT INTO "severity_type" ("code", "value") VALUES ('CRITICAL', 'Critical');
 INSERT INTO "severity_type" ("code", "value") VALUES ('MAJOR', 'Major');
@@ -225,19 +251,115 @@ INSERT INTO "priority_type" ("code", "value") VALUES ('HIGH', 'High');
 INSERT INTO "priority_type" ("code", "value") VALUES ('MEDIUM', 'Medium');
 INSERT INTO "priority_type" ("code", "value") VALUES ('LOW', 'Low');
 
-INSERT INTO "incident_type" ("code", "value") VALUES ('INTERNAL', 'Server Issue');
-INSERT INTO "incident_type" ("code", "value") VALUES ('EXTERNAL', 'Out of Memory');
+INSERT INTO "incident_type" ("code", "value") VALUES ('COMPLAINT', 'Complaint');
+INSERT INTO "incident_type" ("code", "value") VALUES ('INCIDENT', 'Incident');
+INSERT INTO "incident_type" ("code", "value") VALUES ('REQUEST_FOR_INFORMATION', 'Request For Information');
 
+INSERT INTO "incident_status" ("code", "value") VALUES ('ACCEPTED', 'Accepted');
+INSERT INTO "incident_status" ("code", "value") VALUES ('ASSIGNED', 'Assigned');
+INSERT INTO "incident_status" ("code", "value") VALUES ('CANCELLED', 'Cancelled');
+INSERT INTO "incident_status" ("code", "value") VALUES ('CATEGORIZE', 'Categorize');
 INSERT INTO "incident_status" ("code", "value") VALUES ('CLOSED', 'Closed');
 INSERT INTO "incident_status" ("code", "value") VALUES ('OPEN', 'Open');
-INSERT INTO "incident_status" ("code", "value") VALUES ('RE_OPEN', 'Reopen');
+INSERT INTO "incident_status" ("code", "value") VALUES ('PENDING_CHANGE', 'Pending Change');
+INSERT INTO "incident_status" ("code", "value") VALUES ('PENDING_CUSTOMER', 'Pending Customer');
+INSERT INTO "incident_status" ("code", "value") VALUES ('PENDING_EVIDENCE', 'Pending Evidence');
+INSERT INTO "incident_status" ("code", "value") VALUES ('PENDING_OTHER', 'Pending Other');
+INSERT INTO "incident_status" ("code", "value") VALUES ('PENDING_VENDOR', 'Pending Vendor');
+INSERT INTO "incident_status" ("code", "value") VALUES ('REFERRED', 'Referred');
+INSERT INTO "incident_status" ("code", "value") VALUES ('REJECTED', 'Rejected');
+INSERT INTO "incident_status" ("code", "value") VALUES ('REOPENED', 'Reopened');
+INSERT INTO "incident_status" ("code", "value") VALUES ('REPLACED_PROBLEM', 'Replaced Problem');
+INSERT INTO "incident_status" ("code", "value") VALUES ('RESOLVED', 'Resolved');
+INSERT INTO "incident_status" ("code", "value") VALUES ('SUSPENDED', 'Suspended');
+INSERT INTO "incident_status" ("code", "value") VALUES ('WORK_IN_PROGRESS', 'Work In Progress');
 
-INSERT INTO "incident_category_type" ("code", "value") VALUES ('TECHNICAL_RISK', 'Technical Risk');
+INSERT INTO "incident_category" ("code", "value") VALUES ('ACCESS', 'Access');
+INSERT INTO "incident_category" ("code", "value") VALUES ('DATA', 'Data');
+INSERT INTO "incident_category" ("code", "value") VALUES ('FACILITIES', 'Facilities');
+INSERT INTO "incident_category" ("code", "value") VALUES ('FAILURE', 'Failure');
+INSERT INTO "incident_category" ("code", "value") VALUES ('GENERAL_INFORMATION', 'General Information');
+INSERT INTO "incident_category" ("code", "value") VALUES ('HARDWARE', 'Hardware');
+INSERT INTO "incident_category" ("code", "value") VALUES ('HOW_TO', 'How To');
+INSERT INTO "incident_category" ("code", "value") VALUES ('OTHER', 'Other');
+INSERT INTO "incident_category" ("code", "value") VALUES ('PERFORMANCE', 'Performance');
+INSERT INTO "incident_category" ("code", "value") VALUES ('SECURITY', 'Security');
+INSERT INTO "incident_category" ("code", "value") VALUES ('SERVICE_DELIVERY', 'Service Delivery');
+INSERT INTO "incident_category" ("code", "value") VALUES ('SERVICE_PORTFOLIO', 'Service Portfolio');
+INSERT INTO "incident_category" ("code", "value") VALUES ('STATUS', 'Status');
+INSERT INTO "incident_category" ("code", "value") VALUES ('SUPPORT', 'Support');
+
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('AUTHORIZATION_ERROR', 'Authorization Error');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('AVAILABILITY', 'Availability');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('DATA_OR_FILE_CORRUPTED', 'Data Or File Corrupted');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('DATA_OR_FILE_INCORRECT', 'Data Or File Incorrect');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('DATA_OR_FILE_MISSING', 'Data Or File Missing');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('ERROR_MESSAGE', 'Error Message');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('FUNCTION_OR_FEATURE_NOT_WORKING', 'Function Or Feature Not Working');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('FUNCTIONALITY', 'Functionality');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('GENERAL_INFORMATION', 'General Information');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('HARDWARE_FAILURE', 'Hardware Failure');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('HOW_TO', 'How To');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('INCIDENT_RESOLUTION_QUALITY', 'Incident Resolution Quality');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('INCIDENT_RESOLUTION_TIME', 'Incident Resolution Time');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('JOB_FAILED', 'Job Failed');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('LOGIN_FAILURE', 'Login Failure');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('MISSING_OR_STOLEN', 'Missing Or Stolen');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('NEW_SERVICE', 'New Service');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('PERFORMANCE', 'Performance');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('PERFORMANCE_DEGRADATION', 'Performance Degradation');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('PERSON', 'Person');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('SECURITY_BREACH', 'Security Breach');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('SECURITY_EVENT', 'Security Event/Message');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('STATUS', 'Status');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('STORAGE_LIMIT_EXCEEDED', 'Storage Limit Exceeded');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('SYSTEM_DOWN', 'System Down');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('SYSTEM_OR_APPLICATION_HANGS', 'System Or Application Hangs');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('UPGRADE_NEW_RELEASE', 'Upgrade/New Release');
+INSERT INTO "incident_sub_category" ("code", "value") VALUES ('VIRUS_ALERT', 'Virus Alert');
 
 INSERT INTO "risk_subject" ("code", "value") VALUES ('TECHNICAL_RISK', 'Technical Risk');
 
 INSERT INTO "party_role_type" ("code", "value") VALUES ('CUSTOMER', 'Customer');
 INSERT INTO "party_role_type" ("code", "value") VALUES ('VENDOR', 'Vendor');
+
+INSERT INTO "contract_status" ("code", "value") VALUES ('ACTIVE', 'Active');
+INSERT INTO "contract_status" ("code", "value") VALUES ('AWAITING_APPROVAL', 'Awaiting Approval');
+INSERT INTO "contract_status" ("code", "value") VALUES ('AWAITING_APPROVAL_FOR_RENEWAL', 'Awaiting Approval For Renewal');
+INSERT INTO "contract_status" ("code", "value") VALUES ('CANCELED', 'Canceled');
+INSERT INTO "contract_status" ("code", "value") VALUES ('DENIED', 'Denied');
+INSERT INTO "contract_status" ("code", "value") VALUES ('FINISHED', 'Finished');
+INSERT INTO "contract_status" ("code", "value") VALUES ('IN_PREPARATION', 'In Preparation');
+INSERT INTO "contract_status" ("code", "value") VALUES ('QUOTE_REQUESTED', 'Quote Requested');
+INSERT INTO "contract_status" ("code", "value") VALUES ('QUOTED', 'Quoted');
+INSERT INTO "contract_status" ("code", "value") VALUES ('STANDARD_CONTRACT', 'Standard Contract');
+INSERT INTO "contract_status" ("code", "value") VALUES ('SUSPENDED', 'Suspended');
+INSERT INTO "contract_status" ("code", "value") VALUES ('VALIDATED', 'Validated');
+
+INSERT INTO "payment_type" ("code", "value") VALUES ('BOTH', 'Both');
+INSERT INTO "payment_type" ("code", "value") VALUES ('LOANS', 'Loans');
+INSERT INTO "payment_type" ("code", "value") VALUES ('NONE', 'None');
+INSERT INTO "payment_type" ("code", "value") VALUES ('RENTS', 'Rents');
+
+INSERT INTO "periodicity" ("code", "value") VALUES ('ANNUAL', 'Annual');
+INSERT INTO "periodicity" ("code", "value") VALUES ('BI_MONTHLY', 'Bi Monthly');
+INSERT INTO "periodicity" ("code", "value") VALUES ('BI_WEEKLY', 'Bi Weekly');
+INSERT INTO "periodicity" ("code", "value") VALUES ('DAILY', 'Daily');
+INSERT INTO "periodicity" ("code", "value") VALUES ('MONTHLY', 'Monthly');
+INSERT INTO "periodicity" ("code", "value") VALUES ('OTHER', 'Other');
+INSERT INTO "periodicity" ("code", "value") VALUES ('QUARTERLY', 'Quarterly');
+INSERT INTO "periodicity" ("code", "value") VALUES ('SEMI_ANNUAL', 'Semi Annual');
+INSERT INTO "periodicity" ("code", "value") VALUES ('SEMI_MONTHLY', 'Semi Monthly');
+INSERT INTO "periodicity" ("code", "value") VALUES ('WEEKLY', 'Weekly');
+
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('MISC_MEETINGS', 'Misc Meetings');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('MISC_OTHER', 'Misc Other');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('MISC_VACATION', 'Misc Vacation');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('MISC_WORK_ITEM', 'Misc Work Item');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('PACKAGE', 'Package');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('PROJECT', 'Project');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('REQUEST', 'Request');
+INSERT INTO "time_entry_category" ("code", "value") VALUES ('TASK', 'Task');
 
 -- content tables
 CREATE TABLE IF NOT EXISTS "host" (
@@ -383,12 +505,15 @@ CREATE TABLE IF NOT EXISTS "scheduled_task" (
 
 CREATE TABLE IF NOT EXISTS "timesheet" (
     "timesheet_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "time_hour" INTEGER NOT NULL,
+    "date_of_work" DATETIME NOT NULL,
+    "is_billable_id" TEXT NOT NULL,
+    "number_of_hours" INTEGER NOT NULL,
+    "time_entry_category_id" TEXT NOT NULL,
     "timesheet_summary" TEXT NOT NULL,
-    "start_time" TEXT NOT NULL,
-    "end_time" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("is_billable_id") REFERENCES "status_value"("code"),
+    FOREIGN KEY("time_entry_category_id") REFERENCES "time_entry_category"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -461,8 +586,8 @@ CREATE TABLE IF NOT EXISTS "organization" (
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
-CREATE TABLE IF NOT EXISTS "contact_electronics" (
-    "contact_electronics_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS "contact_electronic" (
+    "contact_electronic_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "contact_type_id" TEXT NOT NULL,
     "party_id" INTEGER NOT NULL,
     "electronics_details" TEXT NOT NULL,
@@ -546,21 +671,33 @@ CREATE TABLE IF NOT EXISTS "awareness_training" (
 
 CREATE TABLE IF NOT EXISTS "rating" (
     "rating_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "party_id" INTEGER NOT NULL,
-    "score_id" TEXT NOT NULL,
+    "author_id" INTEGER NOT NULL,
+    "rating_given_to_id" INTEGER NOT NULL,
+    "rating_value_id" TEXT NOT NULL,
+    "best_rating_id" TEXT NOT NULL,
+    "rating_explanation" TEXT NOT NULL,
+    "review_aspect" TEXT NOT NULL,
+    "worst_rating_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
-    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
-    FOREIGN KEY("score_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("author_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("rating_given_to_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("rating_value_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("best_rating_id") REFERENCES "rating_value"("code"),
+    FOREIGN KEY("worst_rating_id") REFERENCES "rating_value"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
 CREATE TABLE IF NOT EXISTS "contract" (
     "contract_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "party_id" INTEGER NOT NULL,
+    "contract_status_id" TEXT NOT NULL,
+    "document_reference" TEXT NOT NULL,
+    "payment_type_id" TEXT NOT NULL,
+    "periodicity_id" TEXT NOT NULL,
+    "start_date" DATETIME NOT NULL,
+    "end_date" DATETIME NOT NULL,
     "contract_type_id" TEXT NOT NULL,
-    "date_contract_signed" DATETIME NOT NULL,
-    "date_contract_expires" DATETIME NOT NULL,
     "date_of_last_review" DATETIME NOT NULL,
     "date_of_next_review" DATETIME NOT NULL,
     "date_of_contract_review" DATETIME NOT NULL,
@@ -568,6 +705,9 @@ CREATE TABLE IF NOT EXISTS "contract" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("contract_status_id") REFERENCES "contract_status"("code"),
+    FOREIGN KEY("payment_type_id") REFERENCES "payment_type"("code"),
+    FOREIGN KEY("periodicity_id") REFERENCES "periodicity"("code"),
     FOREIGN KEY("contract_type_id") REFERENCES "contract_type"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -582,20 +722,6 @@ CREATE TABLE IF NOT EXISTS "note" (
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
-CREATE TABLE IF NOT EXISTS "agreement" (
-    "agreement_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "party_id" INTEGER NOT NULL,
-    "agreement_type_id" TEXT NOT NULL,
-    "signed_status_id" TEXT NOT NULL,
-    "document_path" TEXT NOT NULL,
-    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
-    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
-    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
-    FOREIGN KEY("agreement_type_id") REFERENCES "agreement_type"("code"),
-    FOREIGN KEY("signed_status_id") REFERENCES "status_value"("code"),
-    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
-);
-
 CREATE TABLE IF NOT EXISTS "risk_register" (
     "risk_register_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "description" TEXT NOT NULL,
@@ -606,7 +732,7 @@ CREATE TABLE IF NOT EXISTS "risk_register" (
     "rating_impact_id" TEXT NOT NULL,
     "rating_overall_risk_id" TEXT NOT NULL,
     "control_effectivenes_controls_in_place" TEXT NOT NULL,
-    "control_effectivenes_control_effectiveness_id" TEXT NOT NULL,
+    "control_effectivenes_control_effectiveness" INTEGER NOT NULL,
     "control_effectivenes_over_all_residual_risk_rating_id" TEXT NOT NULL,
     "mitigation_further_actions" TEXT NOT NULL,
     "control_monitor_mitigation_actions_tracking_strategy" TEXT NOT NULL,
@@ -619,7 +745,6 @@ CREATE TABLE IF NOT EXISTS "risk_register" (
     FOREIGN KEY("rating_likelihood_id") REFERENCES "rating_value"("code"),
     FOREIGN KEY("rating_impact_id") REFERENCES "rating_value"("code"),
     FOREIGN KEY("rating_overall_risk_id") REFERENCES "rating_value"("code"),
-    FOREIGN KEY("control_effectivenes_control_effectiveness_id") REFERENCES "rating_value"("code"),
     FOREIGN KEY("control_effectivenes_over_all_residual_risk_rating_id") REFERENCES "rating_value"("code"),
     FOREIGN KEY("control_monitor_risk_owner_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
@@ -631,6 +756,7 @@ CREATE TABLE IF NOT EXISTS "incident" (
     "incident_date" DATE NOT NULL,
     "time_and_time_zone" DATETIME NOT NULL,
     "category_id" TEXT NOT NULL,
+    "sub_category_id" TEXT NOT NULL,
     "severity_id" TEXT NOT NULL,
     "priority_id" TEXT NOT NULL,
     "internal_or_external_id" TEXT NOT NULL,
@@ -651,13 +777,15 @@ CREATE TABLE IF NOT EXISTS "incident" (
     "lessons_learned" TEXT NOT NULL,
     "status_id" TEXT NOT NULL,
     "closed_date" DATE NOT NULL,
+    "reopened_time" DATETIME NOT NULL,
     "feedback_from_business" TEXT NOT NULL,
     "reported_to_regulatory" TEXT NOT NULL,
     "report_date" DATE NOT NULL,
     "report_time" DATETIME NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
-    FOREIGN KEY("category_id") REFERENCES "incident_category_type"("code"),
+    FOREIGN KEY("category_id") REFERENCES "incident_category"("code"),
+    FOREIGN KEY("sub_category_id") REFERENCES "incident_sub_category"("code"),
     FOREIGN KEY("severity_id") REFERENCES "severity_type"("code"),
     FOREIGN KEY("priority_id") REFERENCES "priority_type"("code"),
     FOREIGN KEY("internal_or_external_id") REFERENCES "incident_type"("code"),

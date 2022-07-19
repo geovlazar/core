@@ -146,10 +146,11 @@
   entity "timesheet" as timesheet {
     * **timesheet_id**: INTEGER
     --
-    * time_hour: INTEGER
+    * date_of_work: DATETIME
+    * is_billable_id: TEXT <<ENUM(status_value)>>
+    * number_of_hours: INTEGER
+    * time_entry_category_id: TEXT <<ENUM(time_entry_category)>>
     * timesheet_summary: TEXT
-    * start_time: TEXT
-    * end_time: TEXT
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
@@ -230,8 +231,8 @@
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
-  entity "contact_electronics" as contact_electronics {
-    * **contact_electronics_id**: INTEGER
+  entity "contact_electronic" as contact_electronic {
+    * **contact_electronic_id**: INTEGER
     --
     * contact_type_id: TEXT <<ENUM(contact_type)>>
     * party_id: INTEGER <<FK(party)>>
@@ -265,11 +266,36 @@
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
+  entity "security_incident_response_team" as security_incident_response_team {
+    * **security_incident_response_team_id**: INTEGER
+    --
+    * person_party_id: INTEGER <<FK(party)>>
+    * organization_party_id: INTEGER <<FK(party)>>
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
+  entity "awareness_training" as awareness_training {
+    * **awareness_training_id**: INTEGER
+    --
+    * training_subject_id: TEXT <<ENUM(training_subject)>>
+    * person_party_id: INTEGER <<FK(party)>>
+    * organization_party_id: INTEGER <<FK(party)>>
+    * training_status_id: TEXT <<ENUM(status_value)>>
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
   entity "rating" as rating {
     * **rating_id**: INTEGER
     --
-    * party_id: INTEGER <<FK(party)>>
-    * score_id: TEXT <<ENUM(rating_value)>>
+    * author_id: INTEGER <<FK(party)>>
+    * rating_given_to_id: INTEGER <<FK(party)>>
+    * rating_value_id: TEXT <<ENUM(rating_value)>>
+    * best_rating_id: TEXT <<ENUM(rating_value)>>
+    * rating_explanation: TEXT
+    * review_aspect: TEXT
+    * worst_rating_id: TEXT <<ENUM(rating_value)>>
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
@@ -278,9 +304,13 @@
     * **contract_id**: INTEGER
     --
     * party_id: INTEGER <<FK(party)>>
+    * contract_status_id: TEXT <<ENUM(contract_status)>>
+    * document_reference: TEXT
+    * payment_type_id: TEXT <<ENUM(payment_type)>>
+    * periodicity_id: TEXT <<ENUM(periodicity)>>
+    * start_date: DATETIME
+    * end_date: DATETIME
     * contract_type_id: TEXT <<ENUM(contract_type)>>
-    * date_contract_signed: DATETIME
-    * date_contract_expires: DATETIME
     * date_of_last_review: DATETIME
     * date_of_next_review: DATETIME
     * date_of_contract_review: DATETIME
@@ -298,17 +328,6 @@
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
-  entity "agreement" as agreement {
-    * **agreement_id**: INTEGER
-    --
-    * party_id: INTEGER <<FK(party)>>
-    * agreement_type_id: TEXT <<ENUM(agreement_type)>>
-    * signed_status_id: TEXT <<ENUM(status_value)>>
-    * document_path: TEXT
-      created_at: DATETIME
-    * record_status_id: TEXT <<ENUM(record_status)>>
-  }
-
   entity "risk_register" as risk_register {
     * **risk_register_id**: INTEGER
     --
@@ -320,7 +339,7 @@
     * rating_impact_id: TEXT <<ENUM(rating_value)>>
     * rating_overall_risk_id: TEXT <<ENUM(rating_value)>>
     * control_effectivenes_controls_in_place: TEXT
-    * control_effectivenes_control_effectiveness_id: TEXT <<ENUM(rating_value)>>
+    * control_effectivenes_control_effectiveness: INTEGER
     * control_effectivenes_over_all_residual_risk_rating_id: TEXT <<ENUM(rating_value)>>
     * mitigation_further_actions: TEXT
     * control_monitor_mitigation_actions_tracking_strategy: TEXT
@@ -336,7 +355,8 @@
     * title: TEXT
     * incident_date: DATE
     * time_and_time_zone: DATETIME
-    * category_id: TEXT <<ENUM(incident_category_type)>>
+    * category_id: TEXT <<ENUM(incident_category)>>
+    * sub_category_id: TEXT <<ENUM(incident_sub_category)>>
     * severity_id: TEXT <<ENUM(severity_type)>>
     * priority_id: TEXT <<ENUM(priority_type)>>
     * internal_or_external_id: TEXT <<ENUM(incident_type)>>
@@ -357,6 +377,7 @@
     * lessons_learned: TEXT
     * status_id: TEXT <<ENUM(incident_status)>>
     * closed_date: DATE
+    * reopened_time: DATETIME
     * feedback_from_business: TEXT
     * reported_to_regulatory: TEXT
     * report_date: DATE
@@ -373,14 +394,18 @@
   party |o..o{ organization
   party |o..o{ party_relation
   party |o..o{ party_relation
-  party |o..o{ contact_electronics
+  party |o..o{ contact_electronic
   party |o..o{ contact_land
   party |o..o{ organization_role
   party |o..o{ organization_role
+  party |o..o{ security_incident_response_team
+  party |o..o{ security_incident_response_team
+  party |o..o{ awareness_training
+  party |o..o{ awareness_training
+  party |o..o{ rating
   party |o..o{ rating
   party |o..o{ contract
   party |o..o{ note
-  party |o..o{ agreement
   party |o..o{ risk_register
   party |o..o{ incident
   party |o..o{ incident
