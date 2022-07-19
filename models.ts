@@ -12,6 +12,7 @@ import { enumTableDefnOptions, tableName } from "./governance.ts";
 // - [ ] strongly type all text to ints/date/etc. where necessary
 // - [ ] convert relevant legacy Opsfolio Drupal CTVs to SQLa entities
 // - [ ] convert relevant legacy IGS Operations Portfolio Specification (OPS) repo models to SQLa entities
+// - [ ] need to enhance all enums and models as per UDM
 
 export enum ExecutionContext {
   DEVELOPMENT,
@@ -47,16 +48,18 @@ export enum PartyType {
   ORGANIZATION = "Organization",
 }
 
-// Reference URL: https://docs.oracle.com/cd/E29633_01/CDMRF/GUID-F52E49F4-AE6F-4FF5-8EEB-8366A66AF7E9.htm
-// TODO:- [ ] increase number of entries by refering more examples
+/**
+ * Reference URL: https://docs.oracle.com/cd/E29633_01/CDMRF/GUID-F52E49F4-AE6F-4FF5-8EEB-8366A66AF7E9.htm
+ */
 
 export enum PartyRole {
   CUSTOMER = "Customer",
   VENDOR = "Vendor",
 }
 
-// Reference URL: https://docs.oracle.com/cd/E63029_01/books/Secur/secur_accesscontrol022.htm
-// TODO:- [ ] increase number of entries by refering more examples
+/**
+ * Reference URL: https://docs.oracle.com/cd/E63029_01/books/Secur/secur_accesscontrol022.htm
+ */
 
 export enum PartyRelationType {
   PERSON_TO_PERSON = "Person To Person",
@@ -78,24 +81,20 @@ export enum ContactType {
   PERSONAL_EMAIL = "Personal Email",
 }
 
-// TODO:- [ ] Enhance by referring UDM
-
 export enum TrainingSubject {
   HIPPA = "HIPPA",
 }
-
-// TODO:- [ ] Enhance by referring UDM
 
 export enum StatusValues {
   YES = "Yes",
   NO = "No",
 }
 
-// TODO:- [ ] Enhance by referring UDM
-// TODO:- [ ] Need to change RatingScore to  RatingValue if no other UDM found other than Schema.org
-// https://schema.org/ratingValue
+/**
+ * Reference URL: https://schema.org/ratingValue
+ */
 
-export enum RatingScore {
+export enum RatingValue {
   ONE = "1",
   TWO = "2",
   THREE = "3",
@@ -103,21 +102,24 @@ export enum RatingScore {
   FIVE = "5",
 }
 
-// TODO:- [ ] Enhance by referring UDM
-
 export enum ContractType {
   GENERAL_CONTRACT_FOR_SERVICES = "General Contract for Services",
   EMPLOYMENT_AGREEMENT = "Employment Agreement",
   NONCOMPETE_AGREEMENT = "Noncompete Agreement",
+  VENDOR_SLA = "Vendor SLA",
+  VENDOR_NDA = "Vendor NDA",
 }
 
-// TODO:- [ ] Enhance by referring UDM
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/enum_project_risk_type_enum.html
+ */
 
 export enum RiskType {
-  TECHNICAL_RISK = "Technical Risk",
+  BUDGET = "Budget",
+  QUALITY = "Quality",
+  SCHEDULE = "Schedule",
+  SCHEDULE_AND_BUDGET = "Schedule And Budget",
 }
-
-// TODO:- [ ] Enhance by referring UDM
 
 export enum SeverityType {
   CRITICAL = "Critical",
@@ -126,49 +128,103 @@ export enum SeverityType {
   LOW = "Low",
 }
 
-// TODO:- [ ] Enhance by referring UDM
-
 export enum PriorityType {
   HIGH = "High",
   MEDIUM = "Medium",
   LOW = "Low",
 }
 
-// TODO:- [ ] Enhance by referring UDM
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+ */
 
-export enum IncidentCategoryType {
-  TECHNICAL_RISK = "Technical Risk",
+export enum IncidentCategory {
+  ACCESS = "Access",
+  DATA = "Data",
+  FACILITIES = "Facilities",
+  FAILURE = "Failure",
+  GENERAL_INFORMATION = "General Information",
+  HARDWARE = "Hardware",
+  HOW_TO = "How To",
+  OTHER = "Other",
+  PERFORMANCE = "Performance",
+  SECURITY = "Security",
+  SERVICE_DELIVERY = "Service Delivery",
+  SERVICE_PORTFOLIO = "Service Portfolio",
+  STATUS = "Status",
+  SUPPORT = "Support",
 }
 
-// TODO:- [ ] Enhance by referring UDM
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+ */
+export enum IncidentSubCategory {
+  AUTHORIZATION_ERROR = "Authorization Error",
+  AVAILABILITY = "Availability",
+  DATA_OR_FILE_CORRUPTED = "Data Or File Corrupted",
+  DATA_OR_FILE_INCORRECT = "Data Or File Incorrect",
+  DATA_OR_FILE_MISSING = "Data Or File Missing",
+  ERROR_MESSAGE = "Error Message",
+  FUNCTION_OR_FEATURE_NOT_WORKING = "Function Or Feature Not Working",
+  FUNCTIONALITY = "Functionality",
+  GENERAL_INFORMATION = "General Information",
+  HARDWARE_FAILURE = "Hardware Failure",
+  HOW_TO = "How To",
+  INCIDENT_RESOLUTION_QUALITY = "Incident Resolution Quality",
+  INCIDENT_RESOLUTION_TIME = "Incident Resolution Time",
+  JOB_FAILED = "Job Failed",
+  LOGIN_FAILURE = "Login Failure",
+  MISSING_OR_STOLEN = "Missing Or Stolen",
+  NEW_SERVICE = "New Service",
+  PERFORMANCE = "Performance",
+  PERFORMANCE_DEGRADATION = "Performance Degradation",
+  PERSON = "Person",
+  SECURITY_BREACH = "Security Breach",
+  SECURITY_EVENT = "Security Event/Message",
+  STATUS = "Status",
+  STORAGE_LIMIT_EXCEEDED = "Storage Limit Exceeded",
+  SYSTEM_DOWN = "System Down",
+  SYSTEM_OR_APPLICATION_HANGS = "System Or Application Hangs",
+  UPGRADE_NEW_RELEASE = "Upgrade/New Release",
+  VIRUS_ALERT = "Virus Alert",
+}
 
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+ */
 export enum IncidentType {
-  INTERNAL = "Server Issue",
-  EXTERNAL = "Out of Memory",
+  COMPLAINT = "Complaint",
+  INCIDENT = "Incident",
+  REQUEST_FOR_INFORMATION = "Request For Information",
 }
 
-// TODO:- [ ] Enhance by referring UDM
-
+/**
+ * Reference URL:https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+ */
 export enum IncidentStatus {
+  ACCEPTED = "Accepted",
+  ASSIGNED = "Assigned",
+  CANCELLED = "Cancelled",
+  CATEGORIZE = "Categorize",
   CLOSED = "Closed",
   OPEN = "Open",
-  RE_OPEN = "Reopen",
+  PENDING_CHANGE = "Pending Change",
+  PENDING_CUSTOMER = "Pending Customer",
+  PENDING_EVIDENCE = "Pending Evidence",
+  PENDING_OTHER = "Pending Other",
+  PENDING_VENDOR = "Pending Vendor",
+  REFERRED = "Referred",
+  REJECTED = "Rejected",
+  REOPENED = "Reopened",
+  REPLACED_PROBLEM = "Replaced Problem",
+  RESOLVED = "Resolved",
+  SUSPENDED = "Suspended",
+  WORK_IN_PROGRESS = "Work In Progress",
 }
-
-// TODO:- [ ] Enhance by referring UDM
-
-export enum AgreementType {
-  VENDOR_SLA = "Vendor SLA",
-  VENDOR_NDA = "Vendor NDA",
-}
-
-// TODO:- [ ] Enhance by referring UDM
 
 export enum RiskSubject {
   TECHNICAL_RISK = "Technical Risk",
 }
-
-// TODO:- [ ] Enhance by referring UDM
 
 export enum AssetRiskType {
   TYPE1 = "asset risk type 1",
@@ -180,8 +236,70 @@ export enum GraphNature {
   APP = "Application",
 }
 
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/enum_contract_status_enum.html
+ */
+
+export enum ContractStatus {
+  ACTIVE = "Active",
+  AWAITING_APPROVAL = "Awaiting Approval",
+  AWAITING_APPROVAL_FOR_RENEWAL = "Awaiting Approval For Renewal",
+  CANCELED = "Canceled",
+  DENIED = "Denied",
+  FINISHED = "Finished",
+  IN_PREPARATION = "In Preparation",
+  QUOTE_REQUESTED = "Quote Requested",
+  QUOTED = "Quoted",
+  STANDARD_CONTRACT = "Standard Contract",
+  SUSPENDED = "Suspended",
+  VALIDATED = "Validated",
+}
+
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/enum_payment_type_enum.html
+ */
+
+export enum PaymentType {
+  BOTH = "Both",
+  LOANS = "Loans",
+  NONE = "None",
+  RENTS = "Rents",
+}
+
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+ */
+
+export enum Periodicity {
+  ANNUAL = "Annual",
+  BI_MONTHLY = "Bi Monthly",
+  BI_WEEKLY = "Bi Weekly",
+  DAILY = "Daily",
+  MONTHLY = "Monthly",
+  OTHER = "Other",
+  QUARTERLY = "Quarterly",
+  SEMI_ANNUAL = "Semi Annual",
+  SEMI_MONTHLY = "Semi Monthly",
+  WEEKLY = "Weekly",
+}
+
 export enum BoundaryNature {
   REGULATORY_TAX_ID = "Regulatory Tax ID", // like an "official" company (something with a Tax ID)
+}
+
+/**
+ * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+ */
+
+export enum TimeEntryCategory {
+  MISC_MEETINGS = "Misc Meetings",
+  MISC_OTHER = "Misc Other",
+  MISC_VACATION = "Misc Vacation",
+  MISC_WORK_ITEM = "Misc Work Item",
+  PACKAGE = "Package",
+  PROJECT = "Project",
+  REQUEST = "Request",
+  TASK = "Task",
 }
 
 export function enumerations<Context extends SQLa.SqlEmitContext>(
@@ -256,21 +374,15 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
-  const ratingScore = mg.enumTextTable(
+  const ratingValue = mg.enumTextTable(
     tableName("rating_value"),
-    RatingScore,
+    RatingValue,
     enumTableDefnOptions,
   );
 
   const contractType = mg.enumTextTable(
     tableName("contract_type"),
     ContractType,
-    enumTableDefnOptions,
-  );
-
-  const agreementType = mg.enumTextTable(
-    tableName("agreement_type"),
-    AgreementType,
     enumTableDefnOptions,
   );
 
@@ -304,9 +416,15 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
-  const incidentCategoryType = mg.enumTextTable(
-    tableName("incident_category_type"),
-    IncidentCategoryType,
+  const incidentCategory = mg.enumTextTable(
+    tableName("incident_category"),
+    IncidentCategory,
+    enumTableDefnOptions,
+  );
+
+  const incidentSubCategory = mg.enumTextTable(
+    tableName("incident_sub_category"),
+    IncidentSubCategory,
     enumTableDefnOptions,
   );
 
@@ -321,6 +439,31 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     PartyRole,
     enumTableDefnOptions,
   );
+
+  const contractStatus = mg.enumTextTable(
+    tableName("contract_status"),
+    ContractStatus,
+    enumTableDefnOptions,
+  );
+
+  const paymentType = mg.enumTextTable(
+    tableName("payment_type"),
+    PaymentType,
+    enumTableDefnOptions,
+  );
+
+  const periodicity = mg.enumTextTable(
+    tableName("periodicity"),
+    Periodicity,
+    enumTableDefnOptions,
+  );
+
+  const timeEntryCategory = mg.enumTextTable(
+    tableName("time_entry_category"),
+    TimeEntryCategory,
+    enumTableDefnOptions,
+  );
+
   // deno-fmt-ignore
   const seedDDL = mg.prepareSeedDDL`
       ${execCtx}
@@ -347,11 +490,9 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${govn.recordStatus}
 
-      ${ratingScore}
+      ${ratingValue}
 
       ${contractType}
-
-      ${agreementType}
 
       ${riskType}
 
@@ -363,11 +504,21 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${incidentStatus}
 
-      ${incidentCategoryType}
+      ${incidentCategory}
+
+      ${incidentSubCategory}
 
       ${riskSubject}
 
       ${partyRole}
+
+      ${contractStatus}
+
+      ${paymentType}
+
+      ${periodicity}
+
+      ${timeEntryCategory}
 
       ${execCtx.seedDML}
 
@@ -393,11 +544,9 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${govn.recordStatus.seedDML}
 
-      ${ratingScore.seedDML}
+      ${ratingValue.seedDML}
 
       ${contractType.seedDML}
-
-      ${agreementType.seedDML}
 
       ${riskType.seedDML}
 
@@ -409,11 +558,21 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${incidentStatus.seedDML}
 
-      ${incidentCategoryType.seedDML}
+      ${incidentCategory.seedDML}
+
+      ${incidentSubCategory.seedDML}
 
       ${riskSubject.seedDML}
 
-      ${partyRole.seedDML}`;
+      ${partyRole.seedDML}
+
+      ${contractStatus.seedDML}
+
+      ${paymentType.seedDML}
+
+      ${periodicity.seedDML}
+
+      ${timeEntryCategory.seedDML}`;
 
   return {
     modelsGovn: mg,
@@ -429,17 +588,21 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     recordStatus: govn.recordStatus,
     trainingSubject,
     statusValues,
-    ratingScore,
+    ratingValue,
     contractType,
-    agreementType,
     riskType,
     severityType,
     priorityType,
     incidentType,
     incidentStatus,
-    incidentCategoryType,
+    incidentCategory,
+    incidentSubCategory,
     riskSubject,
     partyRole,
+    contractStatus,
+    paymentType,
+    periodicity,
+    timeEntryCategory,
     seedDDL,
     exposeATC: [
       execCtx,
@@ -452,17 +615,21 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       govn.recordStatus,
       trainingSubject,
       statusValues,
-      ratingScore,
+      ratingValue,
       contractType,
-      agreementType,
       riskType,
       severityType,
       priorityType,
       incidentType,
       incidentStatus,
-      incidentCategoryType,
+      incidentCategory,
+      incidentSubCategory,
       riskSubject,
       partyRole,
+      contractStatus,
+      paymentType,
+      periodicity,
+      timeEntryCategory,
     ],
   };
 }
@@ -588,22 +755,18 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
-  // TODO:- [ ] Enhance by referring UDM
-  // Found another model in UDM as TimeEntry
-  // https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
-
+  /**
+   * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+   */
   const timesheet = mg.table(tableName("timesheet"), {
     timesheet_id: mg.primaryKey(),
-    time_hour: mgd.integer(),
+    date_of_work: mgd.dateTime(),
+    is_billable_id: enums.statusValues.foreignKeyRef.code(),
+    number_of_hours: mgd.integer(),
+    time_entry_category_id: enums.timeEntryCategory.foreignKeyRef.code(),
     timesheet_summary: mgd.text(),
-    start_time: mgd.text(),
-    end_time: mgd.text(),
     ...mg.housekeeping(),
   });
-
-  // TODO:- [ ] Enhance by referring UDM
-  // Found another model in UDM as DigitalCertificate
-  // https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
 
   const certificate = mg.table(tableName("certificate"), {
     certificate_id: mg.primaryKey(),
@@ -651,8 +814,9 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
-  // Reference URL:  https://docs.oracle.com/cd/E29633_01/CDMRF/GUID-F52E49F4-AE6F-4FF5-8EEB-8366A66AF7E9.htm
-
+  /**
+   * Reference URL: https://docs.oracle.com/cd/E29633_01/CDMRF/GUID-F52E49F4-AE6F-4FF5-8EEB-8366A66AF7E9.htm
+   */
   const partyRelation = mg.table(tableName("party_relation"), {
     party_relation_id: mg.primaryKey(),
     party_id: party.foreignKeyRef.party_id(),
@@ -679,13 +843,13 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
-  const contactElectronics = mg.table(tableName("contact_electronics"), {
-    contact_electronics_id: mg.primaryKey(),
+  const contactElectronics = mg.table(tableName("contact_electronic"), {
+    contact_electronic_id: mg.primaryKey(),
     contact_type_id: enums.contactType.foreignKeyRef.code(),
     party_id: party.foreignKeyRef.party_id(),
     electronics_details: mgd.text(),
     ...mg.housekeeping(),
-  }, { lint: { ignorePluralTableName: true } });
+  });
 
   const contactLand = mg.table(tableName("contact_land"), {
     contact_land_id: mg.primaryKey(),
@@ -722,14 +886,20 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     },
   );
 
-  // TODO:- [ ] Need to enhance this model from UDM or https://schema.org/Rating
-
+  /**
+   * Reference URL: https://schema.org/Rating
+   */
   const rating = mg.table(
     tableName("rating"),
     {
       rating_id: mg.primaryKey(),
-      party_id: party.foreignKeyRef.party_id(),
-      score_id: enums.ratingScore.foreignKeyRef.code(),
+      author_id: party.foreignKeyRef.party_id(),
+      rating_given_to_id: party.foreignKeyRef.party_id(),
+      rating_value_id: enums.ratingValue.foreignKeyRef.code(),
+      best_rating_id: enums.ratingValue.foreignKeyRef.code(),
+      rating_explanation: mgd.text(),
+      review_aspect: mgd.text(),
+      worst_rating_id: enums.ratingValue.foreignKeyRef.code(),
       ...mg.housekeeping(),
     },
   );
@@ -744,34 +914,25 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     },
   );
 
-  // TODO: Need to enhance this model from https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
-
+  /**
+   * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+   */
   const contract = mg.table(
     tableName("contract"),
     {
       contract_id: mg.primaryKey(),
       party_id: party.foreignKeyRef.party_id(),
+      contract_status_id: enums.contractStatus.foreignKeyRef.code(),
+      document_reference: mgd.text(),
+      payment_type_id: enums.paymentType.foreignKeyRef.code(),
+      periodicity_id: enums.periodicity.foreignKeyRef.code(),
+      start_date: mgd.dateTime(),
+      end_date: mgd.dateTime(),
       contract_type_id: enums.contractType.foreignKeyRef.code(),
-      date_contract_signed: mgd.dateTime(),
-      date_contract_expires: mgd.dateTime(),
       date_of_last_review: mgd.dateTime(),
       date_of_next_review: mgd.dateTime(),
       date_of_contract_review: mgd.dateTime(),
       date_of_contract_approval: mgd.dateTime(),
-      ...mg.housekeeping(),
-    },
-  );
-
-  // TODO: Need to combine this model with contract model (According to UDM agreement is similar to contract)
-
-  const agreement = mg.table(
-    tableName("agreement"),
-    {
-      agreement_id: mg.primaryKey(),
-      party_id: party.foreignKeyRef.party_id(),
-      agreement_type_id: enums.agreementType.foreignKeyRef.code(),
-      signed_status_id: enums.statusValues.foreignKeyRef.code(),
-      document_path: mgd.text(),
       ...mg.housekeeping(),
     },
   );
@@ -784,13 +945,12 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       risk_subject_id: enums.riskSubject.foreignKeyRef.code(),
       risk_type_id: enums.riskType.foreignKeyRef.code(),
       impact_to_the_organization: mgd.text(),
-      rating_likelihood_id: enums.ratingScore.foreignKeyRef.code(),
-      rating_impact_id: enums.ratingScore.foreignKeyRef.code(),
-      rating_overall_risk_id: enums.ratingScore.foreignKeyRef.code(),
+      rating_likelihood_id: enums.ratingValue.foreignKeyRef.code(),
+      rating_impact_id: enums.ratingValue.foreignKeyRef.code(),
+      rating_overall_risk_id: enums.ratingValue.foreignKeyRef.code(),
       control_effectivenes_controls_in_place: mgd.text(),
-      control_effectivenes_control_effectiveness_id: enums.ratingScore
-        .foreignKeyRef.code(),
-      control_effectivenes_over_all_residual_risk_rating_id: enums.ratingScore
+      control_effectivenes_control_effectiveness: mgd.integer(),
+      control_effectivenes_over_all_residual_risk_rating_id: enums.ratingValue
         .foreignKeyRef.code(),
       mitigation_further_actions: mgd.text(),
       control_monitor_mitigation_actions_tracking_strategy: mgd.text(),
@@ -800,6 +960,9 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     },
   );
 
+  /**
+   * Reference URL: https://docs.microfocus.com/UCMDB/11.0/cp-docs/docs/eng/class_model/html/index.html
+   */
   const incident = mg.table(
     tableName("incident"),
     {
@@ -807,7 +970,8 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       title: mgd.text(),
       incident_date: mgd.date(),
       time_and_time_zone: mgd.dateTime(),
-      category_id: enums.incidentCategoryType.foreignKeyRef.code(),
+      category_id: enums.incidentCategory.foreignKeyRef.code(),
+      sub_category_id: enums.incidentSubCategory.foreignKeyRef.code(),
       severity_id: enums.severityType.foreignKeyRef.code(),
       priority_id: enums.priorityType.foreignKeyRef.code(),
       internal_or_external_id: enums.incidentType.foreignKeyRef.code(),
@@ -828,6 +992,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       lessons_learned: mgd.text(),
       status_id: enums.incidentStatus.foreignKeyRef.code(),
       closed_date: mgd.date(),
+      reopened_time: mgd.dateTime(),
       feedback_from_business: mgd.text(),
       reported_to_regulatory: mgd.text(),
       report_date: mgd.date(),
@@ -890,8 +1055,6 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${notes}
 
-      ${agreement}
-
       ${riskRegister}
 
       ${incident}`;
@@ -919,10 +1082,11 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     contactElectronics,
     contactLand,
     organizationRole,
+    securityIncidentResponseTeam,
+    awarenessTraining,
     rating,
     contract,
     notes,
-    agreement,
     riskRegister,
     incident,
     seedDDL,
@@ -939,10 +1103,11 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       contactElectronics,
       contactLand,
       organizationRole,
+      securityIncidentResponseTeam,
+      awarenessTraining,
       rating,
       contract,
       notes,
-      agreement,
       riskRegister,
       incident,
     ],
