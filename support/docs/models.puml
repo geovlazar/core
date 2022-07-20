@@ -386,6 +386,17 @@
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
+  entity "party_identifier" as party_identifier {
+    * **party_identifier_id**: INTEGER
+    --
+    * identifier_number: TEXT
+    * identifier_name: TEXT
+    * party_identifier_type_id: TEXT <<ENUM(party_identifier_type)>>
+    * party_id: TEXT <<ENUM(party_type)>>
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
   boundary |o..o{ boundary
   graph |o..o{ boundary
   host |o..o{ host_boundary

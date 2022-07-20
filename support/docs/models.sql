@@ -41,6 +41,12 @@ CREATE TABLE IF NOT EXISTS "party_type" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "party_identifier_type" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS "person_type" (
     "code" TEXT PRIMARY KEY,
     "value" TEXT NOT NULL,
@@ -203,6 +209,10 @@ INSERT INTO "party_type" ("code", "value") VALUES ('ORGANIZATION', 'Organization
 
 INSERT INTO "person_type" ("code", "value") VALUES ('INDIVIDUAL', 'Individual');
 INSERT INTO "person_type" ("code", "value") VALUES ('PROFESSIONAL', 'Professional');
+
+INSERT INTO "party_identifier_type" ("code", "value") VALUES ('UUID', 'UUID');
+INSERT INTO "party_identifier_type" ("code", "value") VALUES ('DRIVING_LICENSE', 'Driving License');
+INSERT INTO "party_identifier_type" ("code", "value") VALUES ('PASSPORT', 'Passport');
 
 INSERT INTO "contact_type" ("code", "value") VALUES ('HOME_ADDRESS', 'Home Address');
 INSERT INTO "contact_type" ("code", "value") VALUES ('OFFICIAL_ADDRESS', 'Official Address');
@@ -558,6 +568,19 @@ CREATE TABLE IF NOT EXISTS "party" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_type_id") REFERENCES "party_type"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "party_identifier" (
+    "party_identifier_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "identifier_number" TEXT NOT NULL,
+    "identifier_name" TEXT NOT NULL,
+    "party_identifier_type_id" TEXT NOT NULL,
+    "party_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("party_identifier_type_id") REFERENCES "party_identifier_type"("code"),
+    FOREIGN KEY("party_id") REFERENCES "party_type"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 

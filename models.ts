@@ -67,6 +67,12 @@ export enum PartyRelationType {
   ORGANIZATION_TO_ORGANIZATION = "Organization To Organization",
 }
 
+export enum PartyIdentifierType {
+  UUID = "UUID",
+  DRIVING_LICENSE = "Driving License",
+  PASSPORT = "Passport",
+}
+
 export enum PersonType {
   INDIVIDUAL = "Individual",
   PROFESSIONAL = "Professional",
@@ -344,6 +350,12 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
+  const partyIdentifierType = mg.enumTextTable(
+    tableName("party_identifier_type"),
+    PartyIdentifierType,
+    enumTableDefnOptions,
+  );
+
   const personType = mg.enumTextTable(
     tableName("person_type"),
     PersonType,
@@ -478,6 +490,8 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${partyType}
 
+      ${partyIdentifierType}
+
       ${personType}
 
       ${contactType}
@@ -534,6 +548,8 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${personType.seedDML}
 
+      ${partyIdentifierType.seedDML}
+
       ${contactType.seedDML}
 
       ${trainingSubject.seedDML}
@@ -582,6 +598,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     assetRiskType,
     organizationRoleType,
     partyType,
+    partyIdentifierType,
     personType,
     contactType,
     partyRelationType,
@@ -609,6 +626,7 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       assetRiskType,
       organizationRoleType,
       partyType,
+      partyIdentifierType,
       personType,
       contactType,
       partyRelationType,
@@ -802,6 +820,18 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     party_id: mg.primaryKey(),
     party_type_id: enums.partyType.foreignKeyRef.code(),
     party_name: mgd.text(),
+    ...mg.housekeeping(),
+  });
+
+  /**
+   * Reference URL: https://help.salesforce.com/s/articleView?id=sf.c360_a_partyidentification_object.htm&type=5
+   */
+  const partyIdentifier = mg.table(tableName("party_identifier"), {
+    party_identifier_id: mg.primaryKey(),
+    identifier_number: mgd.text(),
+    identifier_name: mgd.text(),
+    party_identifier_type_id: enums.partyIdentifierType.foreignKeyRef.code(),
+    party_id: enums.partyType.foreignKeyRef.code(),
     ...mg.housekeeping(),
   });
 
@@ -1033,6 +1063,8 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${party}
 
+      ${partyIdentifier}
+
       ${person}
 
       ${organization}
@@ -1089,6 +1121,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     notes,
     riskRegister,
     incident,
+    partyIdentifier,
     seedDDL,
     exposeATC: [
       host,
@@ -1110,6 +1143,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       notes,
       riskRegister,
       incident,
+      partyIdentifier,
     ],
   };
 }
