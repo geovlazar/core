@@ -59,8 +59,9 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
     const ecc = ec.columns;
     const ee = await db.recordsDQL(
       ctx,
-      SQLa.SQL({ symbolsFirst: true })
-        `SELECT ${ecc.code}, ${ecc.value} from ${ec}`,
+      SQLa.SQL({
+        symbolsFirst: true,
+      })`SELECT ${ecc.code}, ${ecc.value} from ${ec}`,
     );
     ta.assert(ee);
     ta.assert(ee.records.length == 3);
@@ -84,8 +85,8 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
       // in the SQLite database the table is called `execution_context` but when
       // accessed through osQuery, it's called opsfolio_execution_context since
       // all tables in the ATC database prefixed with `opsfolio_`.
-      const osqResult = await dzx.$
-        `osqueryi --config_path ${generatable.osQueryATCConfig} "select code, value from opsfolio_execution_context"`;
+      const osqResult = await dzx
+        .$`osqueryi --config_path ${generatable.osQueryATCConfig} "select code, value from opsfolio_execution_context"`;
       ta.assertEquals(
         osqResult.stdout,
         ws.unindentWhitespace(`
