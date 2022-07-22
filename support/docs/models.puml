@@ -269,7 +269,7 @@
   entity "security_incident_response_team" as security_incident_response_team {
     * **security_incident_response_team_id**: INTEGER
     --
-    * person_party_id: INTEGER <<FK(party)>>
+    * person_id: INTEGER <<FK(person)>>
     * organization_party_id: INTEGER <<FK(party)>>
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
@@ -279,8 +279,8 @@
     * **awareness_training_id**: INTEGER
     --
     * training_subject_id: TEXT <<ENUM(training_subject)>>
-    * person_party_id: INTEGER <<FK(party)>>
-    * organization_party_id: INTEGER <<FK(party)>>
+    * person_id: INTEGER <<FK(person)>>
+    * organization_id: INTEGER <<FK(organization)>>
     * training_status_id: TEXT <<ENUM(status_value)>>
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
@@ -303,7 +303,7 @@
   entity "contract" as contract {
     * **contract_id**: INTEGER
     --
-    * party_id: INTEGER <<FK(party)>>
+    * organization_id: INTEGER <<FK(organization)>>
     * contract_status_id: TEXT <<ENUM(contract_status)>>
     * document_reference: TEXT
     * payment_type_id: TEXT <<ENUM(payment_type)>>
@@ -397,6 +397,63 @@
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
 
+  entity "raci_matrix_subject_boundary" as raci_matrix_subject_boundary {
+    * **raci_matrix_subject_boundary_id**: INTEGER
+    --
+    * boundary_id: INTEGER <<FK(boundary)>>
+    * raci_matrix_subject_id: TEXT <<ENUM(raci_matrix_subject)>>
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
+  entity "raci_matrix_activity" as raci_matrix_activity {
+    * **raci_matrix_activity_id**: INTEGER
+    --
+    * activity: TEXT
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
+  entity "raci_matrix_assignment" as raci_matrix_assignment {
+    * **raci_matrix_assignment_id**: INTEGER
+    --
+    * person_id: INTEGER <<FK(person)>>
+    * subject_id: TEXT <<ENUM(raci_matrix_subject)>>
+    * activity_id: INTEGER <<FK(raci_matrix_activity)>>
+    * raci_matrix_assignment_nature_id: TEXT <<ENUM(raci_matrix_assignment_nature)>>
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
+  entity "person_skill" as person_skill {
+    * **person_skill_id**: INTEGER
+    --
+    * person_id: INTEGER <<FK(person)>>
+    * skill_nature_id: TEXT <<ENUM(skill_nature)>>
+    * skill_id: TEXT <<ENUM(skill)>>
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
+  entity "key_performance" as key_performance {
+    * **key_performance_id**: INTEGER
+    --
+    * title: TEXT
+    * description: TEXT
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
+  entity "key_performance_indicator" as key_performance_indicator {
+    * **key_performance_indicator_id**: INTEGER
+    --
+    * key_performance_id: INTEGER <<FK(key_performance)>>
+    * base_value: TEXT
+    * date: DATE
+      created_at: DATETIME
+    * record_status_id: TEXT <<ENUM(record_status)>>
+  }
+
   boundary |o..o{ boundary
   graph |o..o{ boundary
   host |o..o{ host_boundary
@@ -409,16 +466,21 @@
   party |o..o{ contact_land
   party |o..o{ organization_role
   party |o..o{ organization_role
+  person |o..o{ security_incident_response_team
   party |o..o{ security_incident_response_team
-  party |o..o{ security_incident_response_team
-  party |o..o{ awareness_training
-  party |o..o{ awareness_training
+  person |o..o{ awareness_training
+  organization |o..o{ awareness_training
   party |o..o{ rating
   party |o..o{ rating
-  party |o..o{ contract
+  organization |o..o{ contract
   party |o..o{ note
   party |o..o{ risk_register
   party |o..o{ incident
   party |o..o{ incident
   party |o..o{ incident
+  boundary |o..o{ raci_matrix_subject_boundary
+  person |o..o{ raci_matrix_assignment
+  raci_matrix_activity |o..o{ raci_matrix_assignment
+  person |o..o{ person_skill
+  key_performance |o..o{ key_performance_indicator
 @enduml

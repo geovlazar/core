@@ -308,6 +308,58 @@ export enum TimeEntryCategory {
   TASK = "Task",
 }
 
+export enum RaciMatrixSubject {
+  PROJECT_LEADERSHIP = "Project Leadership",
+  PROJECT_MANAGEMENT = "Project Management",
+  APPLICATION_DEVELOPMENT = "Application Development",
+  DEV_OPERATIONS = "Dev Operations",
+  QUALITY_ASSURANCE = "Quality Assurance",
+  SEARCH_ENGINE_OPTIMIZATION = "Search Engine Optimization",
+  USER_INTERFASE_USABILITY = "User Interfase And Usability",
+  BUSINESS_ANALYST = "Business Analyst (Abm)",
+  CURATION_COORDINATION = "Curation Coordination",
+  KNOWLEDGE_REPRESENTATION = "Knowledge Representation",
+  MARKETING_OUTREACH = "Marketing Outreach",
+  CURATION_WORKS = "Curation Works",
+}
+
+/**
+ * Reference URL: https://advisera.com/27001academy/blog/2018/11/05/raci-matrix-for-iso-27001-implementation-project/
+ */
+
+export enum RaciMatrixAssignmentNature {
+  RESPONSIBLE = "Responsible",
+  ACCOUNTABLE = "Accountable",
+  CONSULTED = "Consulted",
+  INFORMED = "Informed",
+}
+
+// TODO:
+// - [ ] Need to update it to the standard way with the skill registry url
+
+export enum SkillNature {
+  SOFTWARE = "Software",
+  HARDWARE = "Hardware",
+}
+
+export enum Skill {
+  ANGULAR = "Angular",
+  DENO = "Deno",
+  TYPESCRIPT = "Typescript",
+  POSTGRESQL = "Postgresql",
+  MYSQL = "Mysql",
+  HUGO = "Hugo",
+  PHP = "Php",
+  JAVASCRIPT = "JavaScript",
+  PYTHON = "Python",
+  DOT_NET = ".Net",
+  ORACLE = "Oracle",
+  JAVA = "Java",
+  JQUERY = "JQuery",
+  OSQUERY = "Osquery",
+  REACTJS = "ReactJs",
+}
+
 export function enumerations<Context extends SQLa.SqlEmitContext>(
   ddlOptions: SQLa.SqlTextSupplierOptions<Context> & {
     readonly sqlNS?: SQLa.SqlNamespaceSupplier;
@@ -476,6 +528,30 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     enumTableDefnOptions,
   );
 
+  const raciMatrixSubject = mg.enumTextTable(
+    tableName("raci_matrix_subject"),
+    RaciMatrixSubject,
+    enumTableDefnOptions,
+  );
+
+  const raciMatrixAssignmentNature = mg.enumTextTable(
+    tableName("raci_matrix_assignment_nature"),
+    RaciMatrixAssignmentNature,
+    enumTableDefnOptions,
+  );
+
+  const skillNature = mg.enumTextTable(
+    tableName("skill_nature"),
+    SkillNature,
+    enumTableDefnOptions,
+  );
+
+  const skill = mg.enumTextTable(
+    tableName("skill"),
+    Skill,
+    enumTableDefnOptions,
+  );
+
   // deno-fmt-ignore
   const seedDDL = mg.prepareSeedDDL`
       ${execCtx}
@@ -534,6 +610,14 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${timeEntryCategory}
 
+      ${raciMatrixSubject}
+
+      ${raciMatrixAssignmentNature}
+
+      ${skill}
+
+      ${skillNature}
+
       ${execCtx.seedDML}
 
       ${graphNature.seedDML}
@@ -588,7 +672,15 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
 
       ${periodicity.seedDML}
 
-      ${timeEntryCategory.seedDML}`;
+      ${timeEntryCategory.seedDML}
+
+      ${raciMatrixSubject.seedDML}
+
+      ${raciMatrixAssignmentNature.seedDML}
+
+      ${skill.seedDML}
+
+      ${skillNature.seedDML}`;
 
   return {
     modelsGovn: mg,
@@ -620,6 +712,10 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
     paymentType,
     periodicity,
     timeEntryCategory,
+    raciMatrixSubject,
+    raciMatrixAssignmentNature,
+    skill,
+    skillNature,
     seedDDL,
     exposeATC: [
       execCtx,
@@ -648,6 +744,10 @@ export function enumerations<Context extends SQLa.SqlEmitContext>(
       paymentType,
       periodicity,
       timeEntryCategory,
+      raciMatrixSubject,
+      raciMatrixAssignmentNature,
+      skillNature,
+      skill,
     ],
   };
 }
@@ -701,6 +801,25 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     informed: mgd.text(),
     ...mg.housekeeping(),
   });
+
+  const raciMatrixSubjectBoundary = mg.table(
+    tableName("raci_matrix_subject_boundary"),
+    {
+      raci_matrix_subject_boundary_id: mg.primaryKey(),
+      boundary_id: boundary.foreignKeyRef.boundary_id(),
+      raci_matrix_subject_id: enums.raciMatrixSubject.foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  const raciMatrixActivity = mg.table(
+    tableName("raci_matrix_activity"),
+    {
+      raci_matrix_activity_id: mg.primaryKey(),
+      activity: mgd.text(),
+      ...mg.housekeeping(),
+    },
+  );
 
   const assetRisk = mg.table(tableName("asset_risk"), {
     asset_risk_id: mg.primaryKey(),
@@ -898,7 +1017,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     tableName("security_incident_response_team"),
     {
       security_incident_response_team_id: mg.primaryKey(),
-      person_party_id: party.foreignKeyRef.party_id(),
+      person_id: person.foreignKeyRef.person_id(),
       organization_party_id: party.foreignKeyRef.party_id(),
       ...mg.housekeeping(),
     },
@@ -909,8 +1028,8 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     {
       awareness_training_id: mg.primaryKey(),
       training_subject_id: enums.trainingSubject.foreignKeyRef.code(),
-      person_party_id: party.foreignKeyRef.party_id(),
-      organization_party_id: party.foreignKeyRef.party_id(),
+      person_id: person.foreignKeyRef.person_id(),
+      organization_id: organization.foreignKeyRef.organization_id(),
       training_status_id: enums.statusValues.foreignKeyRef.code(),
       ...mg.housekeeping(),
     },
@@ -951,7 +1070,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     tableName("contract"),
     {
       contract_id: mg.primaryKey(),
-      party_id: party.foreignKeyRef.party_id(),
+      organization_id: organization.foreignKeyRef.organization_id(),
       contract_status_id: enums.contractStatus.foreignKeyRef.code(),
       document_reference: mgd.text(),
       payment_type_id: enums.paymentType.foreignKeyRef.code(),
@@ -1031,6 +1150,45 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     },
   );
 
+  const raciMatrixAssignment = mg.table(
+    tableName("raci_matrix_assignment"),
+    {
+      raci_matrix_assignment_id: mg.primaryKey(),
+      person_id: person.foreignKeyRef.person_id(),
+      subject_id: enums.raciMatrixSubject.foreignKeyRef.code(),
+      activity_id: raciMatrixActivity.foreignKeyRef.raci_matrix_activity_id(),
+      raci_matrix_assignment_nature_id: enums.raciMatrixAssignmentNature
+        .foreignKeyRef.code(),
+      ...mg.housekeeping(),
+    },
+  );
+
+  const personSkill = mg.table(tableName("person_skill"), {
+    person_skill_id: mg.primaryKey(),
+    person_id: person.foreignKeyRef.person_id(),
+    skill_nature_id: enums.skillNature.foreignKeyRef.code(),
+    skill_id: enums.skill.foreignKeyRef.code(),
+    ...mg.housekeeping(),
+  });
+
+  const keyPerformance = mg.table(tableName("key_performance"), {
+    key_performance_id: mg.primaryKey(),
+    title: mgd.text(),
+    description: mgd.text(),
+    ...mg.housekeeping(),
+  });
+
+  const keyPerformanceIndicator = mg.table(
+    tableName("key_performance_indicator"),
+    {
+      key_performance_indicator_id: mg.primaryKey(),
+      key_performance_id: keyPerformance.foreignKeyRef.key_performance_id(),
+      base_value: mgd.text(),
+      date: mgd.date(),
+      ...mg.housekeeping(),
+    },
+  );
+
   // deno-fmt-ignore
   const seedDDL = mg.prepareSeedDDL`
       ${host}
@@ -1089,7 +1247,19 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${riskRegister}
 
-      ${incident}`;
+      ${incident}
+
+      ${raciMatrixSubjectBoundary}
+
+      ${raciMatrixActivity}
+
+      ${raciMatrixAssignment}
+
+      ${personSkill}
+
+      ${keyPerformance}
+
+      ${keyPerformanceIndicator}`;
 
   return {
     modelsGovn: mg,
@@ -1122,6 +1292,12 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     riskRegister,
     incident,
     partyIdentifier,
+    raciMatrixSubjectBoundary,
+    raciMatrixActivity,
+    raciMatrixAssignment,
+    personSkill,
+    keyPerformance,
+    keyPerformanceIndicator,
     seedDDL,
     exposeATC: [
       host,
@@ -1144,6 +1320,12 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       riskRegister,
       incident,
       partyIdentifier,
+      raciMatrixSubjectBoundary,
+      raciMatrixActivity,
+      raciMatrixAssignment,
+      personSkill,
+      keyPerformance,
+      keyPerformanceIndicator,
     ],
   };
 }
