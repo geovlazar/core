@@ -173,6 +173,30 @@ CREATE TABLE IF NOT EXISTS "time_entry_category" (
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "raci_matrix_subject" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "raci_matrix_assignment_nature" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "skill" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "skill_nature" (
+    "code" TEXT PRIMARY KEY,
+    "value" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO "execution_context" ("code", "value") VALUES (0, 'DEVELOPMENT');
 INSERT INTO "execution_context" ("code", "value") VALUES (1, 'TEST');
 INSERT INTO "execution_context" ("code", "value") VALUES (2, 'PRODUCTION');
@@ -370,6 +394,43 @@ INSERT INTO "time_entry_category" ("code", "value") VALUES ('PACKAGE', 'Package'
 INSERT INTO "time_entry_category" ("code", "value") VALUES ('PROJECT', 'Project');
 INSERT INTO "time_entry_category" ("code", "value") VALUES ('REQUEST', 'Request');
 INSERT INTO "time_entry_category" ("code", "value") VALUES ('TASK', 'Task');
+
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('PROJECT_LEADERSHIP', 'Project Leadership');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('PROJECT_MANAGEMENT', 'Project Management');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('APPLICATION_DEVELOPMENT', 'Application Development');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('DEV_OPERATIONS', 'Dev Operations');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('QUALITY_ASSURANCE', 'Quality Assurance');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('SEARCH_ENGINE_OPTIMIZATION', 'Search Engine Optimization');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('USER_INTERFASE_USABILITY', 'User Interfase And Usability');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('BUSINESS_ANALYST', 'Business Analyst (Abm)');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('CURATION_COORDINATION', 'Curation Coordination');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('KNOWLEDGE_REPRESENTATION', 'Knowledge Representation');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('MARKETING_OUTREACH', 'Marketing Outreach');
+INSERT INTO "raci_matrix_subject" ("code", "value") VALUES ('CURATION_WORKS', 'Curation Works');
+
+INSERT INTO "raci_matrix_assignment_nature" ("code", "value") VALUES ('RESPONSIBLE', 'Responsible');
+INSERT INTO "raci_matrix_assignment_nature" ("code", "value") VALUES ('ACCOUNTABLE', 'Accountable');
+INSERT INTO "raci_matrix_assignment_nature" ("code", "value") VALUES ('CONSULTED', 'Consulted');
+INSERT INTO "raci_matrix_assignment_nature" ("code", "value") VALUES ('INFORMED', 'Informed');
+
+INSERT INTO "skill" ("code", "value") VALUES ('ANGULAR', 'Angular');
+INSERT INTO "skill" ("code", "value") VALUES ('DENO', 'Deno');
+INSERT INTO "skill" ("code", "value") VALUES ('TYPESCRIPT', 'Typescript');
+INSERT INTO "skill" ("code", "value") VALUES ('POSTGRESQL', 'Postgresql');
+INSERT INTO "skill" ("code", "value") VALUES ('MYSQL', 'Mysql');
+INSERT INTO "skill" ("code", "value") VALUES ('HUGO', 'Hugo');
+INSERT INTO "skill" ("code", "value") VALUES ('PHP', 'Php');
+INSERT INTO "skill" ("code", "value") VALUES ('JAVASCRIPT', 'JavaScript');
+INSERT INTO "skill" ("code", "value") VALUES ('PYTHON', 'Python');
+INSERT INTO "skill" ("code", "value") VALUES ('DOT_NET', '.Net');
+INSERT INTO "skill" ("code", "value") VALUES ('ORACLE', 'Oracle');
+INSERT INTO "skill" ("code", "value") VALUES ('JAVA', 'Java');
+INSERT INTO "skill" ("code", "value") VALUES ('JQUERY', 'JQuery');
+INSERT INTO "skill" ("code", "value") VALUES ('OSQUERY', 'Osquery');
+INSERT INTO "skill" ("code", "value") VALUES ('REACTJS', 'ReactJs');
+
+INSERT INTO "skill_nature" ("code", "value") VALUES ('SOFTWARE', 'Software');
+INSERT INTO "skill_nature" ("code", "value") VALUES ('HARDWARE', 'Hardware');
 
 -- content tables
 CREATE TABLE IF NOT EXISTS "host" (
@@ -668,11 +729,11 @@ CREATE TABLE IF NOT EXISTS "organization_role" (
 
 CREATE TABLE IF NOT EXISTS "security_incident_response_team" (
     "security_incident_response_team_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "person_party_id" INTEGER NOT NULL,
+    "person_id" INTEGER NOT NULL,
     "organization_party_id" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
-    FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("person_id") REFERENCES "person"("person_id"),
     FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -680,14 +741,14 @@ CREATE TABLE IF NOT EXISTS "security_incident_response_team" (
 CREATE TABLE IF NOT EXISTS "awareness_training" (
     "awareness_training_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "training_subject_id" TEXT NOT NULL,
-    "person_party_id" INTEGER NOT NULL,
-    "organization_party_id" INTEGER NOT NULL,
+    "person_id" INTEGER NOT NULL,
+    "organization_id" INTEGER NOT NULL,
     "training_status_id" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("training_subject_id") REFERENCES "training_subject"("code"),
-    FOREIGN KEY("person_party_id") REFERENCES "party"("party_id"),
-    FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("person_id") REFERENCES "person"("person_id"),
+    FOREIGN KEY("organization_id") REFERENCES "organization"("organization_id"),
     FOREIGN KEY("training_status_id") REFERENCES "status_value"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
@@ -713,7 +774,7 @@ CREATE TABLE IF NOT EXISTS "rating" (
 
 CREATE TABLE IF NOT EXISTS "contract" (
     "contract_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "party_id" INTEGER NOT NULL,
+    "organization_id" INTEGER NOT NULL,
     "contract_status_id" TEXT NOT NULL,
     "document_reference" TEXT NOT NULL,
     "payment_type_id" TEXT NOT NULL,
@@ -727,7 +788,7 @@ CREATE TABLE IF NOT EXISTS "contract" (
     "date_of_contract_approval" DATETIME NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
-    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("organization_id") REFERENCES "organization"("organization_id"),
     FOREIGN KEY("contract_status_id") REFERENCES "contract_status"("code"),
     FOREIGN KEY("payment_type_id") REFERENCES "payment_type"("code"),
     FOREIGN KEY("periodicity_id") REFERENCES "periodicity"("code"),
@@ -816,6 +877,73 @@ CREATE TABLE IF NOT EXISTS "incident" (
     FOREIGN KEY("reported_to_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("assigned_to_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("status_id") REFERENCES "incident_status"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "raci_matrix_subject_boundary" (
+    "raci_matrix_subject_boundary_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "boundary_id" INTEGER NOT NULL,
+    "raci_matrix_subject_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("boundary_id") REFERENCES "boundary"("boundary_id"),
+    FOREIGN KEY("raci_matrix_subject_id") REFERENCES "raci_matrix_subject"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "raci_matrix_activity" (
+    "raci_matrix_activity_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "activity" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "raci_matrix_assignment" (
+    "raci_matrix_assignment_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "person_id" INTEGER NOT NULL,
+    "subject_id" TEXT NOT NULL,
+    "activity_id" INTEGER NOT NULL,
+    "raci_matrix_assignment_nature_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("person_id") REFERENCES "person"("person_id"),
+    FOREIGN KEY("subject_id") REFERENCES "raci_matrix_subject"("code"),
+    FOREIGN KEY("activity_id") REFERENCES "raci_matrix_activity"("raci_matrix_activity_id"),
+    FOREIGN KEY("raci_matrix_assignment_nature_id") REFERENCES "raci_matrix_assignment_nature"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "person_skill" (
+    "person_skill_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "person_id" INTEGER NOT NULL,
+    "skill_nature_id" TEXT NOT NULL,
+    "skill_id" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("person_id") REFERENCES "person"("person_id"),
+    FOREIGN KEY("skill_nature_id") REFERENCES "skill_nature"("code"),
+    FOREIGN KEY("skill_id") REFERENCES "skill"("code"),
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "key_performance" (
+    "key_performance_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+);
+
+CREATE TABLE IF NOT EXISTS "key_performance_indicator" (
+    "key_performance_indicator_id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "key_performance_id" INTEGER NOT NULL,
+    "base_value" TEXT NOT NULL,
+    "date" DATE NOT NULL,
+    "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+    "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
+    FOREIGN KEY("key_performance_id") REFERENCES "key_performance"("key_performance_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
