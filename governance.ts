@@ -37,12 +37,15 @@ export const recordStatus = SQLa.enumTextTable(
 
 export type HousekeepingColumnsDefns<Context extends SQLa.SqlEmitContext> = {
   readonly created_at: SQLa.AxiomSqlDomain<Date | undefined, Context>;
-  readonly record_status_id: SQLa.AxiomSqlDomain<string | undefined, Context>;
+  readonly record_status_id: SQLa.AxiomSqlDomain<
+    keyof typeof RecordStatus | undefined,
+    Context
+  >;
 };
 
 export function recordStatusId<
   Context extends SQLa.SqlEmitContext,
->(): SQLa.AxiomSqlDomain<string | undefined, Context> {
+>(): SQLa.AxiomSqlDomain<keyof typeof RecordStatus | undefined, Context> {
   return recordStatus.foreignKeyRef.code(undefined, {
     sqlDefaultValue: () => ({ SQL: () => `'ACTIVE'` }),
   });
