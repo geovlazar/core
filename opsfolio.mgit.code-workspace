@@ -37,6 +37,9 @@
 		"[typescript]": {
 			"editor.defaultFormatter": "denoland.vscode-deno"
 		},
-		"hediet.vscode-drawio.theme": "atlas"
+		"hediet.vscode-drawio.theme": "atlas",
+		"git.decorations.enabled": true,
+		"workbench.editor.decorations.colors": true,
+		"workbench.editor.decorations.badges": true
 	}
 }
