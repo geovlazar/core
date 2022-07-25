@@ -948,9 +948,8 @@ export function entities<Context extends SQLa.SqlEmitContext>(
   const partyIdentifier = mg.table(tableName("party_identifier"), {
     party_identifier_id: mg.primaryKey(),
     identifier_number: mgd.text(),
-    identifier_name: mgd.text(),
     party_identifier_type_id: enums.partyIdentifierType.foreignKeyRef.code(),
-    party_id: enums.partyType.foreignKeyRef.code(),
+    party_id: party.foreignKeyRef.party_id(),
     ...mg.housekeeping(),
   });
 
@@ -992,7 +991,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     ...mg.housekeeping(),
   });
 
-  const contactElectronics = mg.table(tableName("contact_electronic"), {
+  const contactElectronic = mg.table(tableName("contact_electronic"), {
     contact_electronic_id: mg.primaryKey(),
     contact_type_id: enums.contactType.foreignKeyRef.code(),
     party_id: party.foreignKeyRef.party_id(),
@@ -1183,7 +1182,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     {
       key_performance_indicator_id: mg.primaryKey(),
       key_performance_id: keyPerformance.foreignKeyRef.key_performance_id(),
-      base_value: mgd.text(),
+      base_value: mgd.integer(),
       date: mgd.date(),
       ...mg.housekeeping(),
     },
@@ -1227,7 +1226,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
       ${organization}
 
-      ${contactElectronics}
+      ${contactElectronic}
 
       ${contactLand}
 
@@ -1281,7 +1280,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     person,
     organization,
     partyRelation,
-    contactElectronics,
+    contactElectronic,
     contactLand,
     organizationRole,
     securityIncidentResponseTeam,
@@ -1309,7 +1308,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       person,
       partyRelation,
       organization,
-      contactElectronics,
+      contactElectronic,
       contactLand,
       organizationRole,
       securityIncidentResponseTeam,
