@@ -390,9 +390,8 @@
     * **party_identifier_id**: INTEGER
     --
     * identifier_number: TEXT
-    * identifier_name: TEXT
     * party_identifier_type_id: TEXT <<ENUM(party_identifier_type)>>
-    * party_id: TEXT <<ENUM(party_type)>>
+    * party_id: INTEGER <<FK(party)>>
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
@@ -448,7 +447,7 @@
     * **key_performance_indicator_id**: INTEGER
     --
     * key_performance_id: INTEGER <<FK(key_performance)>>
-    * base_value: TEXT
+    * base_value: INTEGER
     * date: DATE
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
@@ -478,6 +477,7 @@
   party |o..o{ incident
   party |o..o{ incident
   party |o..o{ incident
+  party |o..o{ party_identifier
   boundary |o..o{ raci_matrix_subject_boundary
   person |o..o{ raci_matrix_assignment
   raci_matrix_activity |o..o{ raci_matrix_assignment

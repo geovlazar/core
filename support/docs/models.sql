@@ -635,13 +635,12 @@ CREATE TABLE IF NOT EXISTS "party" (
 CREATE TABLE IF NOT EXISTS "party_identifier" (
     "party_identifier_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "identifier_number" TEXT NOT NULL,
-    "identifier_name" TEXT NOT NULL,
     "party_identifier_type_id" TEXT NOT NULL,
-    "party_id" TEXT NOT NULL,
+    "party_id" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("party_identifier_type_id") REFERENCES "party_identifier_type"("code"),
-    FOREIGN KEY("party_id") REFERENCES "party_type"("code"),
+    FOREIGN KEY("party_id") REFERENCES "party"("party_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -939,7 +938,7 @@ CREATE TABLE IF NOT EXISTS "key_performance" (
 CREATE TABLE IF NOT EXISTS "key_performance_indicator" (
     "key_performance_indicator_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "key_performance_id" INTEGER NOT NULL,
-    "base_value" TEXT NOT NULL,
+    "base_value" INTEGER NOT NULL,
     "date" DATE NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
