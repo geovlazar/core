@@ -6,19 +6,19 @@ export * as dzx from "https://deno.land/x/dzx@0.4.0/mod.ts";
 //   Taksfile.ts prepare-sandbox will switch RF URLs to local mGit location
 //   Taksfile.ts prepare-publish will switch RF URLs to remote GitHub location (using latest tag)
 
-export * as rflDepsHelpers from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/deps-helpers.ts";
-export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/axiom/mod.ts";
-export * as rflDiscoverFS from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/fs/discover.ts";
-export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/sql/mod.ts";
-export * as rflSQLa from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/sql/render/mod.ts";
-export * as rflSqlDiagram from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/sql/diagram/mod.ts";
-export * as rflSqlOsQuery from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/sql/engine/osquery.ts";
-export * as rflSqlite from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/sql/engine/sqlite.ts";
-export * as rflTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/core.ts";
-export * as rflTaskUDD from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/udd.ts";
-export * as rflDenoConfigHelpers from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/deno-config.ts";
-export * as rflGitTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/git.ts";
-export * as rflGitHubTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/github.ts";
-export * as rflDoctorTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/doctor.ts";
-export * as rflShellTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/task/shell.ts";
-export * as rflTextWS from "https://raw.githubusercontent.com/resFactory/factory/v0.12.15/lib/text/whitespace.ts";
+export * as rflDepsHelpers from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/deps-helpers.ts";
+export * as rflAxiom from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/axiom/mod.ts";
+export * as rflDiscoverFS from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/fs/discover.ts";
+export * as rflSQL from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/sql/mod.ts";
+export * as rflSQLa from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/sql/render/mod.ts";
+export * as rflSqlDiagram from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/sql/diagram/mod.ts";
+export * as rflSqlOsQuery from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/sql/engine/osquery.ts";
+export * as rflSqlite from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/sql/engine/sqlite.ts";
+export * as rflTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/core.ts";
+export * as rflTaskUDD from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/udd.ts";
+export * as rflDenoConfigHelpers from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/deno-config.ts";
+export * as rflGitTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/git.ts";
+export * as rflGitHubTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/github.ts";
+export * as rflDoctorTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/doctor.ts";
+export * as rflShellTask from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/task/shell.ts";
+export * as rflTextWS from "https://raw.githubusercontent.com/resFactory/factory/v0.12.16/lib/text/whitespace.ts";
