@@ -1,10 +1,10 @@
-import { hex, rflSqlite as sqlite } from "./deps.ts";
+import { dzx, hex, rflSqlite as sqlite } from "./deps.ts";
 
 // deno-lint-ignore no-explicit-any
 type Any = any;
 
 type AssetsConfig = {
-  readonly sqliteSqlSrc: string;
+  readonly sqliteSqlDestFile: string;
   readonly osQueryATCConfig: string;
   readonly sqliteDb: string;
   readonly plantUmlIE: string;
@@ -25,7 +25,7 @@ export async function generateArtifacts(assets: {
   readonly osQueryATCConfig: (sqliteDbPath: string) => string;
   readonly plantUmlIE?: string;
 }, ga: AssetsConfig) {
-  await Deno.writeTextFile(ga.sqliteSqlSrc, assets.sqliteSql);
+  await Deno.writeTextFile(ga.sqliteSqlDestFile, assets.sqliteSql);
   await Deno.writeTextFile(
     ga.osQueryATCConfig,
     assets.osQueryATCConfig(ga.sqliteDb),
@@ -41,8 +41,13 @@ export async function generateArtifacts(assets: {
   }
 }
 
+/**
+ * Assuming SQL text has been generated, load it into an SQLite database on disk
+ * using the embedded (usually WASM) SQLite engine.
+ * @param ga
+ */
 // deno-lint-ignore require-await
-export async function dbDeploy(assets: {
+export async function dbDeployEmbedded(assets: {
   readonly sqliteSql: string;
 }, ga: AssetsConfig) {
   const sqlEngine = sqlite.sqliteEngine();
@@ -51,6 +56,30 @@ export async function dbDeploy(assets: {
   });
   db.dbStore.execute(assets.sqliteSql);
   db.close();
+}
+
+/**
+ * Assuming a SQLite file has been generated, use `dzx` to prepare an SQLite
+ * database in memory and then ".dump" what was created in memory into a file.
+ * @param ga
+ */
+export async function dbDeployShell(
+  ga: AssetsConfig & { removeExistingDb?: boolean; memoryFirst?: boolean },
+) {
+  // recursive is set to true to prevent exception if not found
+  const { removeExistingDb = true, memoryFirst = true } = ga;
+  if (removeExistingDb) {
+    try {
+      await Deno.remove(ga.sqliteDb);
+    } catch { /* ignore if does not exist */ }
+  }
+  dzx.$.verbose = false;
+  if (memoryFirst) {
+    await dzx
+      .$`echo "\n.dump\n" | cat ${ga.sqliteSqlDestFile} - | sqlite3 ":memory:" | sqlite3 ${ga.sqliteDb}`;
+  } else {
+    await dzx.$`sqlite3 ${ga.sqliteDb}`;
+  }
 }
 
 /**

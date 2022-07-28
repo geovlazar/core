@@ -14,7 +14,7 @@ const cleanArtifacts = typeof cleanArtifactEV === "undefined"
 
 Deno.test("Opsfolio generate artifacts", async (tc) => {
   const generatable = {
-    sqliteSqlSrc: "opsfolio.auto.sql",
+    sqliteSqlDestFile: "opsfolio.auto.sql",
     plantUmlIE: "opsfolio.auto.puml",
     osQueryATCConfig: "opsfolio.auto.osquery-atc.json",
     sqliteDb: "opsfolio.auto.sqlite.db",
@@ -34,8 +34,8 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
   await mod.clean(generatable);
   await mod.generateArtifacts(assets, generatable);
 
-  await tc.step(generatable.sqliteSqlSrc, async () => {
-    ta.assert(await Deno.readTextFile(generatable.sqliteSqlSrc));
+  await tc.step(generatable.sqliteSqlDestFile, async () => {
+    ta.assert(await Deno.readTextFile(generatable.sqliteSqlDestFile));
   });
 
   await tc.step(generatable.osQueryATCConfig, async () => {
@@ -47,7 +47,7 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
   });
 
   await tc.step(generatable.sqliteDb, async () => {
-    await mod.dbDeploy(assets, generatable);
+    await mod.dbDeployShell(generatable);
     const db = sqlEngine.instance({
       storageFileName: () => generatable.sqliteDb,
     });
@@ -99,9 +99,11 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
       +------+-------------+
       `),
       );
-    } catch {
+    } catch (err) {
       console.log(
-        `unable to run osqueryi ATC test case: osqueryi executable not found in path`,
+        `unable to run osqueryi ATC test case: osqueryi executable not found in path?`,
+        "\n",
+        err,
       );
     }
   });
@@ -110,12 +112,12 @@ Deno.test("Opsfolio generate artifacts", async (tc) => {
     ta.assertEquals(
       ddlOptions.sqlTextLintState?.lintedSqlText.lintIssues.length,
       0,
-      `Please see ${generatable.sqliteSqlSrc} for SQL lint issues`,
+      `Please see ${generatable.sqliteSqlDestFile} for SQL lint issues`,
     );
     ta.assertEquals(
       ddlOptions.sqlTextLintState?.lintedSqlTmplEngine.lintIssues.length,
       0,
-      `Please see ${generatable.sqliteSqlSrc} for template engine lint issues`,
+      `Please see ${generatable.sqliteSqlDestFile} for template engine lint issues`,
     );
   });
 
