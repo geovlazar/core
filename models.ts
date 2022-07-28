@@ -1017,7 +1017,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     {
       security_incident_response_team_id: mg.primaryKey(),
       person_id: person.foreignKeyRef.person_id(),
-      organization_party_id: party.foreignKeyRef.party_id(),
+      organization_id: organization.foreignKeyRef.organization_id(),
       ...mg.housekeeping(),
     },
   );
@@ -1127,11 +1127,11 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       it_service_impacted: mgd.text(),
       impacted_modules: mgd.text(),
       impacted_dept: mgd.text(),
-      reported_by_id: party.foreignKeyRef.party_id(),
-      reported_to_id: party.foreignKeyRef.party_id(),
+      reported_by_id: person.foreignKeyRef.person_id(),
+      reported_to_id: person.foreignKeyRef.person_id(),
       brief_description: mgd.text(),
       detailed_description: mgd.text(),
-      assigned_to_id: party.foreignKeyRef.party_id(),
+      assigned_to_id: person.foreignKeyRef.person_id(),
       assigned_date: mgd.date(),
       investigation_details: mgd.text(),
       containment_details: mgd.text(),
