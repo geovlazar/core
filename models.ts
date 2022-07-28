@@ -781,7 +781,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
 
   const host = mg.table(tableName("host"), {
     host_id: mg.primaryKey(),
-    host_name: SQLa.unique(mgd.text()),
+    host_name: { ...mgd.text(), isUnique: true },
     ...mg.housekeeping(),
   });
 

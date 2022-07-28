@@ -438,8 +438,8 @@ CREATE TABLE IF NOT EXISTS "host" (
     "host_name" TEXT NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
-    UNIQUE("host_name"),
-    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
+    FOREIGN KEY("record_status_id") REFERENCES "record_status"("code"),
+    UNIQUE("host_name")
 );
 
 CREATE TABLE IF NOT EXISTS "graph" (
