@@ -1,4 +1,8 @@
-import { dzx, hex, rflSqlite as sqlite } from "./deps.ts";
+import {
+  hex,
+  rflSqlite as sqliteEngine,
+  rflTaskSqlite as sqliteTask,
+} from "./deps.ts";
 
 // deno-lint-ignore no-explicit-any
 type Any = any;
@@ -50,7 +54,7 @@ export async function generateArtifacts(assets: {
 export async function dbDeployEmbedded(assets: {
   readonly sqliteSql: string;
 }, ga: AssetsConfig) {
-  const sqlEngine = sqlite.sqliteEngine();
+  const sqlEngine = sqliteEngine.sqliteEngine();
   const db = sqlEngine.instance({
     storageFileName: () => ga.sqliteDb,
   });
@@ -63,23 +67,19 @@ export async function dbDeployEmbedded(assets: {
  * database in memory and then ".dump" what was created in memory into a file.
  * @param ga
  */
-export async function dbDeployShell(
-  ga: AssetsConfig & { removeExistingDb?: boolean; memoryFirst?: boolean },
-) {
-  // recursive is set to true to prevent exception if not found
-  const { removeExistingDb = true, memoryFirst = true } = ga;
-  if (removeExistingDb) {
-    try {
-      await Deno.remove(ga.sqliteDb);
-    } catch { /* ignore if does not exist */ }
-  }
-  dzx.$.verbose = false;
-  if (memoryFirst) {
-    await dzx
-      .$`echo "\n.dump\n" | cat ${ga.sqliteSqlDestFile} - | sqlite3 ":memory:" | sqlite3 ${ga.sqliteDb}`;
-  } else {
-    await dzx.$`cat ${ga.sqliteSqlDestFile} | sqlite3 ${ga.sqliteDb}`;
-  }
+export async function dbDeployShell(ga: AssetsConfig) {
+  await sqliteTask.sqliteDbDeployShell({
+    sqliteSrc: {
+      sqlFilePath: ga.sqliteSqlDestFile,
+      removeAfter: false,
+    },
+    sqliteDest: {
+      dbFilePath: ga.sqliteDb,
+      removeExistingDb: true,
+    },
+    memoryFirst: true,
+    verbose: false,
+  });
 }
 
 /**
