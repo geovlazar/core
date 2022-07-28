@@ -78,7 +78,7 @@ export async function dbDeployShell(
     await dzx
       .$`echo "\n.dump\n" | cat ${ga.sqliteSqlDestFile} - | sqlite3 ":memory:" | sqlite3 ${ga.sqliteDb}`;
   } else {
-    await dzx.$`sqlite3 ${ga.sqliteDb}`;
+    await dzx.$`cat ${ga.sqliteSqlDestFile} | sqlite3 ${ga.sqliteDb}`;
   }
 }
 
