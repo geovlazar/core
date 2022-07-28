@@ -729,11 +729,11 @@ CREATE TABLE IF NOT EXISTS "organization_role" (
 CREATE TABLE IF NOT EXISTS "security_incident_response_team" (
     "security_incident_response_team_id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "person_id" INTEGER NOT NULL,
-    "organization_party_id" INTEGER NOT NULL,
+    "organization_id" INTEGER NOT NULL,
     "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
     "record_status_id" TEXT NOT NULL DEFAULT 'ACTIVE',
     FOREIGN KEY("person_id") REFERENCES "person"("person_id"),
-    FOREIGN KEY("organization_party_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("organization_id") REFERENCES "organization"("organization_id"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );
 
@@ -872,9 +872,9 @@ CREATE TABLE IF NOT EXISTS "incident" (
     FOREIGN KEY("severity_id") REFERENCES "severity_type"("code"),
     FOREIGN KEY("priority_id") REFERENCES "priority_type"("code"),
     FOREIGN KEY("internal_or_external_id") REFERENCES "incident_type"("code"),
-    FOREIGN KEY("reported_by_id") REFERENCES "party"("party_id"),
-    FOREIGN KEY("reported_to_id") REFERENCES "party"("party_id"),
-    FOREIGN KEY("assigned_to_id") REFERENCES "party"("party_id"),
+    FOREIGN KEY("reported_by_id") REFERENCES "person"("person_id"),
+    FOREIGN KEY("reported_to_id") REFERENCES "person"("person_id"),
+    FOREIGN KEY("assigned_to_id") REFERENCES "person"("person_id"),
     FOREIGN KEY("status_id") REFERENCES "incident_status"("code"),
     FOREIGN KEY("record_status_id") REFERENCES "record_status"("code")
 );

@@ -270,7 +270,7 @@
     * **security_incident_response_team_id**: INTEGER
     --
     * person_id: INTEGER <<FK(person)>>
-    * organization_party_id: INTEGER <<FK(party)>>
+    * organization_id: INTEGER <<FK(organization)>>
       created_at: DATETIME
     * record_status_id: TEXT <<ENUM(record_status)>>
   }
@@ -364,11 +364,11 @@
     * it_service_impacted: TEXT
     * impacted_modules: TEXT
     * impacted_dept: TEXT
-    * reported_by_id: INTEGER <<FK(party)>>
-    * reported_to_id: INTEGER <<FK(party)>>
+    * reported_by_id: INTEGER <<FK(person)>>
+    * reported_to_id: INTEGER <<FK(person)>>
     * brief_description: TEXT
     * detailed_description: TEXT
-    * assigned_to_id: INTEGER <<FK(party)>>
+    * assigned_to_id: INTEGER <<FK(person)>>
     * assigned_date: DATE
     * investigation_details: TEXT
     * containment_details: TEXT
@@ -466,7 +466,7 @@
   party |o..o{ organization_role
   party |o..o{ organization_role
   person |o..o{ security_incident_response_team
-  party |o..o{ security_incident_response_team
+  organization |o..o{ security_incident_response_team
   person |o..o{ awareness_training
   organization |o..o{ awareness_training
   party |o..o{ rating
@@ -474,9 +474,9 @@
   organization |o..o{ contract
   party |o..o{ note
   party |o..o{ risk_register
-  party |o..o{ incident
-  party |o..o{ incident
-  party |o..o{ incident
+  person |o..o{ incident
+  person |o..o{ incident
+  person |o..o{ incident
   party |o..o{ party_identifier
   boundary |o..o{ raci_matrix_subject_boundary
   person |o..o{ raci_matrix_assignment
