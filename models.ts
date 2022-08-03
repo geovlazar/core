@@ -88,7 +88,8 @@ export enum ContactType {
 }
 
 export enum TrainingSubject {
-  HIPPA = "HIPPA",
+  HIPAA = "HIPAA",
+  CYBER_SECURITY = "Cyber Security",
 }
 
 export enum StatusValues {
@@ -1030,6 +1031,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       person_id: person.foreignKeyRef.person_id(),
       organization_id: organization.foreignKeyRef.organization_id(),
       training_status_id: enums.statusValues.foreignKeyRef.code(),
+      attended_date: mgd.date(),
       ...mg.housekeeping(),
     },
   );
@@ -1041,8 +1043,8 @@ export function entities<Context extends SQLa.SqlEmitContext>(
     tableName("rating"),
     {
       rating_id: mg.primaryKey(),
-      author_id: party.foreignKeyRef.party_id(),
-      rating_given_to_id: party.foreignKeyRef.party_id(),
+      author_id: person.foreignKeyRef.person_id(),
+      rating_given_to_id: organization.foreignKeyRef.organization_id(),
       rating_value_id: enums.ratingValue.foreignKeyRef.code(),
       best_rating_id: enums.ratingValue.foreignKeyRef.code(),
       rating_explanation: mgd.text(),
@@ -1103,7 +1105,7 @@ export function entities<Context extends SQLa.SqlEmitContext>(
       mitigation_further_actions: mgd.text(),
       control_monitor_mitigation_actions_tracking_strategy: mgd.text(),
       control_monitor_action_due_date: mgd.date(),
-      control_monitor_risk_owner_id: party.foreignKeyRef.party_id(),
+      control_monitor_risk_owner_id: person.foreignKeyRef.person_id(),
       ...mg.housekeeping(),
     },
   );
